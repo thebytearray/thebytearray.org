@@ -1,0 +1,13 @@
+# Production compose override
+# Usage: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+
+services:
+  app:
+    build:
+      args:
+        - NODE_ENV=production
+    image: thebytearray/website:latest
+    restart: always
+
+  edge:
+    restart: always

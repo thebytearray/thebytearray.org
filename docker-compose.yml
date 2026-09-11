@@ -1,0 +1,62 @@
+name: ${COMPOSE_PROJECT_NAME:-thebytearray}
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=${NODE_ENV:-production}
+    image: thebytearray/website:${IMAGE_TAG:-latest}
+    container_name: ${COMPOSE_PROJECT_NAME:-thebytearray}_app
+    expose:
+      - "80"
+    environment:
+      - NODE_ENV=${NODE_ENV:-production}
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "wget -qO- http://127.0.0.1/health.html > /dev/null || exit 1",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - web
+
+  edge:
+    build:
+      context: .
+      dockerfile: Dockerfile.edge
+    image: thebytearray/website:edge
+    container_name: ${COMPOSE_PROJECT_NAME:-thebytearray}_edge
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - SITE_HOST=app
+    volumes:
+      - certbot_etc:/etc/letsencrypt
+      - certbot_var:/var/lib/letsencrypt
+      - certbot_webroot:/var/www/certbot
+    depends_on:
+      app:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - web
+
+networks:
+  web:
+    driver: bridge
+
+volumes:
+  certbot_etc:
+    driver: local
+  certbot_var:
+    driver: local
+  certbot_webroot:
+    driver: local

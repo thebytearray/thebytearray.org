@@ -1,0 +1,25 @@
+# Development compose override
+# Usage: docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+
+services:
+  app:
+    build:
+      # The Node build stage; the default target is the nginx runtime, which has no npm.
+      target: builder
+      args:
+        - NODE_ENV=development
+    image: thebytearray/website:dev
+    container_name: ${COMPOSE_PROJECT_NAME:-thebytearray}_dev
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./src:/app/src:ro
+      - ./content:/app/content:ro
+      - ./public:/app/public:ro
+    command: npm run dev -- --hostname 0.0.0.0 --port 5173
+    ports:
+      - "127.0.0.1:5173:5173"
+
+  edge:
+    profiles:
+      - with-edge
