@@ -1,0 +1,17 @@
+# syntax=docker/dockerfile:1
+
+FROM nginx:1.27-bookworm
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends certbot curl ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY nginx/edge/entrypoint.sh /entrypoint.sh
+COPY nginx/edge/http.conf /etc/nginx/edge/http.conf
+COPY nginx/edge/https.conf /etc/nginx/edge/https.conf
+
+RUN chmod +x /entrypoint.sh
+
+LABEL org.opencontainers.image.title="thebytearray.org edge (nginx + TLS)"
+
+ENTRYPOINT ["/entrypoint.sh"]

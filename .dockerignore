@@ -1,0 +1,67 @@
+# Dependencies
+node_modules
+npm-debug.log*
+
+# Build output
+dist
+build
+
+# Version control
+.git
+.gitignore
+.gitattributes
+
+# Documentation
+*.md
+!README.md
+LICENSE
+
+# Environment
+.env
+.env.*
+.envrc
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# CI/CD
+.github/
+.travis.yml
+.circleci/
+
+# Docker
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Testing
+coverage
+.nyc_output
+*.test.js
+*.spec.js
+
+# Temporary files
+*.log
+*.tmp
+*.temp
+.cache/
+.parcel-cache/
+
+# Next.js
+.next
+out/
+
+# Local-only folders (never part of the image)
+.agents/
+.claude/
+skills-lock.json
+
+# Turborepo
+.turbo/
+
+# Misc
+Thumbs.db

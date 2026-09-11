@@ -1,0 +1,26 @@
+# syntax=docker/dockerfile:1
+
+FROM alpine:3.20
+
+ARG TARGETARCH
+ARG COMPOSE_VERSION=2.32.4
+
+RUN apk add --no-cache ca-certificates dcron docker-cli git wget \
+    && case "$TARGETARCH" in \
+         amd64) c_arch=x86_64 ;; \
+         arm64) c_arch=aarch64 ;; \
+         *) echo "unsupported TARGETARCH=$TARGETARCH"; exit 1 ;; \
+       esac \
+    && install -d /usr/local/lib/docker/cli-plugins \
+    && wget -qO /usr/local/lib/docker/cli-plugins/docker-compose \
+         "https://github.com/docker/compose/releases/download/v${COMPOSE_VERSION}/docker-compose-linux-${c_arch}" \
+    && chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
+
+COPY scripts/updater/entrypoint.sh /entrypoint.sh
+COPY scripts/updater/run-update.sh /usr/local/bin/run-update
+
+RUN chmod +x /entrypoint.sh /usr/local/bin/run-update
+
+LABEL org.opencontainers.image.title="thebytearray.org git pull + compose (cron)"
+
+ENTRYPOINT ["/entrypoint.sh"]

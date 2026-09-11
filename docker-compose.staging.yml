@@ -1,0 +1,17 @@
+# Staging compose override
+# Usage: docker compose -f docker-compose.yml -f docker-compose.staging.yml up -d
+
+services:
+  app:
+    build:
+      args:
+        - NODE_ENV=staging
+    image: thebytearray/website:staging
+    container_name: ${COMPOSE_PROJECT_NAME:-thebytearray}_staging
+    environment:
+      - NODE_ENV=staging
+
+  edge:
+    container_name: ${COMPOSE_PROJECT_NAME:-thebytearray}_edge_staging
+    ports:
+      - "8080:80"
