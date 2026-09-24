@@ -4,7 +4,8 @@ export const site = {
   tagline: "Straight to the point. Private by default.",
   description:
     "The Byte Array makes Android apps, libraries and developer tools that do one job well. Our apps have no ads, no tracking and no accounts.",
-  email: "contact@thebytearray.org",
+  /** Visible form. The real address is built in emailAddress() on copy or send. */
+  emailDisplay: "contact at thebytearray dot org",
   license: {
     name: "GPL-3.0",
     url: "https://www.gnu.org/licenses/gpl-3.0.html",
@@ -13,6 +14,11 @@ export const site = {
     github: "https://github.com/thebytearray",
   },
 } as const;
+
+/** Assembled only when someone copies the address or opens a mail app. */
+export function emailAddress() {
+  return ["contact", "thebytearray.org"].join("@");
+}
 
 export interface NavItem {
   label: string;

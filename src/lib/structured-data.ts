@@ -19,7 +19,6 @@ export function organizationLd() {
     alternateName: "[]byte",
     url: absoluteUrl("/"),
     logo: absoluteUrl("/apple-icon.png"),
-    email: site.email,
     description: site.description,
     sameAs: [site.links.github],
     ...(founder

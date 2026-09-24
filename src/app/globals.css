@@ -13,108 +13,108 @@
 [data-theme="light"] {
   color-scheme: light;
 
-  --radius: 0.625rem;
+  --radius: 0.5rem;
   --field-border-width: 1px;
 
-  /* Paper, ink and signal teal */
-  --background: #f4f6f6;
-  --foreground: #132020;
+  /* Apple daylight: gray canvas, white cards, near-black text. */
+  --background: #f5f5f7;
+  --foreground: #1d1d1f;
 
   --surface: #ffffff;
   --surface-foreground: var(--foreground);
-  --surface-secondary: #eef2f1;
+  --surface-secondary: #f5f5f7;
   --surface-secondary-foreground: var(--foreground);
-  --surface-tertiary: #e6eceb;
+  --surface-tertiary: #e8e8ed;
   --surface-tertiary-foreground: var(--foreground);
 
   --overlay: #ffffff;
   --overlay-foreground: var(--foreground);
 
-  --muted: #566867;
+  --muted: #6e6e73;
 
-  --default: #e7eceb;
+  --default: #e8e8ed;
   --default-foreground: var(--foreground);
 
-  --accent: #0f766e;
+  /* Ink buttons and focus. The stamp is not the button color. */
+  --accent: #1d1d1f;
   --accent-foreground: #ffffff;
 
-  /* The logo and small highlights; same teal as the accent. */
-  --brand: var(--accent);
+  --brand: #c5362b;
 
   --field-background: #ffffff;
   --field-foreground: var(--foreground);
-  --field-placeholder: #637473;
-  --field-border: #869695;
+  --field-placeholder: #6e6e73;
+  --field-border: #d2d2d7;
 
-  --border: #dae2e1;
-  --separator: #e1e8e7;
+  --border: #d2d2d7;
+  --separator: #d2d2d7;
   --focus: var(--accent);
-  --link: var(--accent);
+  --link: var(--foreground);
 
   /* Darker than HeroUI's default so error text passes AA on paper and white. */
   --danger: oklch(0.55 0.2 26);
   --danger-foreground: #ffffff;
 
-  --backdrop: rgba(10, 20, 20, 0.45);
+  --backdrop: rgba(0, 0, 0, 0.4);
 
-  --surface-shadow: 0 1px 2px 0 rgba(19, 32, 32, 0.05);
+  --surface-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.06);
   --overlay-shadow:
-    0 2px 8px 0 rgba(19, 32, 32, 0.06), 0 14px 28px 0 rgba(19, 32, 32, 0.1);
+    0 2px 8px 0 rgba(0, 0, 0, 0.06), 0 14px 28px 0 rgba(0, 0, 0, 0.1);
   --field-shadow: none;
 
   /* Site-specific tokens */
-  --screenshot-frame: #e6eceb;
+  --screenshot-frame: #e8e8ed;
 }
 
 .dark,
 [data-theme="dark"] {
   color-scheme: dark;
 
-  /* Night, pale ink and a lighter teal that keeps contrast on dark ground */
-  --background: #0f1515;
-  --foreground: #e4ecea;
+  /* Apple night: black canvas, graphite cards, off-white text. */
+  --background: #000000;
+  --foreground: #f5f5f7;
 
-  --surface: #161e1e;
+  --surface: #1d1d1f;
   --surface-foreground: var(--foreground);
-  --surface-secondary: #1c2626;
+  --surface-secondary: #272729;
   --surface-secondary-foreground: var(--foreground);
-  --surface-tertiary: #223030;
+  --surface-tertiary: #2c2c2e;
   --surface-tertiary-foreground: var(--foreground);
 
-  --overlay: #1a2424;
+  --overlay: #1d1d1f;
   --overlay-foreground: var(--foreground);
 
-  --muted: #93a4a2;
+  --muted: #86868b;
 
-  --default: #1f2a2a;
+  --default: #2c2c2e;
   --default-foreground: var(--foreground);
 
-  --accent: #5ec8bd;
-  --accent-foreground: #0b1414;
+  --accent: #f5f5f7;
+  --accent-foreground: #000000;
 
-  --brand: var(--accent);
+  --brand: #ff6a5c;
 
-  --field-background: #131b1b;
+  --field-background: #1d1d1f;
   --field-foreground: var(--foreground);
-  --field-placeholder: #7d8e8c;
-  --field-border: #5a6d6c;
+  --field-placeholder: #86868b;
+  --field-border: #424245;
 
-  --border: #263333;
-  --separator: #1f2a2a;
+  --border: #424245;
+  --separator: #333336;
   --focus: var(--accent);
-  --link: var(--accent);
+  --link: var(--foreground);
 
   /* Lighter than HeroUI's default so error text passes AA on the dark ground. */
   --danger: oklch(0.72 0.16 24);
-  --danger-foreground: #0f1515;
+  --danger-foreground: #000000;
 
-  --backdrop: rgba(0, 0, 0, 0.6);
+  --backdrop: rgba(0, 0, 0, 0.64);
 
   --surface-shadow: 0 0 0 0 transparent;
-  --overlay-shadow: 0 0 0 1px rgba(228, 236, 234, 0.08), 0 16px 32px rgba(0, 0, 0, 0.45);
+  --overlay-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 16px 32px rgba(0, 0, 0, 0.45);
   --field-shadow: none;
 
-  --screenshot-frame: #1c2626;
+  --screenshot-frame: #1d1d1f;
 }
 
 /* ------------------------------------------------------------------ */
@@ -172,7 +172,7 @@
   }
 
   ::selection {
-    background: color-mix(in oklab, var(--accent) 28%, transparent);
+    background: color-mix(in oklab, var(--brand) 28%, transparent);
   }
 
   /* Visible focus for native links and controls; HeroUI components ship their own ring. */
@@ -270,7 +270,7 @@
   }
 
   .prose blockquote {
-    @apply border-l-2 border-brand pl-4 text-muted;
+    @apply border-l-2 border-foreground pl-4 text-muted;
   }
 
   .prose hr {

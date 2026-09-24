@@ -20,7 +20,7 @@ import { Controller, useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 
 import { CopyEmailButton } from "@/components/contact/copy-email-button";
-import { site } from "@/content/site";
+import { emailAddress, site } from "@/content/site";
 
 const TOPICS = [
   { id: "support", label: "Help with an app" },
@@ -53,7 +53,7 @@ function buildMailto({ name, email, topic, message }: ContactValues) {
   const subject = `${topicLabel}: message from ${name}`;
   const body = `${message}\n\n${name}\n${email}`;
 
-  return `mailto:${site.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  return `mailto:${emailAddress()}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 
 const fade = {
@@ -87,12 +87,12 @@ export function ContactForm() {
     <AnimatePresence initial={false} mode="wait">
       {isSent ? (
         <motion.div key="sent" {...fade} aria-live="polite" className="flex flex-col items-start gap-4" role="status">
-          <CircleCheck aria-hidden="true" className="size-8 text-brand" />
+          <CircleCheck aria-hidden="true" className="size-8 text-foreground" />
           <div>
             <h2 className="text-h3 font-bold">Your email app should now be open</h2>
             <p className="mt-2 text-muted">
               We’ve filled in your message. Press send in your email app to reach us. If nothing
-              opened, email <span className="font-medium text-foreground">{site.email}</span> directly.
+              opened, email <span className="font-medium text-foreground">{site.emailDisplay}</span> directly.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">

@@ -4,7 +4,7 @@ import { cn } from "tailwind-variants";
 export function Logo({ className }: { className?: string }) {
   return (
     <span aria-hidden="true" className={cn("font-mono font-bold tracking-tight whitespace-nowrap", className)}>
-      <span className="text-brand">[]</span>byte
+      []byte
     </span>
   );
 }

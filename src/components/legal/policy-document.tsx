@@ -1,10 +1,9 @@
 import { Container } from "@/components/layout/container";
 import { PageBreadcrumbs } from "@/components/layout/page-breadcrumbs";
 import { JsonLd } from "@/components/seo/json-ld";
-import { TextLink } from "@/components/ui/links";
+import { EmailTextLink } from "@/components/contact/email-link";
 import { getApp } from "@/content/apps";
 import type { Policy } from "@/content/policies";
-import { site } from "@/content/site";
 import { breadcrumbLd } from "@/lib/structured-data";
 
 export function PolicyDocument({ policy }: { policy: Policy }) {
@@ -58,7 +57,7 @@ export function PolicyDocument({ policy }: { policy: Policy }) {
           <h2>Contact</h2>
           <p>
             If you have questions about this privacy policy, contact us at{" "}
-            <TextLink href={`mailto:${site.email}`}>{site.email}</TextLink>.
+            <EmailTextLink />.
           </p>
         </section>
       </article>
