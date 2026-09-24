@@ -7,7 +7,7 @@ import { ImageResponse } from "next/og";
 import { ogImageSize } from "@/lib/og-image-size";
 
 // Share images always use the dark palette: it reads well in every feed and chat app.
-const COLORS = { background: "#0f1515", foreground: "#e4ecea", muted: "#93a4a2", brand: "#5ec8bd", rule: "#263333" };
+const COLORS = { background: "#000000", foreground: "#F5F5F7", muted: "#86868B", rule: "#333336" };
 
 const fontsDir = path.join(process.cwd(), "src", "assets", "fonts");
 const loadFonts = () =>
@@ -48,9 +48,8 @@ export async function renderOgImage({ title, subtitle, iconSrc }: OgImageOptions
           fontFamily: "Schibsted Grotesk",
         }}
       >
-        <div style={{ display: "flex", fontFamily: "JetBrains Mono", fontSize: 44 }}>
-          <span style={{ color: COLORS.brand }}>[]</span>
-          <span>byte</span>
+        <div style={{ display: "flex", fontFamily: "JetBrains Mono", fontSize: 44, color: COLORS.foreground }}>
+          []byte
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: 48 }}>

@@ -4,8 +4,7 @@ import { Mail, Newspaper } from "lucide-react";
 import { Container } from "@/components/layout/container";
 import { PageHeader } from "@/components/layout/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
-import { ButtonLink } from "@/components/ui/links";
-import { site } from "@/content/site";
+import { EmailButton } from "@/components/contact/email-link";
 import type { PostMeta } from "@/lib/blog";
 import { formatDate } from "@/lib/format";
 
@@ -17,10 +16,10 @@ export function BlogIndex({ posts }: { posts: PostMeta[] }) {
         {posts.length === 0 ? (
           <EmptyState
             action={
-              <ButtonLink href={`mailto:${site.email}`} size="sm" variant="tertiary">
+              <EmailButton size="sm" variant="tertiary">
                 <Mail aria-hidden="true" className="size-4" />
                 Email us
-              </ButtonLink>
+              </EmailButton>
             }
             description="Product updates will appear here. Have a question in the meantime? Email us."
             icon={Newspaper}
@@ -37,7 +36,7 @@ export function BlogIndex({ posts }: { posts: PostMeta[] }) {
                   <div>
                     <h2 className="text-h3 font-bold">
                       <NextLink
-                        className="rounded-sm decoration-brand decoration-2 underline-offset-4 after:absolute after:inset-0 group-hover:underline"
+                        className="rounded-sm decoration-foreground decoration-2 underline-offset-4 after:absolute after:inset-0 group-hover:underline"
                         href={`/blog/${post.slug}/`}
                       >
                         {post.title}

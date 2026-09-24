@@ -5,6 +5,7 @@ import { AppCard } from "@/components/apps/app-card";
 import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
 import { RepoPreview } from "@/components/open-source/repo-preview";
+import { EmailButton } from "@/components/contact/email-link";
 import { ButtonLink, TextLink } from "@/components/ui/links";
 import { apps } from "@/content/apps";
 import { site } from "@/content/site";
@@ -88,10 +89,10 @@ export default async function HomePage() {
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <ButtonLink href="/contact/">Contact us</ButtonLink>
-              <ButtonLink href={`mailto:${site.email}`} variant="ghost">
+              <EmailButton variant="ghost">
                 <Mail aria-hidden="true" className="size-4" />
-                {site.email}
-              </ButtonLink>
+                {site.emailDisplay}
+              </EmailButton>
             </div>
           </section>
         </div>

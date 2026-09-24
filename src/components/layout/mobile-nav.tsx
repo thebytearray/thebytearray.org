@@ -4,6 +4,7 @@ import NextLink from "next/link";
 import { Button, Drawer, Separator, useOverlayState } from "@heroui/react";
 import { Mail, Menu } from "lucide-react";
 
+import { openEmail } from "@/components/contact/email-link";
 import { GitHubIcon } from "@/components/icons/brand";
 import { mainNav, site } from "@/content/site";
 import { isActivePath } from "@/lib/nav";
@@ -63,13 +64,14 @@ export function MobileNav({ pathname }: { pathname: string }) {
                     </a>
                   </li>
                   <li>
-                    <a
-                      className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-muted transition-colors hover:bg-default hover:text-foreground"
-                      href={`mailto:${site.email}`}
+                    <button
+                      className="flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-left text-muted transition-colors hover:bg-default hover:text-foreground"
+                      type="button"
+                      onClick={openEmail}
                     >
                       <Mail aria-hidden="true" className="size-4" />
-                      {site.email}
-                    </a>
+                      {site.emailDisplay}
+                    </button>
                   </li>
                 </ul>
               </Drawer.Body>

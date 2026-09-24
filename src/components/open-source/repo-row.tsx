@@ -9,7 +9,7 @@ export function RepoRow({ repo }: { repo: Repo }) {
       <div className="flex items-start justify-between gap-4">
         <h3 className="min-w-0 font-mono text-[0.9375rem] font-semibold">
           <a
-            className="rounded-sm break-words decoration-brand decoration-2 underline-offset-4 after:absolute after:inset-0 hover:underline focus-visible:outline-none"
+            className="rounded-sm break-words decoration-foreground decoration-2 underline-offset-4 after:absolute after:inset-0 hover:underline focus-visible:outline-none"
             href={repo.url}
             rel="noopener noreferrer"
             target="_blank"

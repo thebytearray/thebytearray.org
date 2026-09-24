@@ -6,6 +6,7 @@ import { ContactForm } from "@/components/contact/contact-form";
 import { CopyEmailButton } from "@/components/contact/copy-email-button";
 import { Container } from "@/components/layout/container";
 import { PageHeader } from "@/components/layout/page-header";
+import { EmailTextLink } from "@/components/contact/email-link";
 import { TextLink } from "@/components/ui/links";
 import { site } from "@/content/site";
 import { pageMetadata } from "@/lib/seo";
@@ -28,11 +29,11 @@ export default function ContactPage() {
           <aside className="flex flex-col gap-8 lg:col-span-4">
             <div>
               <h2 className="flex items-center gap-2 font-semibold">
-                <Mail aria-hidden="true" className="size-4 text-brand" />
+                <Mail aria-hidden="true" className="size-4 text-foreground" />
                 Email
               </h2>
               <p className="mt-2">
-                <TextLink href={`mailto:${site.email}`}>{site.email}</TextLink>
+                <EmailTextLink />
               </p>
               <div className="mt-3">
                 <CopyEmailButton />
@@ -40,7 +41,7 @@ export default function ContactPage() {
             </div>
             <div>
               <h2 className="flex items-center gap-2 font-semibold">
-                <Bug aria-hidden="true" className="size-4 text-brand" />
+                <Bug aria-hidden="true" className="size-4 text-foreground" />
                 Found a bug?
               </h2>
               <p className="mt-2 text-muted">

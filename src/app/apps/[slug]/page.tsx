@@ -9,10 +9,10 @@ import { GitHubIcon, GooglePlayIcon } from "@/components/icons/brand";
 import { Container } from "@/components/layout/container";
 import { PageBreadcrumbs } from "@/components/layout/page-breadcrumbs";
 import { Section } from "@/components/layout/section";
-import { ButtonLink, TextLink } from "@/components/ui/links";
+import { EmailTextLink } from "@/components/contact/email-link";
+import { ButtonLink } from "@/components/ui/links";
 import { apps, getApp } from "@/content/apps";
 import { JsonLd } from "@/components/seo/json-ld";
-import { site } from "@/content/site";
 import { pageMetadata } from "@/lib/seo";
 import { appLd, breadcrumbLd } from "@/lib/structured-data";
 
@@ -113,7 +113,7 @@ export default async function AppPage({ params }: AppPageProps) {
         </dl>
         <p className="mt-10 text-muted">
           Questions or feedback about {app.name}? Email{" "}
-          <TextLink href={`mailto:${site.email}`}>{site.email}</TextLink>.
+          <EmailTextLink />.
         </p>
       </Section>
     </>

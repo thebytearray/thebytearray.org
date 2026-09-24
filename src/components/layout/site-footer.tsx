@@ -4,6 +4,7 @@ import { Mail } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
 import { GitHubIcon } from "@/components/icons/brand";
 import { Container } from "@/components/layout/container";
+import { EmailIconButton } from "@/components/contact/email-link";
 import { apps } from "@/content/apps";
 import { site } from "@/content/site";
 
@@ -52,13 +53,12 @@ export function SiteFooter() {
               >
                 <GitHubIcon className="size-[18px]" />
               </a>
-              <a
-                aria-label={`Email ${site.email}`}
-                className="inline-flex size-9 items-center justify-center rounded-lg text-muted transition-colors hover:bg-default hover:text-foreground"
-                href={`mailto:${site.email}`}
+              <EmailIconButton
+                className="inline-flex size-9 cursor-pointer items-center justify-center rounded-lg text-muted transition-colors hover:bg-default hover:text-foreground"
+                label={`Email ${site.emailDisplay}`}
               >
                 <Mail aria-hidden="true" className="size-[18px]" />
-              </a>
+              </EmailIconButton>
             </div>
           </div>
 
