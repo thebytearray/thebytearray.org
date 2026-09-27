@@ -104,6 +104,17 @@ jobs:
           chmod 600 ~/.ssh/deploy_key
           printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
           chmod 644 ~/.ssh/known_hosts
+          # Point every later ssh call at the deploy key. Without this, ssh falls
+          # back to the runner's default identities and the auth fails. The path
+          # is written absolute so it does not depend on ~ expansion.
+          cat > ~/.ssh/config <<CONFIG
+          Host *
+            IdentityFile $HOME/.ssh/deploy_key
+            IdentitiesOnly yes
+            UserKnownHostsFile $HOME/.ssh/known_hosts
+            StrictHostKeyChecking yes
+          CONFIG
+          chmod 600 ~/.ssh/config
 
       # The VPS holds no registry credentials and the repo is public, so images
       # travel over the authenticated SSH channel instead of a registry.
