@@ -1,0 +1,203 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      deploy_sha:
+        description: "Commit SHA to deploy (blank = the commit that triggered this run)"
+        required: false
+        type: string
+
+concurrency:
+  group: production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  IMAGE_REPO: thebytearray/website
+  DEPLOY_DIR: /srv/thebytearray/repo
+
+jobs:
+  deploy:
+    name: Verify and deploy to production
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Resolve target commit
+        id: target
+        env:
+          INPUT_SHA: ${{ inputs.deploy_sha }}
+        run: |
+          if [ -n "$INPUT_SHA" ]; then
+            sha="$(git rev-parse --verify "$INPUT_SHA^{commit}" 2>/dev/null || echo "$INPUT_SHA")"
+          else
+            sha="$(git rev-parse HEAD)"
+          fi
+          echo "sha=${sha}" >> "$GITHUB_OUTPUT"
+          echo "tag=$(echo "$sha" | cut -c1-12)" >> "$GITHUB_OUTPUT"
+          echo "Deploying ${sha}"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npx tsc --noEmit
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build site image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile
+          push: false
+          load: true
+          tags: ${{ env.IMAGE_REPO }}:${{ steps.target.outputs.tag }}
+          build-args: |
+            NODE_ENV=production
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # The edge image is ~350MB, so only ship it when its content actually
+      # changed. TLS termination should not restart on every ordinary deploy.
+      - name: Build edge image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile.edge
+          push: false
+          load: true
+          tags: ${{ env.IMAGE_REPO }}:edge
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Read edge image id
+        id: edge
+        run: echo "id=$(docker image inspect '${{ env.IMAGE_REPO }}:edge' --format '{{.Id}}')" >> "$GITHUB_OUTPUT"
+
+      - name: Configure SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.VPS_KNOWN_HOSTS }}
+        run: |
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
+      # The VPS holds no registry credentials and the repo is public, so images
+      # travel over the authenticated SSH channel instead of a registry.
+      - name: Stream site image to VPS
+        env:
+          IMAGE_TAG: ${{ env.IMAGE_REPO }}:${{ steps.target.outputs.tag }}
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+        run: |
+          docker save "$IMAGE_TAG" | gzip -1 \
+            | ssh "$VPS_USER@$VPS_HOST" 'gunzip | docker load'
+
+      - name: Check whether edge image needs shipping
+        id: edge_check
+        env:
+          EDGE_ID: ${{ steps.edge.outputs.id }}
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+        run: |
+          current="$(ssh "$VPS_USER@$VPS_HOST" \
+            "docker image inspect '${{ env.IMAGE_REPO }}:edge' --format '{{.Id}}' 2>/dev/null || true")"
+          if [ "$current" = "$EDGE_ID" ]; then
+            echo "unchanged=true" >> "$GITHUB_OUTPUT"
+            echo "Edge image unchanged on VPS, skipping 350MB transfer."
+          else
+            echo "unchanged=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Stream edge image to VPS
+        if: steps.edge_check.outputs.unchanged != 'true'
+        env:
+          IMAGE_TAG: ${{ env.IMAGE_REPO }}:edge
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+        run: |
+          docker save "$IMAGE_TAG" | gzip -1 \
+            | ssh "$VPS_USER@$VPS_HOST" 'gunzip | docker load'
+
+      - name: Deploy
+        env:
+          DEPLOY_TAG: ${{ steps.target.outputs.tag }}
+          DEPLOY_SHA: ${{ steps.target.outputs.sha }}
+          DEPLOY_DIR: ${{ env.DEPLOY_DIR }}
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+        run: |
+          ssh "$VPS_USER@$VPS_HOST" \
+            "DEPLOY_TAG='$DEPLOY_TAG' DEPLOY_SHA='$DEPLOY_SHA' DEPLOY_DIR='$DEPLOY_DIR' bash -s" \
+            < scripts/vps-deploy.sh
+
+      - name: Prune old images
+        env:
+          KEEP_TAG: ${{ steps.target.outputs.tag }}
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+        run: |
+          ssh "$VPS_USER@$VPS_HOST" "KEEP_TAG='$KEEP_TAG' bash -s" <<'REMOTE'
+          set -euo pipefail
+          REPO='thebytearray/website'
+
+          # `docker images` lists newest first. Keep the live tag plus the most
+          # recent superseded one so a manual rollback always has a target.
+          mapfile -t stale < <(
+            docker images "$REPO" --format '{{.Tag}}' \
+              | grep -vE "^(edge|${KEEP_TAG})$" \
+              | tail -n +2
+          )
+          for t in "${stale[@]:-}"; do
+            [ -n "$t" ] && docker image rm -f "${REPO}:${t}" >/dev/null 2>&1 || true
+          done
+
+          # Superseded edge images become dangling; drop them after a day.
+          docker image prune -f --filter 'until=24h' >/dev/null
+
+          echo "Images retained on VPS:"
+          docker images "$REPO" --format '  {{.Repository}}:{{.Tag}} ({{.Size}})'
+          REMOTE
+
+      - name: Post-deploy verification
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+        run: |
+          set -euo pipefail
+          # Hits the origin directly: the Cloudflare JS challenge answers 403 to
+          # curl, so this verifies the VPS rather than the CDN.
+          ssh "$VPS_USER@$VPS_HOST" bash -s <<'REMOTE'
+          set -euo pipefail
+          echo "--- health (via edge) ---"
+          curl -fsS --max-time 10 -H 'Host: thebytearray.org' http://127.0.0.1/health.html
+          echo
+          echo "--- homepage over TLS (via edge) ---"
+          curl -fsS -o /dev/null -w '  status: %{http_code}  http: %{http_version}\n' \
+            --max-time 15 --resolve thebytearray.org:443:127.0.0.1 https://thebytearray.org
+          echo "--- containers ---"
+          docker ps --filter name=thebytearray --format '  {{.Names}}: {{.Status}}'
+          REMOTE

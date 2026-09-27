@@ -6,7 +6,9 @@ services:
     build:
       args:
         - NODE_ENV=production
-    image: thebytearray/website:latest
+    # Keep the ${IMAGE_TAG} indirection: a hardcoded tag here would override the
+    # base file and break per-commit deploys and rollback to a previous image.
+    image: thebytearray/website:${IMAGE_TAG:-latest}
     restart: always
 
   edge:
