@@ -31,6 +31,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # Full history so the edge check can diff against the deployed commit.
+          fetch-depth: 0
 
       - name: Resolve target commit
         id: target
@@ -64,36 +67,6 @@ jobs:
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build site image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: Dockerfile
-          push: false
-          load: true
-          tags: ${{ env.IMAGE_REPO }}:${{ steps.target.outputs.tag }}
-          build-args: |
-            NODE_ENV=production
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-      # The edge image is ~350MB, so only ship it when its content actually
-      # changed. TLS termination should not restart on every ordinary deploy.
-      - name: Build edge image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: Dockerfile.edge
-          push: false
-          load: true
-          tags: ${{ env.IMAGE_REPO }}:edge
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-      - name: Read edge image id
-        id: edge
-        run: echo "id=$(docker image inspect '${{ env.IMAGE_REPO }}:edge' --format '{{.Id}}')" >> "$GITHUB_OUTPUT"
-
       - name: Configure SSH
         env:
           SSH_PRIVATE_KEY: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
@@ -116,6 +89,63 @@ jobs:
           CONFIG
           chmod 600 ~/.ssh/config
 
+      # Docker image ids are not reproducible between builds, so comparing them
+      # would re-ship the ~350MB edge image on every deploy. Diff the sources the
+      # edge image is built from against the commit currently on the VPS instead.
+      - name: Check whether edge image changed
+        id: edge_check
+        env:
+          TARGET_SHA: ${{ steps.target.outputs.sha }}
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+        run: |
+          set -euo pipefail
+          prev="$(ssh "$VPS_USER@$VPS_HOST" \
+            'cat /srv/thebytearray/deployed-tag 2>/dev/null || true')"
+          if [ -z "$prev" ]; then
+            echo "No previous deploy recorded; shipping the edge image."
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if ! git rev-parse --verify --quiet "${prev}^{commit}" >/dev/null; then
+            echo "Deployed tag ${prev} is not in this checkout; shipping the edge image."
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if git diff --quiet "${prev}" "$TARGET_SHA" -- Dockerfile.edge nginx/edge; then
+            echo "Edge sources unchanged since ${prev}; skipping edge build and transfer."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "Edge sources changed since ${prev}:"
+            git diff --name-only "${prev}" "$TARGET_SHA" -- Dockerfile.edge nginx/edge | sed 's/^/  /'
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build site image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile
+          push: false
+          load: true
+          tags: ${{ env.IMAGE_REPO }}:${{ steps.target.outputs.tag }}
+          build-args: |
+            NODE_ENV=production
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build edge image
+        if: steps.edge_check.outputs.changed == 'true'
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile.edge
+          push: false
+          load: true
+          tags: ${{ env.IMAGE_REPO }}:edge
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
       # The VPS holds no registry credentials and the repo is public, so images
       # travel over the authenticated SSH channel instead of a registry.
       - name: Stream site image to VPS
@@ -127,24 +157,8 @@ jobs:
           docker save "$IMAGE_TAG" | gzip -1 \
             | ssh "$VPS_USER@$VPS_HOST" 'gunzip | docker load'
 
-      - name: Check whether edge image needs shipping
-        id: edge_check
-        env:
-          EDGE_ID: ${{ steps.edge.outputs.id }}
-          VPS_HOST: ${{ secrets.VPS_HOST }}
-          VPS_USER: ${{ secrets.VPS_USER }}
-        run: |
-          current="$(ssh "$VPS_USER@$VPS_HOST" \
-            "docker image inspect '${{ env.IMAGE_REPO }}:edge' --format '{{.Id}}' 2>/dev/null || true")"
-          if [ "$current" = "$EDGE_ID" ]; then
-            echo "unchanged=true" >> "$GITHUB_OUTPUT"
-            echo "Edge image unchanged on VPS, skipping 350MB transfer."
-          else
-            echo "unchanged=false" >> "$GITHUB_OUTPUT"
-          fi
-
       - name: Stream edge image to VPS
-        if: steps.edge_check.outputs.unchanged != 'true'
+        if: steps.edge_check.outputs.changed == 'true'
         env:
           IMAGE_TAG: ${{ env.IMAGE_REPO }}:edge
           VPS_HOST: ${{ secrets.VPS_HOST }}
