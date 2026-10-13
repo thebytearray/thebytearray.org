@@ -1,49 +1,48 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# Build output and Astro's generated types/cache
+dist/
+.astro/
 
-# dependencies
-/node_modules
-/.pnp
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
+# Dependencies
+node_modules/
 
-# testing
-/coverage
-
-# next.js
-/.next/
-/out/
-
-# static export (npm run build)
-/dist/
-
-# production
-/build
-
-# misc
-.DS_Store
-*.pem
-
-# debug
+# Logs
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-.pnpm-debug.log*
+pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# Environment variables and secrets (keep an example file if you add one)
+.env
+.env.*
+!.env.example
 
-# vercel
-.vercel
+# OS files
+.DS_Store
+Thumbs.db
 
-# typescript
+# Editors (the shared .vscode/ recommendations stay in the repo)
+.idea/
+*.swp
+*.swo
+.vscode/*
+!.vscode/extensions.json
+!.vscode/launch.json
+
+# Local tool and agent state
+.claude/settings.local.json
+.agents/
+.cache/
 *.tsbuildinfo
-next-env.d.ts
 
-# local-only: agent tooling
-/.agents/
-/.claude/
+# Test and coverage output
+coverage/
+playwright-report/
+test-results/
+
+# Reference copies of the old site and the portfolio, for AI context only
+ai-context/
+
+# Local-only agent tooling
+.claude/
 skills-lock.json

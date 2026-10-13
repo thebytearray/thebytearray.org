@@ -1,0 +1,58 @@
+---
+import Chip from '../components/Chip.astro';
+import ContactForm from '../components/ContactForm.astro';
+import Icon from '../components/Icon.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { site } from '../data/site';
+import Base from '../layouts/Base.astro';
+---
+
+<Base
+  title="Contact"
+  description="Get help with OpenLoader or Hy2NG, suggest a feature, or talk to The Byte Array about working together."
+  breadcrumbs={[{ name: 'Contact', path: '/contact/' }]}
+>
+  <div data-pagefind-body>
+    <PageHeader
+      title="Contact"
+      lede="Get help with one of our apps, suggest a feature, or talk to us about working together. We read every message."
+      shape="burst"
+      accent="pill"
+    />
+
+    <div class="grid gap-10 lg:grid-cols-12 lg:gap-12">
+      <aside class="flex flex-col gap-8 lg:col-span-4">
+        <div>
+          <h2 class="flex items-center gap-2 font-display text-title-lg">
+            <Icon name="mail" class="text-primary" />
+            Email
+          </h2>
+          <p class="mt-2">
+            <button type="button" data-mailto={site.mail} class="text-link">{site.emailDisplay}</button>
+          </p>
+          <p class="mt-4">
+            <Chip button icon="content_copy" data-mail={site.mail}>
+              <span data-mail-label aria-live="polite">Copy email</span>
+            </Chip>
+          </p>
+        </div>
+        <div>
+          <h2 class="flex items-center gap-2 font-display text-title-lg">
+            <Icon name="bug_report" class="text-primary" />
+            Found a bug?
+          </h2>
+          <p class="mt-2 text-on-surface-variant">
+            For open-source projects, an issue on GitHub is the fastest way to get it fixed.
+          </p>
+          <p class="mt-2">
+            <a href={site.github} target="_blank" rel="noopener" class="text-link">Open GitHub</a>
+          </p>
+        </div>
+      </aside>
+
+      <div class="rounded-xl-inc rounded-tr-md bg-surface-container p-6 sm:rounded-2xl sm:rounded-tr-md sm:p-10 lg:col-span-8">
+        <ContactForm />
+      </div>
+    </div>
+  </div>
+</Base>

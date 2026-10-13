@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://thebytearray.org/sitemap-index.xml

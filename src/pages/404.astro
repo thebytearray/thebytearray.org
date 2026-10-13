@@ -1,0 +1,26 @@
+---
+import Chip from '../components/Chip.astro';
+import Shape from '../components/Shape.astro';
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="Page not found" description="This page does not exist." noindex>
+  <section class="flex flex-col items-center py-10 text-center sm:py-20">
+    <div class="group relative grid w-[min(22rem,80vw)] place-items-center">
+      <Shape lobes={8} depth={0.1} morphTo="flower" class="w-full animate-drift text-primary-container" />
+      <p
+        class="absolute font-display text-[clamp(4.5rem,22vw,7.5rem)] leading-none font-extrabold tracking-[-0.05em] text-on-primary-container"
+      >
+        404
+      </p>
+    </div>
+    <h1 class="mt-8 font-display text-headline-lg text-balance sm:mt-10 sm:text-display-sm">This page took a wrong route.</h1>
+    <p class="mt-4 max-w-md text-body-lg text-on-surface-variant">
+      The link is broken or the page has moved. Try one of these instead.
+    </p>
+    <ul class="mt-8 flex flex-wrap justify-center gap-2.5">
+      <li><Chip href="/" icon="home" variant="filled">Home</Chip></li>
+      <li><Chip href="/apps/" icon="apps">Apps</Chip></li>
+    </ul>
+  </section>
+</Base>

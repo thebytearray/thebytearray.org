@@ -1,0 +1,264 @@
+---
+import { nav, socials } from '../data/site';
+import Icon from './Icon.astro';
+
+const email = socials.find((s) => s.mail);
+const links = socials.filter((s) => s.brand);
+
+const option =
+  'flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-body-md aria-selected:bg-secondary-container aria-selected:text-on-secondary-container';
+---
+
+<!--
+  Search and shortcuts in one dialog. Opens with Cmd/Ctrl+K, "/", or any
+  element with `data-palette-open`. Post and page results come from the
+  Pagefind index built by `npm run build`; under `astro dev` there is no
+  index, so only the commands below are listed.
+  `data-palette-open="posts"` opens it as a blog search instead: no commands,
+  and only posts in the results.
+-->
+<dialog
+  id="palette"
+  aria-label="Search and commands"
+  transition:persist
+  class="m-0 mx-auto mt-[12vh] max-h-[min(30rem,76vh)] w-[min(36rem,calc(100vw-2rem))] max-w-none flex-col overflow-hidden rounded-xl-inc bg-surface-container-high p-0 text-on-surface shadow-level3 backdrop:bg-scrim/40 open:flex"
+>
+  <div class="flex flex-none items-center gap-3 border-b border-outline-variant px-5">
+    <Icon name="search" class="text-on-surface-variant" />
+    <input
+      id="palette-input"
+      type="text"
+      role="combobox"
+      aria-label="Search posts and pages"
+      aria-expanded="true"
+      aria-controls="palette-list"
+      aria-autocomplete="list"
+      autocomplete="off"
+      spellcheck="false"
+      placeholder="Search posts and pages"
+      class="h-14 min-w-0 flex-1 bg-transparent text-body-lg outline-none placeholder:text-on-surface-variant"
+    />
+    <kbd class="rounded-sm border border-outline-variant px-1.5 py-0.5 font-sans text-label-md text-on-surface-variant">
+      Esc
+    </kbd>
+  </div>
+
+  <div id="palette-list" role="listbox" aria-label="Results" class="overflow-y-auto p-2">
+    <div data-commands>
+      {
+        nav.map(({ label, href }, i) => (
+          <a id={`palette-page-${i}`} role="option" aria-selected="false" href={href} class={option}>
+            <Icon name="arrow_forward" class="text-on-surface-variant" />
+            {label}
+          </a>
+        ))
+      }
+      <button id="palette-theme" role="option" aria-selected="false" type="button" data-action="theme" class={option}>
+        <Icon name="dark_mode" class="text-on-surface-variant" />
+        Switch theme
+      </button>
+      {
+        email && (
+          <button id="palette-email" role="option" aria-selected="false" type="button" data-mail={email.mail} class={option}>
+            <Icon name="mail" class="text-on-surface-variant" />
+            <span data-mail-label>Copy email</span>
+          </button>
+        )
+      }
+      {
+        links.map((s, i) => (
+          <a
+            id={`palette-link-${i}`}
+            role="option"
+            aria-selected="false"
+            href={s.href}
+            target="_blank"
+            rel="noopener"
+            class={option}
+          >
+            <svg viewBox="0 0 24 24" class="size-5 flex-none text-on-surface-variant" fill="currentColor" aria-hidden="true">
+              <path d={s.brand} />
+            </svg>
+            {s.label}
+          </a>
+        ))
+      }
+      <a id="palette-rss" role="option" aria-selected="false" href="/rss.xml" class={option}>
+        <Icon name="rss_feed" class="text-on-surface-variant" />
+        RSS feed
+      </a>
+    </div>
+    <!-- Search results go under the commands, so typing a command name always puts it first. -->
+    <div data-results></div>
+    <p data-empty hidden class="px-3 py-6 text-center text-body-md text-on-surface-variant">Nothing matches that.</p>
+  </div>
+</dialog>
+
+<script>
+  interface PagefindResult {
+    url: string;
+    excerpt: string;
+    meta: { title?: string };
+  }
+  interface Pagefind {
+    search(
+      query: string,
+      options?: { filters?: Record<string, string> },
+    ): Promise<{ results: { data(): Promise<PagefindResult> }[] }>;
+  }
+
+  const RESULT =
+    'flex w-full flex-col gap-0.5 rounded-lg px-3 py-2.5 text-left aria-selected:bg-secondary-container aria-selected:text-on-secondary-container';
+  const EXCERPT = 'line-clamp-2 text-body-sm opacity-80 [&_mark]:bg-transparent [&_mark]:font-semibold [&_mark]:text-primary';
+
+  const dialog = document.getElementById('palette') as HTMLDialogElement;
+  const input = document.getElementById('palette-input') as HTMLInputElement;
+  const list = document.getElementById('palette-list')!;
+  const results = list.querySelector<HTMLElement>('[data-results]')!;
+  const commands = [...list.querySelectorAll<HTMLElement>('[data-commands] [role=option]')];
+  const empty = list.querySelector<HTMLElement>('[data-empty]')!;
+
+  // undefined: not loaded yet. null: no index (dev server, or the request failed).
+  let pagefind: Pagefind | null | undefined;
+  async function loadPagefind() {
+    if (pagefind !== undefined) return pagefind;
+    try {
+      const path = '/pagefind/pagefind.js';
+      pagefind = (await import(/* @vite-ignore */ path)) as Pagefind;
+    } catch {
+      pagefind = null;
+    }
+    return pagefind;
+  }
+
+  const options = () => [...list.querySelectorAll<HTMLElement>('[role=option]:not([hidden])')];
+
+  function select(target: HTMLElement | undefined) {
+    for (const option of list.querySelectorAll('[role=option]')) option.setAttribute('aria-selected', 'false');
+    if (!target) return input.removeAttribute('aria-activedescendant');
+    target.setAttribute('aria-selected', 'true');
+    input.setAttribute('aria-activedescendant', target.id);
+    target.scrollIntoView({ block: 'nearest' });
+  }
+
+  function refresh() {
+    const visible = options();
+    empty.hidden = visible.length > 0;
+    select(visible[0]);
+  }
+
+  // True while the dialog is open as the blog search.
+  let postsOnly = false;
+  let searchRun = 0;
+  let timer: ReturnType<typeof setTimeout> | undefined;
+
+  function update() {
+    const query = input.value.trim().toLowerCase();
+    for (const command of commands) {
+      command.hidden = postsOnly || !command.textContent!.toLowerCase().includes(query);
+    }
+    empty.textContent = postsOnly && query.length < 2 ? 'Type to search the blog.' : 'Nothing matches that.';
+
+    clearTimeout(timer);
+    const run = ++searchRun;
+    if (query.length < 2) {
+      results.replaceChildren();
+      return refresh();
+    }
+    refresh();
+    timer = setTimeout(async () => {
+      // Posts carry the `type:post` filter (pages/blog/[id].astro).
+      const found = await (await loadPagefind())?.search(query, postsOnly ? { filters: { type: 'post' } } : undefined);
+      const pages = found ? await Promise.all(found.results.slice(0, 6).map((result) => result.data())) : [];
+      // A newer keystroke has taken over.
+      if (run !== searchRun) return;
+      results.replaceChildren(
+        ...pages.map((page, i) => {
+          const link = document.createElement('a');
+          link.id = `palette-result-${i}`;
+          link.href = page.url;
+          link.className = RESULT;
+          link.setAttribute('role', 'option');
+          const title = document.createElement('span');
+          title.className = 'font-display text-title-md';
+          title.textContent = page.meta.title ?? page.url;
+          const excerpt = document.createElement('span');
+          excerpt.className = EXCERPT;
+          // Pagefind escapes the page text and only adds <mark> around matches.
+          excerpt.innerHTML = page.excerpt;
+          link.append(title, excerpt);
+          return link;
+        }),
+      );
+      refresh();
+    }, 120);
+  }
+
+  function open(scope?: string) {
+    if (dialog.open) return;
+    postsOnly = scope === 'posts';
+    const label = postsOnly ? 'Search posts' : 'Search posts and pages';
+    input.placeholder = label;
+    input.setAttribute('aria-label', label);
+    input.value = '';
+    dialog.showModal();
+    update();
+    input.focus();
+    loadPagefind();
+  }
+
+  input.addEventListener('input', update);
+
+  document.addEventListener('click', (event) => {
+    const opener = event.target instanceof Element && event.target.closest<HTMLElement>('[data-palette-open]');
+    if (opener) open(opener.dataset.paletteOpen);
+  });
+
+  document.addEventListener('keydown', (event) => {
+    const typing =
+      event.target instanceof HTMLElement &&
+      (event.target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(event.target.tagName));
+    if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+      event.preventDefault();
+      if (dialog.open) dialog.close();
+      else open();
+    } else if (event.key === '/' && !typing && !event.metaKey && !event.ctrlKey && !event.altKey) {
+      event.preventDefault();
+      open();
+    }
+  });
+
+  dialog.addEventListener('keydown', (event) => {
+    const visible = options();
+    const current = visible.findIndex((option) => option.getAttribute('aria-selected') === 'true');
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      event.preventDefault();
+      const step = event.key === 'ArrowDown' ? 1 : -1;
+      select(visible[(current + step + visible.length) % visible.length]);
+    } else if (event.key === 'Enter' && visible[current]) {
+      event.preventDefault();
+      visible[current].click();
+    }
+  });
+
+  list.addEventListener('pointermove', (event) => {
+    const option = event.target instanceof Element && event.target.closest<HTMLElement>('[role=option]');
+    if (option && option.getAttribute('aria-selected') !== 'true') select(option);
+  });
+
+  dialog.addEventListener('click', (event) => {
+    // A click on the dialog element itself is a click on the backdrop.
+    if (event.target === dialog) return dialog.close();
+    const option = event.target instanceof Element && event.target.closest<HTMLElement>('[role=option]');
+    if (!option) return;
+    if (option.dataset.action === 'theme') {
+      document.querySelector<HTMLElement>('header [data-theme-toggle]')?.click();
+    }
+    // The email option stays open briefly so its "Copied" confirmation is seen
+    // (the copying itself is the `data-mail` handler in layouts/Base.astro).
+    if (option.dataset.mail) setTimeout(() => dialog.close(), 900);
+    else dialog.close();
+  });
+
+  document.addEventListener('astro:after-swap', () => dialog.close());
+</script>

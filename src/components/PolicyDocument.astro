@@ -1,0 +1,72 @@
+---
+import '../styles/prose.css';
+
+import { getApp } from '../data/apps';
+import type { Policy } from '../data/policies';
+import { site } from '../data/site';
+import Base from '../layouts/Base.astro';
+import Breadcrumbs from './Breadcrumbs.astro';
+
+interface Props {
+  policy: Policy;
+  description: string;
+}
+
+const { policy, description } = Astro.props;
+const app = getApp(policy.app)!;
+const appPath = `/apps/${app.slug}/`;
+---
+
+<Base
+  title={policy.title}
+  description={description}
+  breadcrumbs={[
+    { name: 'Apps', path: '/apps/' },
+    { name: app.name, path: appPath },
+    { name: 'Privacy policy', path: app.privacyPath },
+  ]}
+>
+  <div class="mx-auto max-w-2xl pt-4 sm:pt-10" data-pagefind-body>
+    <Breadcrumbs items={[{ label: 'Apps', href: '/apps/' }, { label: app.name, href: appPath }, { label: 'Privacy policy' }]} />
+
+    <header class="mt-6 sm:mt-8">
+      <h1
+        class="font-display text-[clamp(2rem,7.5vw,3.75rem)] leading-[1.04] font-extrabold tracking-[-0.03em] text-balance"
+      >
+        {policy.title}
+      </h1>
+      <p class="mt-4 text-label-lg text-on-surface-variant">Last updated {policy.lastUpdated}</p>
+    </header>
+
+    <article class="prose mt-10 sm:mt-12">
+      {
+        policy.sections.map((section) => (
+          <section>
+            <h2>{section.heading}</h2>
+            {section.blocks.map((block) =>
+              block.type === 'paragraph' ? (
+                <p>{block.text}</p>
+              ) : (
+                <ul>
+                  {block.items.map((item) => (
+                    <li>
+                      <strong>{item.term}:</strong> {item.text}
+                    </li>
+                  ))}
+                </ul>
+              ),
+            )}
+          </section>
+        ))
+      }
+
+      <section>
+        <h2>Contact</h2>
+        <p>
+          If you have questions about this privacy policy, contact us at{' '}
+          <button type="button" data-mailto={site.mail} class="text-link">{site.emailDisplay}</button>.
+        </p>
+      </section>
+    </article>
+  </div>
+</Base>

@@ -1,0 +1,37 @@
+---
+import type { IconName } from '../data/icons';
+import Icon from './Icon.astro';
+
+interface Props {
+  href?: string;
+  /** Render a <button> (for actions that are not navigation). */
+  button?: boolean;
+  icon?: IconName;
+  variant?: 'outlined' | 'filled' | 'tonal';
+  size?: 'md' | 'sm';
+  class?: string;
+  [key: string]: unknown;
+}
+
+const { href, button, icon, variant = 'outlined', size = 'md', class: className, ...rest } = Astro.props;
+const Tag = href ? 'a' : button ? 'button' : 'span';
+const external = href?.startsWith('http');
+---
+
+<Tag
+  href={href}
+  type={Tag === 'button' ? 'button' : undefined}
+  target={external ? '_blank' : undefined}
+  rel={external ? 'noopener' : undefined}
+  class:list={[
+    'chip fill-on-hover',
+    variant === 'filled' && 'chip-filled',
+    variant === 'tonal' && 'chip-tonal',
+    size === 'sm' && 'chip-sm',
+    className,
+  ]}
+  {...rest}
+>
+  {icon && <Icon name={icon} class={size === 'sm' ? 'text-[1rem]' : 'text-[1.125rem]'} />}
+  <slot />
+</Tag>

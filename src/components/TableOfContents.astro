@@ -1,0 +1,97 @@
+---
+import type { MarkdownHeading } from 'astro';
+
+interface Props {
+  /** Second- and third-level headings of the post, in order. */
+  headings: MarkdownHeading[];
+}
+
+const { headings } = Astro.props;
+const link =
+  'block rounded-md py-1 text-body-md text-on-surface-variant transition-colors duration-(--duration-short4) hover:text-on-surface aria-[current=true]:font-medium aria-[current=true]:text-primary';
+---
+
+<!-- Phones and tablets: a collapsed list above the post. -->
+<details class="group/toc mb-8 rounded-xl bg-surface-container xl:hidden">
+  <summary
+    class="flex min-h-12 list-none items-center justify-between gap-4 rounded-xl px-5 font-display text-title-md [&::-webkit-details-marker]:hidden"
+  >
+    On this page
+    <span class="icon transition-expressive group-open/toc:rotate-180" aria-hidden="true">arrow_downward</span>
+  </summary>
+  <ol class="px-5 pb-4">
+    {
+      headings.map(({ depth, slug, text }) => (
+        <li class:list={[depth === 3 && 'pl-4']}>
+          <a href={`#${slug}`} class={link}>
+            {text}
+          </a>
+        </li>
+      ))
+    }
+  </ol>
+</details>
+
+<!-- Wide screens: pinned in the margin beside the post, with the section in view marked. -->
+<nav aria-label="On this page" class="absolute top-0 left-full ml-8 h-full w-44 max-xl:hidden">
+  <div class="sticky top-24">
+    <p class="font-display text-title-sm">On this page</p>
+    <ol class="mt-2 border-l border-outline-variant" data-toc>
+      {
+        headings.map(({ depth, slug, text }) => (
+          <li>
+            <a
+              href={`#${slug}`}
+              class:list={[
+                link,
+                '-ml-px border-l border-transparent aria-[current=true]:border-primary',
+                depth === 3 ? 'pl-7' : 'pl-4',
+              ]}
+            >
+              {text}
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</nav>
+
+<script>
+  let observer: IntersectionObserver | undefined;
+
+  function init() {
+    observer?.disconnect();
+    const links = [...document.querySelectorAll<HTMLAnchorElement>('[data-toc] a')];
+    if (links.length === 0) return;
+
+    const byId = new Map(links.map((a) => [decodeURIComponent(a.hash.slice(1)), a]));
+    const visible = new Set<string>();
+    const order = [...byId.keys()];
+
+    observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) visible.add(entry.target.id);
+          else visible.delete(entry.target.id);
+        }
+        // Mark the first heading on screen; with none on screen, keep the last one marked.
+        const current = order.find((id) => visible.has(id));
+        if (!current) return;
+        for (const [id, a] of byId) {
+          if (id === current) a.setAttribute('aria-current', 'true');
+          else a.removeAttribute('aria-current');
+        }
+      },
+      // Ignore the sticky site header and the lower half of the screen.
+      { rootMargin: '-88px 0px -50% 0px' },
+    );
+    for (const id of order) {
+      const heading = document.getElementById(id);
+      if (heading) observer.observe(heading);
+    }
+  }
+
+  init();
+  document.addEventListener('astro:page-load', init);
+</script>

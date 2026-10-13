@@ -1,0 +1,295 @@
+---
+import { site } from '../data/site';
+import Icon from './Icon.astro';
+
+interface Props {
+  /** Show only the first few repositories, without search or filters (home page). */
+  limit?: number;
+}
+
+const { limit } = Astro.props;
+const explore = !limit;
+const skeletons = Array.from({ length: limit ?? 6 });
+---
+
+<!--
+  The studio's public repositories, loaded from the GitHub API in the browser
+  (lib/github.ts). Without `limit` it adds a search box and a language filter.
+-->
+<div data-repos data-limit={limit}>
+  {
+    explore && (
+      <div data-controls hidden class="mb-6 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+        <label class="field w-full lg:max-w-sm">
+          <span class="field-label">Search repositories</span>
+          <span class="relative block">
+            <Icon name="search" class="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-on-surface-variant" />
+            <input type="search" data-query placeholder="Name or description" autocomplete="off" class="field-input pl-12" />
+          </span>
+        </label>
+        <div data-languages role="group" aria-label="Filter by language" class="flex flex-wrap gap-2" />
+      </div>
+    )
+  }
+
+  <p data-count aria-live="polite" hidden={!explore} class="mb-3 min-h-5 text-label-lg text-on-surface-variant"></p>
+
+  <ul data-list aria-busy="true" class="grid gap-3 sm:grid-cols-2 sm:gap-4">
+    {
+      skeletons.map(() => (
+        <li aria-hidden="true" class="h-36 animate-pulse rounded-xl bg-surface-container" />
+      ))
+    }
+  </ul>
+  <p data-loading class="sr-only" role="status">Loading repositories</p>
+
+  <div data-message hidden class="flex flex-col items-center rounded-xl-inc bg-surface-container px-6 py-12 text-center">
+    <span class="grid size-14 place-items-center rounded-full bg-secondary-container text-on-secondary-container">
+      <span data-message-icon class="icon text-[1.75rem]" aria-hidden="true"></span>
+    </span>
+    <h3 data-message-title class="mt-5 font-display text-title-lg"></h3>
+    <p data-message-text class="mt-2 max-w-md text-body-md text-on-surface-variant"></p>
+    <div class="mt-6 flex flex-wrap justify-center gap-2">
+      <button type="button" data-retry hidden class="chip chip-filled fill-on-hover">
+        <Icon name="refresh" class="text-[1.125rem]" />
+        Try again
+      </button>
+      <button type="button" data-clear hidden class="chip">Clear filters</button>
+      <a data-github hidden href={site.github} target="_blank" rel="noopener" class="chip fill-on-hover">
+        Open GitHub
+        <Icon name="arrow_outward" class="text-[1rem] opacity-70" />
+      </a>
+    </div>
+  </div>
+
+  <template data-row>
+    <li>
+      <a
+        target="_blank"
+        rel="noopener"
+        class="group flex h-full flex-col gap-2 rounded-xl bg-surface-container p-5 transition-expressive hover:rounded-2xl hover:bg-surface-container-high sm:p-6"
+      >
+        <span class="flex items-start justify-between gap-4">
+          <span class="min-w-0 font-mono text-title-md break-words transition-colors duration-(--duration-short4) group-hover:text-primary">
+            <span data-name></span><span class="sr-only"> on GitHub</span>
+          </span>
+          <Icon name="arrow_outward" class="mt-0.5 text-on-surface-variant transition-expressive group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+        </span>
+        <span data-description class="line-clamp-2 text-body-md text-on-surface-variant"></span>
+        <span class="mt-auto flex flex-wrap items-center gap-x-4 gap-y-1 pt-2 text-label-md text-on-surface-variant">
+          <span data-language class="inline-flex items-center gap-1.5">
+            <span data-language-dot class="size-2.5 rounded-full" aria-hidden="true"></span>
+            <span data-language-name></span>
+          </span>
+          <span class="inline-flex items-center gap-1">
+            <Icon name="star" class="text-[0.9375rem]" />
+            <span class="sr-only">Stars:</span>
+            <span data-stars class="tabular-nums"></span>
+          </span>
+          <span class="inline-flex items-center gap-1">
+            <Icon name="fork_right" class="text-[0.9375rem]" />
+            <span class="sr-only">Forks:</span>
+            <span data-forks class="tabular-nums"></span>
+          </span>
+          <span data-updated></span>
+          <span data-archived class="inline-flex items-center gap-1">
+            <Icon name="archive" class="text-[0.9375rem]" />
+            Archived
+          </span>
+        </span>
+      </a>
+    </li>
+  </template>
+
+  <template data-language-chip>
+    <button type="button" class="chip" aria-pressed="false">
+      <span data-label></span>
+      <span data-total class="tabular-nums opacity-70"></span>
+    </button>
+  </template>
+</div>
+
+<script>
+  import { fetchRepos, formatRelative, GitHubError, languageColor, type Repo } from '../lib/github';
+
+  function setup(root: HTMLElement) {
+    const limit = Number(root.dataset.limit) || 0;
+    const $ = <T extends HTMLElement>(selector: string) => root.querySelector<T>(selector);
+    const list = $('[data-list]')!;
+    const loading = $('[data-loading]')!;
+    const count = $('[data-count]')!;
+    const controls = $('[data-controls]');
+    const query = $<HTMLInputElement>('[data-query]');
+    const languages = $('[data-languages]');
+    const message = $('[data-message]')!;
+    const retry = $('[data-retry]')!;
+    const clear = $('[data-clear]')!;
+    const github = $('[data-github]')!;
+    const rowTemplate = $<HTMLTemplateElement>('template[data-row]')!;
+    const chipTemplate = $<HTMLTemplateElement>('template[data-language-chip]')!;
+    const skeleton = [...list.children].map((item) => item.cloneNode(true));
+
+    let repos: Repo[] = [];
+    // '' means every language.
+    let language = '';
+
+    function row(repo: Repo) {
+      const item = rowTemplate.content.firstElementChild!.cloneNode(true) as HTMLElement;
+      const part = (name: string) => item.querySelector<HTMLElement>(`[data-${name}]`)!;
+      item.querySelector('a')!.href = repo.url;
+      part('name').textContent = repo.name;
+      part('description').textContent = repo.description ?? 'No description yet.';
+      if (repo.language) {
+        part('language-name').textContent = repo.language;
+        part('language-dot').style.backgroundColor = languageColor(repo.language);
+      } else {
+        part('language').remove();
+      }
+      part('stars').textContent = String(repo.stars);
+      part('forks').textContent = String(repo.forks);
+      part('updated').textContent = `Updated ${formatRelative(repo.pushedAt)}`;
+      if (!repo.archived) part('archived').remove();
+      return item;
+    }
+
+    function showMessage(
+      kind: 'error' | 'empty' | 'no-match',
+      title: string,
+      text: string,
+    ) {
+      list.hidden = true;
+      message.hidden = false;
+      message.querySelector('[data-message-icon]')!.textContent =
+        kind === 'error' ? 'error' : kind === 'empty' ? 'folder_code' : 'search_off';
+      message.querySelector('[data-message-title]')!.textContent = title;
+      message.querySelector('[data-message-text]')!.textContent = text;
+      retry.hidden = kind !== 'error';
+      clear.hidden = kind !== 'no-match';
+      github.hidden = kind === 'no-match';
+    }
+
+    function render() {
+      const text = query?.value.trim().toLowerCase() ?? '';
+      const filtered = language !== '' || text !== '';
+      const visible = repos.filter(
+        (repo) =>
+          (language === '' || repo.language === language) &&
+          `${repo.name} ${repo.description ?? ''}`.toLowerCase().includes(text),
+      );
+
+      if (!limit) {
+        count.textContent = filtered
+          ? `Showing ${visible.length} of ${repos.length} repositories`
+          : `${repos.length} repositories`;
+      }
+
+      if (visible.length === 0) {
+        const typed = query?.value.trim() ?? '';
+        return showMessage(
+          'no-match',
+          'No repositories match',
+          typed
+            ? `Nothing matches “${typed}”${language ? ` in ${language}` : ''}. Try a different word or clear the filters.`
+            : 'Try another language or clear the filters.',
+        );
+      }
+
+      message.hidden = true;
+      list.hidden = false;
+      list.replaceChildren(...(limit ? visible.slice(0, limit) : visible).map(row));
+    }
+
+    function buildLanguages() {
+      if (!languages) return;
+      const counts = new Map<string, number>();
+      for (const repo of repos) {
+        if (repo.language) counts.set(repo.language, (counts.get(repo.language) ?? 0) + 1);
+      }
+      const sorted = [...counts].sort(([a, countA], [b, countB]) => countB - countA || a.localeCompare(b));
+      // One language is not worth a filter.
+      if (sorted.length < 2) return languages.replaceChildren();
+
+      languages.replaceChildren(
+        ...[['', repos.length] as [string, number], ...sorted].map(([name, total]) => {
+          const chip = chipTemplate.content.firstElementChild!.cloneNode(true) as HTMLButtonElement;
+          chip.dataset.value = name;
+          chip.querySelector('[data-label]')!.textContent = name || 'All';
+          chip.querySelector('[data-total]')!.textContent = String(total);
+          return chip;
+        }),
+      );
+      syncLanguages();
+    }
+
+    function syncLanguages() {
+      for (const chip of languages?.querySelectorAll<HTMLElement>('button') ?? []) {
+        const selected = chip.dataset.value === language;
+        chip.setAttribute('aria-pressed', String(selected));
+        chip.classList.toggle('chip-filled', selected);
+      }
+    }
+
+    async function load(force = false) {
+      message.hidden = true;
+      list.hidden = false;
+      list.setAttribute('aria-busy', 'true');
+      list.replaceChildren(...skeleton.map((item) => item.cloneNode(true)));
+      loading.textContent = 'Loading repositories';
+
+      try {
+        repos = await fetchRepos({ force });
+      } catch (error) {
+        showMessage(
+          'error',
+          "Couldn't load repositories",
+          error instanceof GitHubError ? error.message : 'Something went wrong while loading repositories.',
+        );
+        return;
+      } finally {
+        list.removeAttribute('aria-busy');
+        loading.textContent = '';
+      }
+
+      if (repos.length === 0) {
+        return showMessage(
+          'empty',
+          'No public repositories yet',
+          "Public repositories will show up here once they're published.",
+        );
+      }
+
+      if (controls) controls.hidden = false;
+      buildLanguages();
+      render();
+    }
+
+    query?.addEventListener('input', render);
+    languages?.addEventListener('click', (event) => {
+      const chip = (event.target as Element).closest<HTMLElement>('button');
+      if (!chip) return;
+      language = chip.dataset.value ?? '';
+      syncLanguages();
+      render();
+    });
+    clear.addEventListener('click', () => {
+      if (query) query.value = '';
+      language = '';
+      syncLanguages();
+      render();
+      query?.focus();
+    });
+    retry.addEventListener('click', () => load(true));
+
+    load();
+  }
+
+  function init() {
+    for (const root of document.querySelectorAll<HTMLElement>('[data-repos]:not([data-ready])')) {
+      root.dataset.ready = '';
+      setup(root);
+    }
+  }
+
+  init();
+  document.addEventListener('astro:page-load', init);
+</script>

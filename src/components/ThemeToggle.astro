@@ -1,0 +1,16 @@
+---
+import Icon from './Icon.astro';
+---
+
+<!-- Behavior lives in the inline theme script in layouts/Base.astro. -->
+<button
+  type="button"
+  data-theme-toggle
+  aria-label="Dark theme"
+  aria-pressed="false"
+  title="Switch between light and dark theme"
+  class="fill-on-hover grid size-10 flex-none place-items-center sm:size-11 rounded-full text-on-surface-variant transition-expressive hover:rotate-12 hover:bg-secondary-container hover:text-on-secondary-container active:scale-90 active:rotate-45"
+>
+  <Icon name="dark_mode" class="text-[1.375rem] dark:hidden" />
+  <Icon name="light_mode" class="hidden text-[1.375rem] dark:inline-block" />
+</button>

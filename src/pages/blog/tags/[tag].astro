@@ -1,0 +1,20 @@
+---
+import BlogIndex from '../../../components/BlogIndex.astro';
+import Base from '../../../layouts/Base.astro';
+import { getPosts, getTags, tagSlug } from '../../../lib/posts';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return getTags(posts).map(({ tag }) => ({
+    params: { tag: tagSlug(tag) },
+    props: { tag, posts, tagged: posts.filter((post) => post.data.tags.includes(tag)) },
+  }));
+}
+
+const { tag, posts, tagged } = Astro.props;
+---
+
+<!-- Tag pages repeat the blog list, so they stay out of search results. -->
+<Base title={`#${tag}`} description={`Posts tagged “${tag}” on The Byte Array blog.`} noindex>
+  <BlogIndex posts={tagged} allPosts={posts} activeTag={tag} />
+</Base>

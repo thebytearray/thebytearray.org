@@ -1,0 +1,47 @@
+// Every Material Symbol used on the site. The self-hosted icon font holds
+// exactly this list: add a name here, then run `npm run icons` to rebuild
+// src/assets/fonts/material-symbols-rounded.woff2 before using <Icon name="..." />.
+// Browse names at https://fonts.google.com/icons
+export const icons = [
+  'apps',
+  'archive',
+  'arrow_back',
+  'arrow_downward',
+  'arrow_forward',
+  'arrow_outward',
+  'bug_report',
+  'check',
+  'check_circle',
+  'chevron_left',
+  'chevron_right',
+  'close',
+  'code',
+  'content_copy',
+  'dark_mode',
+  'devices',
+  'dns',
+  'error',
+  'expand_more',
+  'folder_code',
+  'fork_right',
+  'home',
+  'key',
+  'light_mode',
+  'link',
+  'lock',
+  'mail',
+  'menu',
+  'playlist_add',
+  'qr_code_2',
+  'refresh',
+  'rss_feed',
+  'search',
+  'search_off',
+  'send',
+  'shield',
+  'shop',
+  'star',
+  'wifi',
+] as const;
+
+export type IconName = (typeof icons)[number];

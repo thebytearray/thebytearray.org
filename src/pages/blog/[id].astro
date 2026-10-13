@@ -1,0 +1,176 @@
+---
+import '../../styles/prose.css';
+
+import { Image } from 'astro:assets';
+import { render } from 'astro:content';
+import Chip from '../../components/Chip.astro';
+import Icon from '../../components/Icon.astro';
+import TableOfContents from '../../components/TableOfContents.astro';
+import Base from '../../layouts/Base.astro';
+import { formatDate, getPosts, readingTime, tagSlug } from '../../lib/posts';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return posts.map((post, i) => ({
+    params: { id: post.id },
+    // Posts are newest first, so the "next" (newer) post is the one before.
+    props: { post, newer: posts[i - 1], older: posts[i + 1] },
+  }));
+}
+
+const { post, newer, older } = Astro.props;
+const { title, description, date, updated, author, tags, draft, cover, coverAlt } = post.data;
+const { Content, headings } = await render(post);
+// Short posts don't need a table of contents.
+const toc = headings.filter(({ depth }) => depth === 2 || depth === 3);
+const showToc = toc.length >= 4;
+// Social platforms don't render SVG, so posts without a raster cover use
+// their generated card (src/pages/og/[id].png.ts).
+const ownCover = cover && cover.format !== 'svg';
+const socialImage = ownCover ? cover.src : `/og/${post.id}.png`;
+---
+
+<Base
+  title={title}
+  description={description}
+  type="article"
+  publishedTime={date}
+  modifiedTime={updated}
+  author={author}
+  tags={tags}
+  image={socialImage}
+  imageAlt={ownCover ? coverAlt : title}
+  noindex={draft}
+>
+  <article class="mx-auto max-w-2xl pt-4 sm:pt-10" data-pagefind-body data-pagefind-filter="type:post">
+    <a
+      href="/blog/"
+      class="group -ml-3 inline-flex h-10 items-center gap-2 rounded-full pr-4 pl-3 text-label-lg text-on-surface-variant transition-expressive hover:bg-surface-container-high hover:text-on-surface"
+    >
+      <Icon name="arrow_back" class="transition-expressive group-hover:-translate-x-1" />
+      Blog
+    </a>
+
+    <header class="mt-6 sm:mt-8">
+      <p class="flex flex-wrap items-center gap-x-3 gap-y-1 text-label-lg text-on-surface-variant">
+        <time datetime={date.toISOString()}>{formatDate(date)}</time>
+        <span aria-hidden="true" class="size-1 rounded-full bg-outline"></span>
+        <span>{readingTime(post.body)} min read</span>
+        <span aria-hidden="true" class="size-1 rounded-full bg-outline"></span>
+        <span>{author}</span>
+        {draft && <span class="chip chip-sm chip-tonal text-tertiary">Draft</span>}
+      </p>
+      <h1
+        class="mt-4 font-display text-[clamp(2rem,7.5vw,3.75rem)] leading-[1.04] font-extrabold tracking-[-0.03em] text-balance break-words"
+      >
+        {title}
+      </h1>
+      <p class="mt-4 font-display text-title-lg text-pretty text-on-surface-variant sm:mt-5 sm:text-headline-sm">{description}</p>
+      {
+        tags.length > 0 && (
+          <ul class="mt-7 flex flex-wrap gap-2" aria-label="Tags">
+            {tags.map((tag) => (
+              <li>
+                <Chip href={`/blog/tags/${tagSlug(tag)}/`} size="sm">
+                  #{tag}
+                </Chip>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </header>
+
+    {
+      cover && (
+        <Image
+          src={cover}
+          alt={coverAlt ?? ''}
+          widths={[640, 960, 1536]}
+          sizes="(min-width: 48rem) 48rem, 100vw"
+          loading="eager"
+          class="mt-8 aspect-2/1 w-full rounded-xl-inc rounded-br-md bg-surface-container object-cover sm:mt-10 sm:rounded-2xl sm:rounded-br-md"
+        />
+      )
+    }
+
+    <div class="relative mt-10 sm:mt-12">
+      {showToc && <TableOfContents headings={toc} />}
+      <div class="prose">
+        <Content />
+      </div>
+    </div>
+  </article>
+
+  {
+    (newer || older) && (
+      <nav aria-label="More posts" class="mx-auto mt-16 grid max-w-2xl gap-3 sm:mt-20 sm:grid-cols-2 sm:gap-4">
+        {older ? (
+          <a
+            href={`/blog/${older.id}/`}
+            class="group flex flex-col gap-2 rounded-xl bg-surface-container p-6 transition-expressive hover:rounded-2xl hover:bg-surface-container-high"
+          >
+            <span class="inline-flex items-center gap-2 text-label-lg text-on-surface-variant">
+              <Icon name="arrow_back" class="text-[1rem] transition-expressive group-hover:-translate-x-1" />
+              Older
+            </span>
+            <span class="font-display text-title-lg">{older.data.title}</span>
+          </a>
+        ) : (
+          <span class="max-sm:hidden" />
+        )}
+        {newer && (
+          <a
+            href={`/blog/${newer.id}/`}
+            class="group flex flex-col gap-2 rounded-xl bg-surface-container p-6 text-right transition-expressive hover:rounded-2xl hover:bg-surface-container-high sm:items-end"
+          >
+            <span class="inline-flex items-center justify-end gap-2 text-label-lg text-on-surface-variant">
+              Newer
+              <Icon name="arrow_forward" class="text-[1rem] transition-expressive group-hover:translate-x-1" />
+            </span>
+            <span class="font-display text-title-lg">{newer.data.title}</span>
+          </a>
+        )}
+      </nav>
+    )
+  }
+</Base>
+
+<script>
+  // Adds a copy button to every code block in the post.
+  function init() {
+    for (const pre of document.querySelectorAll<HTMLPreElement>('.prose pre:not([data-copy])')) {
+      pre.dataset.copy = '';
+      // The button sits on a wrapper so it stays put while long lines scroll.
+      const wrapper = document.createElement('div');
+      wrapper.className = 'code-block';
+      pre.replaceWith(wrapper);
+
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'code-copy';
+      button.setAttribute('aria-label', 'Copy code');
+      button.innerHTML = '<span class="icon" aria-hidden="true">content_copy</span><span data-label></span>';
+      wrapper.append(pre, button);
+
+      button.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(pre.innerText);
+        } catch {
+          return;
+        }
+        const icon = button.querySelector('.icon')!;
+        const label = button.querySelector('[data-label]')!;
+        icon.textContent = 'check';
+        label.textContent = 'Copied';
+        setTimeout(() => {
+          icon.textContent = 'content_copy';
+          label.textContent = '';
+        }, 1800);
+      });
+    }
+  }
+
+  init();
+  document.addEventListener('astro:page-load', init);
+</script>

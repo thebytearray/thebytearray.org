@@ -1,0 +1,100 @@
+---
+import { getTags, tagSlug, type Post } from '../lib/posts';
+import Chip from './Chip.astro';
+import PostRow from './PostRow.astro';
+import Shape from './Shape.astro';
+
+interface Props {
+  /** The posts to list (already filtered when on a tag page). */
+  posts: Post[];
+  /** Every post, used to build the tag chips. */
+  allPosts: Post[];
+  activeTag?: string;
+}
+
+const { posts, allPosts, activeTag } = Astro.props;
+const tags = getTags(allPosts);
+
+const years = new Map<number, Post[]>();
+for (const post of posts) {
+  const year = post.data.date.getUTCFullYear();
+  years.set(year, [...(years.get(year) ?? []), post]);
+}
+---
+
+<header class="relative isolate pt-8 pb-10 sm:pt-14 sm:pb-14">
+  <div class="pointer-events-none absolute top-2 right-[-18%] -z-10 w-[min(13rem,52vw)] aspect-square sm:right-[-4%] sm:w-56 lg:right-[4%] lg:w-64">
+    <Shape kind="sunny" class="absolute inset-0 animate-drift text-secondary-container" />
+    <Shape kind="clover" class="absolute bottom-[4%] left-[-8%] w-[34%] text-primary-container" />
+  </div>
+  <h1 class="font-display text-[clamp(2.75rem,11vw,6.5rem)] leading-[0.9] font-extrabold tracking-[-0.04em] break-words">
+    {activeTag ? <span class="text-primary">#{activeTag}</span> : 'Blog'}
+  </h1>
+  <p class="mt-5 max-w-[17rem] font-display text-title-lg text-pretty text-on-surface-variant sm:mt-6 sm:max-w-xl sm:text-headline-sm">
+    {
+      activeTag
+        ? `${posts.length} ${posts.length === 1 ? 'post' : 'posts'} tagged “${activeTag}”.`
+        : 'Product updates and notes from The Byte Array.'
+    }
+  </p>
+</header>
+
+<div
+  class:list={[
+    'mb-8 flex flex-wrap items-start justify-between gap-x-6 gap-y-3 sm:mb-12',
+    allPosts.length === 0 && 'hidden',
+  ]}
+>
+<nav aria-label="Filter by tag">
+  <ul class="flex flex-wrap gap-2 sm:gap-2.5">
+    <li>
+      <Chip href="/blog/" variant={activeTag ? 'outlined' : 'filled'} aria-current={activeTag ? undefined : 'page'}>
+        All
+        <span class="opacity-70">{allPosts.length}</span>
+      </Chip>
+    </li>
+    {
+      tags.map(({ tag, count }) => (
+        <li>
+          <Chip
+            href={`/blog/tags/${tagSlug(tag)}/`}
+            variant={tag === activeTag ? 'filled' : 'outlined'}
+            aria-current={tag === activeTag ? 'page' : undefined}
+          >
+            {tag}
+            <span class="opacity-70">{count}</span>
+          </Chip>
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+<!-- Opens the search dialog (components/CommandPalette.astro), limited to blog posts. -->
+<Chip button icon="search" data-palette-open="posts">Search posts</Chip>
+</div>
+
+<div class="flex flex-col gap-10 sm:gap-12">
+  {
+    [...years].map(([year, yearPosts]) => (
+      <section aria-labelledby={`y${year}`} class="grid gap-x-10 gap-y-3 lg:grid-cols-[11rem_1fr]">
+        <h2 id={`y${year}`} class="font-display text-headline-md text-on-surface-variant">
+          {year}
+        </h2>
+        <ul class="divide-y divide-outline-variant border-y border-outline-variant">
+          {yearPosts.map((post) => (
+            <li class="py-1">
+              <PostRow post={post} />
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))
+  }
+  {
+    posts.length === 0 && (
+      <p class="max-w-prose text-body-lg text-on-surface-variant">
+        No posts yet. The first one will show up here and in the <a href="/rss.xml" class="text-primary underline underline-offset-4">RSS feed</a>.
+      </p>
+    )
+  }
+</div>
