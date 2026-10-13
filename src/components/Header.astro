@@ -1,7 +1,7 @@
 ---
 import { nav, site } from '../data/site';
 import { getPosts } from '../lib/posts';
-import Shape from './Shape.astro';
+import Logo from './Logo.astro';
 import Icon from './Icon.astro';
 import ThemeToggle from './ThemeToggle.astro';
 
@@ -18,13 +18,11 @@ const iconButton =
 <header class="sticky top-0 z-40 bg-surface/80 backdrop-blur-md">
   <div class="mx-auto flex w-full max-w-6xl items-center justify-between gap-2 px-4 py-3 sm:gap-4 sm:px-8 sm:py-4">
     <a href="/" class="group flex items-center gap-3 rounded-full pr-2" aria-label={`${site.name}, home`}>
-      <Shape
-        lobes={8}
-        depth={0.12}
-        morphTo="clover"
-        class="size-9 text-primary transition-[rotate] duration-(--duration-spring-slow) ease-spring-slow group-hover:rotate-90 sm:size-10"
-      />
-      <span class="font-mono text-title-lg font-bold tracking-tight" aria-hidden="true">[]byte</span>
+      <Logo class="size-9 transition-[scale] duration-(--duration-spring-fast) ease-spring-fast group-hover:scale-110 sm:size-10" />
+      <!-- The narrowest phones only have room for the mark. -->
+      <span class="font-display text-title-lg font-semibold tracking-tight whitespace-nowrap max-[22.5rem]:sr-only" aria-hidden="true">
+        {site.name}
+      </span>
     </a>
 
     <div class="flex items-center gap-1 sm:gap-2">

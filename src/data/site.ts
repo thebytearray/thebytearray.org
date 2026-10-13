@@ -10,9 +10,9 @@ const mail = 'Y29udGFjdEB0aGVieXRlYXJyYXkub3Jn';
 export const site = {
   name: 'The Byte Array',
   title: 'The Byte Array',
-  tagline: 'Straight to the point. Private by default.',
+  tagline: 'No BS. Straight to the point.',
   description:
-    'The Byte Array makes Android apps, libraries and developer tools that do one job well. Our apps have no ads, no tracking and no accounts.',
+    'The Byte Array makes mobile apps, libraries and developer tools that do one job well. Our apps have no ads, no tracking and no accounts.',
   locale: 'en',
   mail,
   /** Written-out form of the address, safe to show in the page. */
@@ -24,8 +24,16 @@ export const site = {
   github: 'https://github.com/thebytearray',
   /** Source of this website. */
   repo: 'https://github.com/thebytearray/thebytearray.org',
+  /** The registered company, as listed at Companies House. Shown in the footer. */
+  company: {
+    name: 'The Byte Array Ltd',
+    number: '16581435',
+    jurisdiction: 'England and Wales',
+    office: '124-128 City Road, London, England, EC1V 2NX',
+    url: 'https://find-and-update.company-information.service.gov.uk/company/16581435',
+  },
   /** Topics for search engines (schema.org `knowsAbout`). */
-  topics: ['Android', 'Privacy', 'Open source', 'Developer tools'],
+  topics: ['Mobile apps', 'Android', 'Privacy', 'Open source', 'Developer tools'],
 };
 
 export const nav = [
@@ -64,9 +72,9 @@ export const socials: SocialLink[] = [
 export interface TeamMember {
   name: string;
   role: string;
-  bio: string;
-  github: string;
-  avatar: string;
+  bio?: string;
+  github?: string;
+  avatar?: string;
 }
 
 export const team: TeamMember[] = [
@@ -76,6 +84,10 @@ export const team: TeamMember[] = [
     bio: 'Building software and sharing what I learn along the way.',
     github: 'https://github.com/codewithtamim',
     avatar: 'https://github.com/codewithtamim.png',
+  },
+  {
+    name: 'Bat',
+    role: 'Chief operating officer',
   },
 ];
 

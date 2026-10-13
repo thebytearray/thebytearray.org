@@ -1,6 +1,13 @@
 // Everything on the Apps pages comes from this file. Icons and screenshots
 // live in src/assets/apps/<slug>/.
 import type { ImageMetadata } from 'astro';
+import convertitBackground from '../assets/apps/convertit/background.png';
+import convertitConvert from '../assets/apps/convertit/convert.png';
+import convertitFeatureGraphic from '../assets/apps/convertit/feature-graphic.png';
+import convertitFormats from '../assets/apps/convertit/formats.png';
+import convertitIcon from '../assets/apps/convertit/icon.png';
+import convertitLibrary from '../assets/apps/convertit/library.png';
+import convertitTags from '../assets/apps/convertit/tags.png';
 import hy2ngAddConfiguration from '../assets/apps/hy2ng/add-configuration.png';
 import hy2ngConfigurations from '../assets/apps/hy2ng/configurations.png';
 import hy2ngIcon from '../assets/apps/hy2ng/icon.png';
@@ -14,7 +21,7 @@ import openloaderInstallQueue from '../assets/apps/openloader/install-queue.png'
 import openloaderSettings from '../assets/apps/openloader/settings.png';
 import type { IconName } from './icons';
 
-export type AppSlug = 'openloader' | 'hy2ng';
+export type AppSlug = 'convertit' | 'openloader' | 'hy2ng';
 
 export interface Screenshot {
   src: ImageMetadata;
@@ -36,6 +43,11 @@ export interface App {
   icon: ImageMetadata;
   /** The icon's path from the project root, for the generated social card. */
   iconFile: string;
+  /**
+   * The store feature graphic. The app that has one is the featured app: it
+   * gets the banner on the home and Apps pages instead of a card.
+   */
+  featureGraphic?: Screenshot;
   screenshots: Screenshot[];
   features: AppFeature[];
   playStoreUrl: string;
@@ -44,12 +56,70 @@ export interface App {
   license?: string;
   requirements: string;
   /** schema.org applicationCategory, for search engines. */
-  storeCategory: 'DeveloperApplication' | 'UtilitiesApplication';
+  storeCategory: 'DeveloperApplication' | 'MultimediaApplication' | 'UtilitiesApplication';
   /** Kept at the legacy URL: store listings link to it. */
-  privacyPath: `/${string}/`;
+  privacyPath?: `/${string}/`;
 }
 
 export const apps: App[] = [
+  {
+    slug: 'convertit',
+    name: 'Convertit',
+    tagline: 'No BS. Straight to the point.',
+    summary: 'An offline audio and video converter for Android, with no ads.',
+    description:
+      'Convertit is an ad-free, offline audio and video converter for Android. Pick a file, pick a format (MP3, M4A, AAC, OGG, OPUS and more) and it converts in the background.',
+    icon: convertitIcon,
+    iconFile: 'src/assets/apps/convertit/icon.png',
+    featureGraphic: {
+      src: convertitFeatureGraphic,
+      alt: 'Convertit. No BS. Straight to the point. Audio and video converter, offline, no ads.',
+    },
+    screenshots: [
+      { src: convertitConvert, alt: 'Convert audio and video: one tap to start, no clutter' },
+      { src: convertitFormats, alt: 'Pick the format, done: MP3, M4A, AAC, OGG, OPUS and more' },
+      { src: convertitBackground, alt: 'Keeps going in the background: queue files and carry on' },
+      { src: convertitLibrary, alt: 'Everything you converted: open or share in a tap' },
+      { src: convertitTags, alt: 'Fix the tags: title, artist, album and cover art' },
+    ],
+    features: [
+      {
+        icon: 'graphic_eq',
+        title: 'Audio and video',
+        description: 'One tap to start a conversion. No clutter in the way.',
+      },
+      {
+        icon: 'tune',
+        title: 'Pick the format',
+        description: 'MP3, M4A, AAC, OGG, OPUS and more.',
+      },
+      {
+        icon: 'queue_music',
+        title: 'Keeps going in the background',
+        description: 'Queue several files and carry on with something else.',
+      },
+      {
+        icon: 'library_music',
+        title: 'Library',
+        description: 'Open or share any converted file in a tap.',
+      },
+      {
+        icon: 'sell',
+        title: 'Fix the tags',
+        description: 'Edit the title, artist, album and cover art.',
+      },
+      {
+        icon: 'wifi_off',
+        title: 'Offline, no ads',
+        description: 'Files are converted on your device, and the app shows no ads.',
+      },
+    ],
+    playStoreUrl: 'https://play.google.com/store/apps/details?id=com.nasahacker.convertit',
+    packageId: 'com.nasahacker.convertit',
+    requirements: 'Android.',
+    storeCategory: 'MultimediaApplication',
+    privacyPath: '/convertit-privacy/',
+  },
   {
     slug: 'openloader',
     name: 'OpenLoader',
@@ -150,6 +220,10 @@ export const apps: App[] = [
     privacyPath: '/hy2ng-privacy/',
   },
 ];
+
+/** The app shown as a banner, and the ones shown as cards. */
+export const featuredApp = apps.find((app) => app.featureGraphic);
+export const otherApps = apps.filter((app) => app !== featuredApp);
 
 export function getApp(slug: string): App | undefined {
   return apps.find((app) => app.slug === slug);

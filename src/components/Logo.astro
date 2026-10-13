@@ -1,0 +1,15 @@
+---
+import { logo } from '../lib/logo';
+
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<!-- The logo mark: "Solid Black" on the light theme, "Solid White" on the dark one. -->
+<svg viewBox={logo.viewBox} class:list={['flex-none', className]} aria-hidden="true" focusable="false">
+  <path d={logo.shape} class="fill-[#0b0c10] dark:fill-[#fff]"></path>
+  <path d={logo.brackets} class="fill-[#fff] dark:fill-[#0b0c10]"></path>
+</svg>

@@ -12,7 +12,7 @@ const sectionTitle = 'font-display text-headline-md text-balance';
 
 <Base
   title="About"
-  description="The Byte Array makes software that solves real problems without trading away your privacy: Android apps, libraries and developer tools."
+  description="The Byte Array makes software that solves real problems without trading away your privacy: mobile apps, libraries and developer tools."
   breadcrumbs={[{ name: 'About', path: '/about/' }]}
 >
   <div data-pagefind-body>
@@ -58,7 +58,7 @@ const sectionTitle = 'font-display text-headline-md text-balance';
             We share code when it helps the community, and we keep our policies short and plain about the rest. Read
             the full policies for{' '}
             {
-              apps.map((app, i) => (
+              apps.filter((app) => app.privacyPath).map((app, i) => (
                 <>
                   {i > 0 && ' and '}
                   <a href={app.privacyPath} class="text-link">{app.name}</a>
@@ -75,21 +75,32 @@ const sectionTitle = 'font-display text-headline-md text-balance';
           {
             team.map((member) => (
               <li class="flex items-start gap-4 rounded-xl bg-surface-container p-6">
-                <img
-                  src={member.avatar}
-                  alt=""
-                  width="56"
-                  height="56"
-                  loading="lazy"
-                  class="size-14 flex-none rounded-full bg-surface-container-highest"
-                />
+                {member.avatar ? (
+                  <img
+                    src={member.avatar}
+                    alt=""
+                    width="56"
+                    height="56"
+                    loading="lazy"
+                    class="size-14 flex-none rounded-full bg-surface-container-highest"
+                  />
+                ) : (
+                  <span
+                    aria-hidden="true"
+                    class="grid size-14 flex-none place-items-center rounded-full bg-primary-container font-display text-title-lg text-on-primary-container"
+                  >
+                    {member.name.charAt(0)}
+                  </span>
+                )}
                 <div class="min-w-0">
                   <h3 class="font-display text-title-lg">{member.name}</h3>
                   <p class="text-body-md text-on-surface-variant">{member.role}</p>
-                  <p class="mt-2 text-body-md">{member.bio}</p>
-                  <a href={member.github} target="_blank" rel="noopener" class="text-link mt-3 inline-block text-body-md">
-                    GitHub profile
-                  </a>
+                  {member.bio && <p class="mt-2 text-body-md">{member.bio}</p>}
+                  {member.github && (
+                    <a href={member.github} target="_blank" rel="noopener" class="text-link mt-3 inline-block text-body-md">
+                      GitHub profile
+                    </a>
+                  )}
                 </div>
               </li>
             ))

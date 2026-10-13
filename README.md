@@ -54,9 +54,13 @@ npm run check    # type-check
 
 ## Deployment
 
-The Docker, nginx and GitHub Actions files in this repository were written for
-the previous Next.js version of the site and have not been adapted yet. See
-[DEPLOYMENT.md](DEPLOYMENT.md) for how production is set up.
+The live site is served by nginx on a VPS from a directory of releases.
 
-`ai-context/` (if present) holds local reference copies for AI tooling and is
-git-ignored.
+```sh
+npm run deploy
+```
+
+This builds the site, uploads it as a new release, switches the live site to
+it, checks that the server is serving it and rolls back if it is not. Pushing
+to `main` does the same through `.github/workflows/deploy.yml`. See
+[DEPLOYMENT.md](DEPLOYMENT.md) for setup, secrets and rollback.

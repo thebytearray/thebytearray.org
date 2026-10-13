@@ -40,9 +40,6 @@ coverage/
 playwright-report/
 test-results/
 
-# Reference copies of the old site and the portfolio, for AI context only
-ai-context/
-
 # Local-only agent tooling
 .claude/
 skills-lock.json

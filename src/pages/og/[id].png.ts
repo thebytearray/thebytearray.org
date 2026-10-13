@@ -9,7 +9,7 @@ import { formatDate, getPosts } from '../../lib/posts';
 export const getStaticPaths: GetStaticPaths = async () => [
   {
     params: { id: 'home' },
-    props: { title: site.tagline, subtitle: 'Android apps, libraries and developer tools that do one job well.' },
+    props: { title: site.tagline, subtitle: 'Mobile apps, libraries and developer tools that do one job well.' },
   },
   ...apps.map((app) => ({
     params: { id: app.slug },
