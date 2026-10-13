@@ -19,7 +19,7 @@ The site is a static Astro build (`npm run build` writes `dist/`), so there is
 no Node server in production. Each deploy uploads `dist/` as a new directory
 under `releases/`, named with a UTC timestamp, and points `current` at it.
 
-- Site directory: `<site-dir>` (owned by the deploying user)
+- Site directory: `<site-dir>` (group `deploy`, see below)
 - nginx site: `<nginx-site-file>`; the copy of
   record is `deploy/nginx/thebytearray.org.conf`
 - TLS and security-header snippets: `<nginx-snippet>`
@@ -71,8 +71,17 @@ Repository secrets (Settings → Secrets and variables → Actions):
 | `VPS_SSH_PRIVATE_KEY` | private key of a keypair that user accepts |
 | `VPS_KNOWN_HOSTS` | the server's host keys (`ssh-keyscan <address>`) |
 
-Use a keypair made for CI only, so it can be revoked by removing one line from
-the user's `~/.ssh/authorized_keys`.
+CI logs in as `deploy`, a user with no sudo whose only write access is the
+site directory. Its key is used by CI alone; to revoke it, empty
+`the CI user's authorized_keys file` on the server and replace the secret.
+
+## Who can publish
+
+`<site-dir>` belongs to the `deploy` group, is group-writable and
+has the setgid bit, so releases uploaded by one account can be pruned by
+another. Members: `deploy` (CI) and the admin user that runs `npm run deploy`.
+sshd only admits users listed under `AllowUsers` in
+`<sshd-config-file>`.
 
 ## Rolling back
 
