@@ -43,3 +43,6 @@ test-results/
 # Local-only agent tooling
 .claude/
 skills-lock.json
+
+# The server's own nginx config: kept locally, not published
+deploy/nginx/

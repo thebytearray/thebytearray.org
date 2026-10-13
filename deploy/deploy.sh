@@ -4,9 +4,10 @@
 # back if it is not being served. Run with `npm run deploy`; the GitHub
 # workflow runs the same script.
 #
-# The server address is kept out of the repo: set DEPLOY_HOST (user@host) in
-# the environment or in a git-ignored .env.deploy file. Optional: DEPLOY_KEY
-# (SSH private key), DEPLOY_KEEP (releases kept for rollback) and
+# Server details are kept out of the repo: set DEPLOY_HOST (user@host) and
+# DEPLOY_PATH (the site directory on the server) in the environment or in a
+# git-ignored .env.deploy file. Optional: DEPLOY_KEY (SSH private key; ssh's
+# own default otherwise), DEPLOY_KEEP (releases kept for rollback) and
 # DEPLOY_SKIP_BUILD=1 (publish the dist/ that is already there).
 set -euo pipefail
 
@@ -22,12 +23,14 @@ if [ -f .env.deploy ]; then
 fi
 
 HOST="${DEPLOY_HOST:?Set DEPLOY_HOST (user@host) in .env.deploy or the environment}"
-KEY="${DEPLOY_KEY:-$HOME/.ssh/deploy_key}"
+APP="${DEPLOY_PATH:?Set DEPLOY_PATH (the site directory on the server) in .env.deploy or the environment}"
 KEEP="${DEPLOY_KEEP:-5}"
-APP=<site-dir>
 SITE_HOST=thebytearray.org
 
-SSH=(ssh -i "$KEY" -o IdentitiesOnly=yes -o BatchMode=yes)
+SSH=(ssh -o BatchMode=yes)
+if [ -n "${DEPLOY_KEY:-}" ]; then
+  SSH+=(-i "$DEPLOY_KEY" -o IdentitiesOnly=yes)
+fi
 release="$(date -u +%Y%m%d%H%M%S)"
 
 if [ "${DEPLOY_SKIP_BUILD:-}" != 1 ]; then

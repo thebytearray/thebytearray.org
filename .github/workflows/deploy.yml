@@ -2,7 +2,8 @@
 #
 # Repository secrets (Settings → Secrets and variables → Actions):
 #   VPS_HOST             server address
-#   VPS_USER             a user that can write <site-dir>
+#   VPS_USER             a user that can write the site directory
+#   VPS_PATH             the site directory on the server
 #   VPS_SSH_PRIVATE_KEY  private key of a keypair that user accepts
 #   VPS_KNOWN_HOSTS      the server's host keys (`ssh-keyscan <address>`)
 name: Deploy
@@ -59,5 +60,6 @@ jobs:
       - name: Build and publish
         env:
           DEPLOY_HOST: ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}
+          DEPLOY_PATH: ${{ secrets.VPS_PATH }}
           DEPLOY_KEY: /home/runner/.ssh/deploy_key
         run: bash deploy/deploy.sh
