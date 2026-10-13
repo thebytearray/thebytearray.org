@@ -1,145 +1,113 @@
 # Deployment runbook
 
-Production is `thebytearray.org`, served from a single VPS at `<server-address>`
-(Ubuntu 24.04, OVH). This file is the operational reference: how a deploy
-happens, how to undo one, and what to check when something is wrong.
+Production is `thebytearray.org`, served by nginx on a VPS. This file is the
+operational reference: how a deploy happens, how to undo one, and what to check
+when something is wrong.
 
 ## Topology
 
 ```
-Cloudflare (proxied, JS challenge on)
+Cloudflare (proxied, browser check on)
         │
         ▼
-:443 ── edge container ──▶ app container ──▶ static files
-         nginx + certbot     nginx
-         TLS, HSTS,          the Next.js static
-         security headers    export from dist/
+:443 ── nginx on the VPS ──▶ <site-dir>/current
+         TLS, security          a symlink to the live release in
+         headers, caching       <site-dir>/releases/
 ```
 
-`edge` binds the host's 80/443 and reverse-proxies to `app` over the internal
-bridge network. `app` is a plain nginx serving `dist/`; there is no Node server
-in production because `next.config.ts` uses `output: "export"`.
+The site is a static Astro build (`npm run build` writes `dist/`), so there is
+no Node server in production. Each deploy uploads `dist/` as a new directory
+under `releases/`, named with a UTC timestamp, and points `current` at it.
 
-Both are defined in `docker-compose.yml` + `docker-compose.prod.yml`.
-
-- Live layout: `<deploy-root>/repo` (a git clone, checked out per deploy)
-- Deployed tag of record: `<deploy-root>/deployed-tag`
-- Deployment log: `docker logs thebytearray_edge`
+- Site directory: `<site-dir>` (owned by the deploying user)
+- nginx site: `<nginx-site-file>`; the copy of
+  record is `deploy/nginx/thebytearray.org.conf`
+- TLS and security-header snippets: `<nginx-snippet>`
+  and `<nginx-snippet>` (on the server only)
 
 ## How a deploy happens
 
-Push to `main` → `.github/workflows/deploy.yml`:
+`deploy/deploy.sh` does the whole thing, from a laptop or from CI:
 
-1. `lint` and `tsc --noEmit`
-2. build the site image, tagged with the 12-char commit SHA
-3. diff `Dockerfile.edge` and `nginx/edge/` against the commit currently
-   deployed; only rebuild and ship the ~350MB edge image if those changed
-4. stream the images to the VPS over SSH and `docker load` them
-5. run `scripts/vps-deploy.sh` on the VPS
-6. prune superseded images, then re-verify the origin over TLS
+1. `npm run build`
+2. write the release name to `dist/release.txt`
+3. `rsync` the build to `releases/.<release>.tmp` on the server
+4. run `deploy/publish-release.sh` on the server over SSH, which:
+   - renames the upload to `releases/<release>` and switches `current` to it
+     in one step
+   - reads `https://thebytearray.org/release.txt` back from the server's own
+     nginx (`curl --resolve … 127.0.0.1`) and expects the new release name
+   - on a mismatch, points `current` back at the previous release, deletes the
+     new one and fails
+   - keeps the newest five releases and removes older ones
 
-Images travel over the SSH channel rather than a registry: the repo is public
-and the VPS holds no registry credentials, so this avoids a credential to leak
-or rotate. Deploys are serialised by a `production` concurrency group.
+### By hand
 
-`scripts/vps-deploy.sh` writes the target tag into `.env` before calling
-`compose up`. That indirection is deliberate: a `.env` file in the project
-directory takes precedence over the shell environment for compose interpolation,
-so setting `IMAGE_TAG` as an environment variable alone silently does nothing.
-
-After switching, the script asserts the running container's image is actually
-the requested tag, then health-checks through the TLS terminator. Plain HTTP
-cannot be used for the health check because `edge` 301s everything to HTTPS.
-
-## Rolling back
-
-Deploys roll back on their own. If the new container is unhealthy, or the
-running image is not the requested tag, the script restores the previous tag,
-re-checks it, and fails the workflow. If that rollback is also unhealthy it
-leaves the host alone and asks for a human.
-
-To roll back by hand:
-
-```bash
-# what is live now
-cat <deploy-root>/deployed-tag
-
-# switch to a specific image tag that is still on the host
-DEPLOY_TAG=<tag> <deploy-root>/repo/scripts/vps-deploy.sh
+```sh
+npm run deploy
 ```
 
-Each deploy keeps the live image plus the one before it, so there is always a
-rollback target. Re-running a specific commit is also available from the
-Actions tab via `workflow_dispatch` → `deploy_sha`.
+The server address is not in the repo. Put it in a git-ignored `.env.deploy`:
 
-## Secrets
+```sh
+DEPLOY_HOST=user@server-address
+# DEPLOY_KEY=~/.ssh/deploy_key   (default)
+# DEPLOY_KEEP=5                         (releases kept for rollback)
+```
 
-Repo secrets (Settings → Secrets and variables → Actions):
+### Automatically, on push
+
+Pushing to `main` runs `.github/workflows/deploy.yml`: install, type-check,
+then the same `deploy/deploy.sh`. Deploys are serialised by a `production`
+concurrency group. Other branches and pull requests run
+`.github/workflows/ci.yml` (type-check and build only).
+
+Repository secrets (Settings → Secrets and variables → Actions):
 
 | Secret | Value |
 | --- | --- |
-| `VPS_HOST` | `<server-address>` |
-| `VPS_USER` | `deploy` |
-| `VPS_SSH_PRIVATE_KEY` | private key for the CI-only keypair |
-| `VPS_KNOWN_HOSTS` | pinned host keys for the VPS |
+| `VPS_HOST` | server address |
+| `VPS_USER` | a user that can write `<site-dir>` |
+| `VPS_SSH_PRIVATE_KEY` | private key of a keypair that user accepts |
+| `VPS_KNOWN_HOSTS` | the server's host keys (`ssh-keyscan <address>`) |
 
-The CI keypair's public half is in `the CI user's authorized_keys file`. To
-revoke CI access, remove that line and rotate the secret. The `deploy` user has
-passwordless sudo, so treat the key as equivalent to root.
+Use a keypair made for CI only, so it can be revoked by removing one line from
+the user's `~/.ssh/authorized_keys`.
 
-## TLS
+## Rolling back
 
-Certbot runs inside the `edge` container and renews twice a day against
-Let's Encrypt, reloading nginx on success. Certificates live in the
-`thebytearray_certbot_etc` volume, so `docker compose down -v` would delete them
-and force re-issuance.
+A deploy that is not being served rolls back on its own. To go back to an
+older release by hand, on the server:
 
-To force renewal:
-
-```bash
-docker exec thebytearray_edge certbot renew --force-renewal
-docker restart thebytearray_edge
+```sh
+cd <site-dir>
+ls releases/                       # newest five, named by UTC timestamp
+ln -sfn releases/<release> current.tmp && mv -Tf current.tmp current
 ```
 
-## Access
+## Changing the nginx config
 
-SSH accepts keys only. `PasswordAuthentication` is off and `PermitRootLogin` is
-no; the allowed users are `ubuntu` (admin, `NOPASSWD` sudo) and `deploy` (CI).
-The hardening lives in `<sshd-config-file>` —
-it must sort before `50-cloud-init.conf`, because sshd honours the first value
-it reads for a keyword.
+Edit `deploy/nginx/thebytearray.org.conf`, copy it to
+`<nginx-site-file>` on the server, then:
 
-UFW allows only 22, 80, and 443.
+```sh
+sudo nginx -t && sudo systemctl reload nginx
+```
 
 ## Cloudflare caveat
 
-The domain is proxied and returns **403 "Just a moment..."** to `curl`, because
-a JavaScript challenge runs before the request reaches the origin. Real browsers
-pass it, so the site is fine, but anything scripted must not assume a 200:
+The domain is proxied and can answer **403 "Just a moment..."** to `curl`,
+because a browser check runs before the request reaches the server. Real
+browsers pass it, so the site is fine, but anything scripted must not assume a
+200:
 
-- uptime monitors must either solve the challenge or check the origin directly
-- CI deliberately verifies the origin via `--resolve`, bypassing Cloudflare
+- uptime monitors must either pass the check or ask the server directly
+- the deploy verifies on the server itself, bypassing Cloudflare
 
-This also means the A record's real value is hidden. Confirm the origin is
-serving by bypassing the proxy:
+To confirm the server is serving, from the server:
 
-```bash
+```sh
 curl -sS -o /dev/null -w '%{http_code} %{http_version}\n' \
-  --resolve thebytearray.org:443:<server-address> https://thebytearray.org
-```
-
-## Routine checks
-
-```bash
-docker ps --filter name=thebytearray
-docker logs --tail 50 thebytearray_edge
-docker compose -f docker-compose.yml -f docker-compose.prod.yml ps
-df -h /                  # keep an eye on image accumulation
-```
-
-Update Docker and the host:
-
-```bash
-sudo apt update && sudo apt upgrade -y
-sudo systemctl reload ssh   # required after a sshd update
+  --resolve thebytearray.org:443:127.0.0.1 https://thebytearray.org
+curl -sS --resolve thebytearray.org:443:127.0.0.1 https://thebytearray.org/release.txt
 ```

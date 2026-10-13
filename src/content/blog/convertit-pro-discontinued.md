@@ -1,10 +1,13 @@
 ---
 title: 'Convertit Pro is discontinued'
 date: 2026-09-24
+updated: 2026-10-13
 author: Tamim
 description: 'Pirated copies drove sales to almost zero, so we stopped maintaining Convertit Pro and the free version of Convertit.'
 tags: ['Convertit', 'Announcements']
 ---
+
+> **Update, October 13, 2026:** Convertit is available again, and Convertit Pro is on its way back. Read [Convertit is back](/blog/convertit-is-back/).
 
 Convertit Pro is discontinued. Modified and pirated copies started spreading, sales dropped to almost zero, and we can no longer justify the time and cost of keeping the project alive.
 

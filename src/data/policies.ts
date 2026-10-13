@@ -20,6 +20,80 @@ export interface Policy {
 const p = (text: string): PolicyBlock => ({ type: "paragraph", text });
 
 export const policies: Record<AppSlug, Policy> = {
+  convertit: {
+    app: "convertit",
+    title: "Convertit privacy policy",
+    lastUpdated: "October 2026",
+    sections: [
+      {
+        heading: "Introduction",
+        blocks: [
+          p(
+            "This privacy policy explains how Convertit (“the App”) handles your data. We believe in minimal data collection and maximum transparency.",
+          ),
+        ],
+      },
+      {
+        heading: "Data collection",
+        blocks: [
+          p(
+            "Convertit does not collect any personal data. The App operates entirely on-device and does not transmit information to external servers.",
+          ),
+        ],
+      },
+      {
+        heading: "Your files",
+        blocks: [
+          p(
+            "Audio and video files you choose are converted locally on your device. The App never uploads or transmits your files, the converted results, or their tags and cover art to any server.",
+          ),
+        ],
+      },
+      {
+        heading: "Permissions",
+        blocks: [
+          p("The App requests the following permissions solely for local functionality:"),
+          {
+            type: "list",
+            items: [
+              {
+                term: "Files and media",
+                text: "Used to read the files you pick and to save the converted files on your device.",
+              },
+              {
+                term: "Notification",
+                text: "Used to show conversion progress and completion status while the App works in the background.",
+              },
+            ],
+          },
+        ],
+      },
+      {
+        heading: "Third-party services",
+        blocks: [
+          p(
+            "Convertit does not integrate any third-party analytics, advertising, or tracking services. It shows no ads and has no cloud accounts or telemetry.",
+          ),
+        ],
+      },
+      {
+        heading: "Data storage",
+        blocks: [
+          p(
+            "Converted files, your library and your preferences are stored exclusively on your device using Android’s local storage APIs. Uninstalling the App removes its stored data; converted files you saved to shared storage stay until you delete them.",
+          ),
+        ],
+      },
+      {
+        heading: "Changes to this policy",
+        blocks: [
+          p(
+            "We may update this privacy policy from time to time. Changes will be posted on this page.",
+          ),
+        ],
+      },
+    ],
+  },
   hy2ng: {
     app: "hy2ng",
     title: "Hy2NG privacy policy",

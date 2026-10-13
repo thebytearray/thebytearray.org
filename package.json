@@ -18,7 +18,8 @@
     "prebuild": "npm run tokens",
     "check": "astro check",
     "assets": "node scripts/generate-assets.mjs",
-    "icons": "node scripts/fetch-icons.mjs"
+    "icons": "node scripts/fetch-icons.mjs",
+    "deploy": "bash deploy/deploy.sh"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.19",

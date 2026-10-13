@@ -5,7 +5,8 @@ import ColorPicker from '../components/ColorPicker.astro';
 import PostRow from '../components/PostRow.astro';
 import RepoList from '../components/RepoList.astro';
 import Shape from '../components/Shape.astro';
-import { apps } from '../data/apps';
+import FeaturedApp from '../components/FeaturedApp.astro';
+import { featuredApp, otherApps } from '../data/apps';
 import { site, socials } from '../data/site';
 import Base from '../layouts/Base.astro';
 import { getPosts } from '../lib/posts';
@@ -25,11 +26,11 @@ const sectionLink =
     </div>
 
     <h1 class="font-display text-[clamp(2.75rem,10.5vw,7rem)] leading-[0.9] font-extrabold tracking-[-0.045em]">
-      Straight to the point. <span class="text-primary">Private by default.</span>
+      No BS.<br /><span class="text-primary">Straight to the point.</span>
     </h1>
 
     <p class="mt-7 max-w-md font-display text-title-lg text-pretty sm:mt-10 sm:max-w-2xl sm:text-headline-sm">
-      {site.name} makes Android apps, libraries and developer tools that do one job well. Our apps have no ads, no
+      {site.name} makes mobile apps, libraries and developer tools that do one job well. Our apps have no ads, no
       tracking and no accounts.
     </p>
 
@@ -45,19 +46,19 @@ const sectionLink =
     <div class="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
       <div>
         <h2 id="apps" class="font-display text-headline-lg sm:text-display-sm">Apps</h2>
-        <p class="mt-1 text-body-lg text-on-surface-variant">Built for Android and available on Google Play.</p>
+        <p class="mt-1 text-body-lg text-on-surface-variant">Available on Google Play.</p>
       </div>
     </div>
-    <div class="mt-6 grid gap-3 sm:mt-8 sm:gap-4 md:grid-cols-2">
+    {featuredApp && <FeaturedApp app={featuredApp} class="mt-6 sm:mt-8" />}
+    <div class="mt-3 grid gap-3 sm:mt-4 sm:gap-4 md:grid-cols-2">
       {
-        apps.map((app, i) => (
+        otherApps.map((app, i) => (
           <AppCard
             app={app}
             tone={i % 2 === 0 ? 'primary' : 'tertiary'}
             class:list={[
               'rounded-xl-inc sm:rounded-2xl',
-              i === 0 && 'rounded-tl-md sm:rounded-tl-md',
-              i === apps.length - 1 && 'rounded-br-md sm:rounded-br-md',
+              i === otherApps.length - 1 && 'rounded-br-md sm:rounded-br-md',
             ]}
           />
         ))

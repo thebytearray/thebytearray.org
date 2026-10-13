@@ -1,7 +1,7 @@
 // Loads the studio's public repositories from the GitHub API in the browser.
 // Used by components/RepoList.astro.
 const REPOS_URL = 'https://api.github.com/users/thebytearray/repos?sort=updated&per_page=100';
-const CACHE_KEY = 'tba:github-repos:v1';
+const CACHE_KEY = 'tba:github-repos:v2';
 const CACHE_TTL_MS = 60 * 60 * 1000;
 const REQUEST_TIMEOUT_MS = 10_000;
 const MAX_RETRIES = 2;
@@ -75,9 +75,14 @@ function isRepo(value: unknown): value is Repo {
   );
 }
 
-/** Most stars first, then most recently pushed. */
+/** Active repositories before archived ones; then most stars first, then most recently pushed. */
 export function sortRepos(repos: Repo[]): Repo[] {
-  return [...repos].sort((a, b) => b.stars - a.stars || Date.parse(b.pushedAt) - Date.parse(a.pushedAt));
+  return [...repos].sort(
+    (a, b) =>
+      Number(a.archived) - Number(b.archived) ||
+      b.stars - a.stars ||
+      Date.parse(b.pushedAt) - Date.parse(a.pushedAt),
+  );
 }
 
 function readCache(): Repo[] | null {

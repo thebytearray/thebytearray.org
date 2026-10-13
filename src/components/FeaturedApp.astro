@@ -1,0 +1,63 @@
+---
+import { Image } from 'astro:assets';
+import type { App } from '../data/apps';
+import { brands } from '../data/site';
+import Chip from './Chip.astro';
+
+interface Props {
+  /** An app with a `featureGraphic`. */
+  app: App;
+  /** Heading level of the app name, to fit the page outline. */
+  heading?: 'h2' | 'h3';
+  class?: string;
+}
+
+const { app, heading: Heading = 'h3', class: className } = Astro.props;
+const details = `/apps/${app.slug}/`;
+const graphic = app.featureGraphic!;
+---
+
+<!-- The featured app: its store feature graphic as a banner, with the summary and actions below. -->
+<article
+  class:list={[
+    'overflow-clip rounded-xl-inc rounded-tl-md bg-surface-container sm:rounded-2xl sm:rounded-tl-md lg:rounded-3xl lg:rounded-tl-lg',
+    className,
+  ]}
+>
+  <a href={details} tabindex="-1" aria-hidden="true" class="group block overflow-clip">
+    <Image
+      src={graphic.src}
+      alt=""
+      widths={[640, 1024, 1536, 2048]}
+      sizes="(min-width: 72rem) 68rem, 100vw"
+      loading="eager"
+      class="w-full transition-[scale] duration-(--duration-spring-slow) ease-spring-slow group-hover:scale-[1.02]"
+    />
+  </a>
+
+  <div class="flex flex-col gap-5 p-6 sm:p-8 lg:flex-row lg:items-center lg:justify-between lg:gap-10 lg:px-10">
+    <div class="flex items-center gap-4 sm:gap-5">
+      <Image src={app.icon} alt="" width={128} height={128} class="size-14 flex-none rounded-[22%] sm:size-16" />
+      <div class="min-w-0">
+        <p class="text-label-lg text-primary">Featured app</p>
+        <Heading class="font-display text-headline-md sm:text-headline-lg">
+          <a href={details} class="rounded-sm decoration-2 underline-offset-4 hover:underline">{app.name}</a>
+        </Heading>
+        <p class="mt-1 max-w-prose text-body-lg text-pretty text-on-surface-variant">{app.summary}</p>
+      </div>
+    </div>
+    <ul class="flex flex-none flex-wrap gap-2">
+      <li>
+        <Chip href={details} variant="filled" aria-label={`${app.name} details`}>Details</Chip>
+      </li>
+      <li>
+        <Chip href={app.playStoreUrl} class="bg-surface" aria-label={`Get ${app.name} on Google Play`}>
+          <svg viewBox="0 0 24 24" class="size-4 flex-none" fill="currentColor" aria-hidden="true">
+            <path d={brands.googlePlay}></path>
+          </svg>
+          Google Play
+        </Chip>
+      </li>
+    </ul>
+  </div>
+</article>

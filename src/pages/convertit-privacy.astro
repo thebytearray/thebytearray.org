@@ -1,0 +1,10 @@
+---
+import PolicyDocument from '../components/PolicyDocument.astro';
+import { policies } from '../data/policies';
+---
+
+<!-- This URL is for the Google Play listing; keep the path stable. -->
+<PolicyDocument
+  policy={policies.convertit}
+  description="How Convertit handles your data: nothing is collected, and your files never leave your device."
+/>

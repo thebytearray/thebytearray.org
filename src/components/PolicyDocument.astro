@@ -23,7 +23,7 @@ const appPath = `/apps/${app.slug}/`;
   breadcrumbs={[
     { name: 'Apps', path: '/apps/' },
     { name: app.name, path: appPath },
-    { name: 'Privacy policy', path: app.privacyPath },
+    { name: 'Privacy policy', path: Astro.url.pathname },
   ]}
 >
   <div class="mx-auto max-w-2xl pt-4 sm:pt-10" data-pagefind-body>

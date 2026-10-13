@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import satori from 'satori';
 import sharp from 'sharp';
+import { logo } from './logo';
 import { scallop } from './shape';
 
 const root = process.cwd();
@@ -63,7 +64,15 @@ export async function card({ title, subtitle, iconFile }: CardOptions): Promise<
         shape(scallop(9, 0.07), color('primary-container'), { width: 560, height: 560 }),
       ),
       el('div', { display: 'flex', alignItems: 'center', gap: 16, fontSize: 34, fontWeight: 600 }, [
-        shape(scallop(8, 0.12), color('primary'), { width: 64, height: 64 }),
+        el(
+          'svg',
+          { width: 64, height: 64 },
+          [
+            el('path', {}, undefined, { d: logo.shape, fill: logo.black }),
+            el('path', {}, undefined, { d: logo.brackets, fill: logo.white }),
+          ],
+          { viewBox: logo.viewBox },
+        ),
         'thebytearray.org',
       ]),
       el('div', { display: 'flex', alignItems: 'center', gap: 44 }, [

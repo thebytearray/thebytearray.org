@@ -53,6 +53,7 @@ const organization = {
   '@type': 'Organization',
   '@id': `${home}#organization`,
   name: site.name,
+  legalName: site.company.name,
   alternateName: '[]byte',
   url: home,
   logo: new URL('/apple-touch-icon.png', Astro.site).href,
