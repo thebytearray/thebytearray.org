@@ -23,6 +23,10 @@ fi
 
 previous="$(readlink current || true)"
 
+# Releases are shared through the site directory's group, so whoever deploys
+# next (a person or CI) can prune this one.
+chmod -R g+rwX "releases/.$RELEASE.tmp"
+
 # The upload has a temporary name so a half-copied release is never visible.
 mv "releases/.$RELEASE.tmp" "releases/$RELEASE"
 

@@ -12,10 +12,13 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
+# Values already in the environment (CI) win over the file.
 if [ -f .env.deploy ]; then
-  set -a
-  . ./.env.deploy
-  set +a
+  while IFS='=' read -r name value; do
+    case "$name" in
+      DEPLOY_*) [ -n "${!name:-}" ] || export "$name=$value" ;;
+    esac
+  done < .env.deploy
 fi
 
 HOST="${DEPLOY_HOST:?Set DEPLOY_HOST (user@host) in .env.deploy or the environment}"
@@ -37,7 +40,9 @@ fi
 printf '%s\n' "$release" > dist/release.txt
 
 echo "Uploading release $release to $HOST"
-rsync -az --delete -e "${SSH[*]}" dist/ "$HOST:$APP/releases/.$release.tmp/"
+# No owner, group or permission bits are copied: the release takes the site
+# directory's group, and publish-release.sh makes it group-writable.
+rsync -rltz --delete -e "${SSH[*]}" dist/ "$HOST:$APP/releases/.$release.tmp/"
 
 "${SSH[@]}" "$HOST" \
   "SITE_DIR='$APP' SITE_HOST='$SITE_HOST' RELEASE='$release' KEEP_RELEASES='$KEEP' bash -s" \
