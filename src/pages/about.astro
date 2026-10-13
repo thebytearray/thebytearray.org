@@ -1,0 +1,122 @@
+---
+import Chip from '../components/Chip.astro';
+import Icon from '../components/Icon.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { apps } from '../data/apps';
+import { brands, site, team, workAreas } from '../data/site';
+import Base from '../layouts/Base.astro';
+
+const section = 'grid gap-x-10 gap-y-5 lg:grid-cols-[11rem_1fr]';
+const sectionTitle = 'font-display text-headline-md text-balance';
+---
+
+<Base
+  title="About"
+  description="The Byte Array makes software that solves real problems without trading away your privacy: Android apps, libraries and developer tools."
+  breadcrumbs={[{ name: 'About', path: '/about/' }]}
+>
+  <div data-pagefind-body>
+    <PageHeader
+      title="About The Byte Array"
+      lede="We make software that solves real problems without trading away your privacy. Much of our work is open source, so you can see how it works."
+      shape="clover"
+      accent="sunny"
+      tone="primary"
+    />
+
+    <div class="flex flex-col gap-16 sm:gap-24">
+      <section aria-labelledby="what-we-build" class={section}>
+        <h2 id="what-we-build" class={sectionTitle}>What we build</h2>
+        <ul class="grid gap-3 sm:gap-4 md:grid-cols-3">
+          {
+            workAreas.map(({ title, description, icon }, i) => (
+              <li
+                class:list={[
+                  'rounded-xl bg-surface-container p-6',
+                  i === 0 && 'rounded-tl-2xl sm:rounded-tl-3xl',
+                ]}
+              >
+                <span class="grid size-12 place-items-center rounded-lg bg-primary-container text-on-primary-container">
+                  <Icon name={icon} class="text-[1.5rem]" />
+                </span>
+                <h3 class="mt-5 font-display text-title-lg">{title}</h3>
+                <p class="mt-2 text-body-md text-on-surface-variant">{description}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      <section aria-labelledby="data" class={section}>
+        <h2 id="data" class={sectionTitle}>How we handle data</h2>
+        <div class="max-w-2xl space-y-4 text-body-lg text-pretty">
+          <p>
+            Our apps work on your device. They don’t include analytics, ads or tracking, and none of them ask you to
+            create an account. When an app needs the network, it only talks to devices or servers you choose.
+          </p>
+          <p>
+            We share code when it helps the community, and we keep our policies short and plain about the rest. Read
+            the full policies for{' '}
+            {
+              apps.map((app, i) => (
+                <>
+                  {i > 0 && ' and '}
+                  <a href={app.privacyPath} class="text-link">{app.name}</a>
+                </>
+              ))
+            }.
+          </p>
+        </div>
+      </section>
+
+      <section aria-labelledby="team" class={section}>
+        <h2 id="team" class={sectionTitle}>Who we are</h2>
+        <ul class="grid max-w-3xl gap-3 sm:grid-cols-2 sm:gap-4">
+          {
+            team.map((member) => (
+              <li class="flex items-start gap-4 rounded-xl bg-surface-container p-6">
+                <img
+                  src={member.avatar}
+                  alt=""
+                  width="56"
+                  height="56"
+                  loading="lazy"
+                  class="size-14 flex-none rounded-full bg-surface-container-highest"
+                />
+                <div class="min-w-0">
+                  <h3 class="font-display text-title-lg">{member.name}</h3>
+                  <p class="text-body-md text-on-surface-variant">{member.role}</p>
+                  <p class="mt-2 text-body-md">{member.bio}</p>
+                  <a href={member.github} target="_blank" rel="noopener" class="text-link mt-3 inline-block text-body-md">
+                    GitHub profile
+                  </a>
+                </div>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      <section aria-labelledby="license" class={section}>
+        <h2 id="license" class={sectionTitle}>Open source</h2>
+        <div>
+          <p class="max-w-2xl text-body-lg text-pretty">
+            OpenLoader and this website are open source under {site.license.name}. Our libraries and tools are on
+            GitHub too, each with its own license.
+          </p>
+          <ul class="mt-7 flex flex-wrap gap-2 sm:gap-2.5">
+            <li><Chip href="/open-source/" variant="filled">Browse repositories</Chip></li>
+            <li>
+              <Chip href={site.github}>
+                <svg viewBox="0 0 24 24" class="size-[1.125rem] flex-none" fill="currentColor" aria-hidden="true">
+                  <path d={brands.github}></path>
+                </svg>
+                GitHub
+              </Chip>
+            </li>
+          </ul>
+        </div>
+      </section>
+    </div>
+  </div>
+</Base>

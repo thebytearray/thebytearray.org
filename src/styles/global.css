@@ -1,0 +1,505 @@
+@import 'tailwindcss';
+@import './tokens.generated.css';
+
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+/*
+ * Material 3 / M3 Expressive design tokens.
+ * Colors come from tokens.generated.css (seed: src/styles/seed.json) and are
+ * exposed as Tailwind utilities: bg-primary, text-on-surface-variant, ...
+ */
+@theme inline {
+  --color-*: initial;
+  --color-primary: var(--md-sys-color-primary);
+  --color-on-primary: var(--md-sys-color-on-primary);
+  --color-primary-container: var(--md-sys-color-primary-container);
+  --color-on-primary-container: var(--md-sys-color-on-primary-container);
+  --color-secondary: var(--md-sys-color-secondary);
+  --color-on-secondary: var(--md-sys-color-on-secondary);
+  --color-secondary-container: var(--md-sys-color-secondary-container);
+  --color-on-secondary-container: var(--md-sys-color-on-secondary-container);
+  --color-tertiary: var(--md-sys-color-tertiary);
+  --color-on-tertiary: var(--md-sys-color-on-tertiary);
+  --color-tertiary-container: var(--md-sys-color-tertiary-container);
+  --color-on-tertiary-container: var(--md-sys-color-on-tertiary-container);
+  --color-error: var(--md-sys-color-error);
+  --color-on-error: var(--md-sys-color-on-error);
+  --color-error-container: var(--md-sys-color-error-container);
+  --color-on-error-container: var(--md-sys-color-on-error-container);
+  --color-surface: var(--md-sys-color-surface);
+  --color-on-surface: var(--md-sys-color-on-surface);
+  --color-surface-variant: var(--md-sys-color-surface-variant);
+  --color-on-surface-variant: var(--md-sys-color-on-surface-variant);
+  --color-surface-dim: var(--md-sys-color-surface-dim);
+  --color-surface-bright: var(--md-sys-color-surface-bright);
+  --color-surface-container-lowest: var(--md-sys-color-surface-container-lowest);
+  --color-surface-container-low: var(--md-sys-color-surface-container-low);
+  --color-surface-container: var(--md-sys-color-surface-container);
+  --color-surface-container-high: var(--md-sys-color-surface-container-high);
+  --color-surface-container-highest: var(--md-sys-color-surface-container-highest);
+  --color-outline: var(--md-sys-color-outline);
+  --color-outline-variant: var(--md-sys-color-outline-variant);
+  --color-inverse-surface: var(--md-sys-color-inverse-surface);
+  --color-inverse-on-surface: var(--md-sys-color-inverse-on-surface);
+  --color-inverse-primary: var(--md-sys-color-inverse-primary);
+  --color-shadow: var(--md-sys-color-shadow);
+  --color-scrim: var(--md-sys-color-scrim);
+}
+
+@theme {
+  /* Typefaces */
+  --font-display: 'Bricolage Grotesque Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* Type scale: display / headline / title / body / label */
+  --text-*: initial;
+  --text-display-lg: 3.5625rem;
+  --text-display-lg--line-height: 4rem;
+  --text-display-lg--letter-spacing: -0.03em;
+  --text-display-lg--font-weight: 700;
+  --text-display-md: 2.8125rem;
+  --text-display-md--line-height: 3.25rem;
+  --text-display-md--letter-spacing: -0.025em;
+  --text-display-md--font-weight: 700;
+  --text-display-sm: 2.25rem;
+  --text-display-sm--line-height: 2.75rem;
+  --text-display-sm--letter-spacing: -0.02em;
+  --text-display-sm--font-weight: 700;
+
+  --text-headline-lg: 2rem;
+  --text-headline-lg--line-height: 2.5rem;
+  --text-headline-lg--letter-spacing: -0.015em;
+  --text-headline-lg--font-weight: 600;
+  --text-headline-md: 1.75rem;
+  --text-headline-md--line-height: 2.25rem;
+  --text-headline-md--letter-spacing: -0.015em;
+  --text-headline-md--font-weight: 600;
+  --text-headline-sm: 1.5rem;
+  --text-headline-sm--line-height: 2rem;
+  --text-headline-sm--letter-spacing: -0.01em;
+  --text-headline-sm--font-weight: 600;
+
+  --text-title-lg: 1.375rem;
+  --text-title-lg--line-height: 1.75rem;
+  --text-title-lg--letter-spacing: -0.005em;
+  --text-title-lg--font-weight: 600;
+  --text-title-md: 1rem;
+  --text-title-md--line-height: 1.5rem;
+  --text-title-md--letter-spacing: 0.005em;
+  --text-title-md--font-weight: 600;
+  --text-title-sm: 0.875rem;
+  --text-title-sm--line-height: 1.25rem;
+  --text-title-sm--letter-spacing: 0.005em;
+  --text-title-sm--font-weight: 600;
+
+  --text-body-lg: 1.0625rem;
+  --text-body-lg--line-height: 1.75rem;
+  --text-body-lg--letter-spacing: 0;
+  --text-body-lg--font-weight: 400;
+  --text-body-md: 0.9375rem;
+  --text-body-md--line-height: 1.5rem;
+  --text-body-md--letter-spacing: 0;
+  --text-body-md--font-weight: 400;
+  --text-body-sm: 0.8125rem;
+  --text-body-sm--line-height: 1.25rem;
+  --text-body-sm--letter-spacing: 0.005em;
+  --text-body-sm--font-weight: 400;
+
+  --text-label-lg: 0.875rem;
+  --text-label-lg--line-height: 1.25rem;
+  --text-label-lg--letter-spacing: 0.01em;
+  --text-label-lg--font-weight: 500;
+  --text-label-md: 0.75rem;
+  --text-label-md--line-height: 1rem;
+  --text-label-md--letter-spacing: 0.03em;
+  --text-label-md--font-weight: 500;
+  --text-label-sm: 0.6875rem;
+  --text-label-sm--line-height: 1rem;
+  --text-label-sm--letter-spacing: 0.04em;
+  --text-label-sm--font-weight: 500;
+
+  /* Shape scale (corner radii), including the expressive large sizes */
+  --radius-*: initial;
+  --radius-xs: 0.25rem;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-lg-inc: 1.25rem;
+  --radius-xl: 1.75rem;
+  --radius-xl-inc: 2rem;
+  --radius-2xl: 3rem;
+  --radius-3xl: 4.5rem;
+  --radius-full: 624.9375rem;
+
+  /* Elevation levels 1-5 */
+  --shadow-*: initial;
+  --shadow-level1: 0 1px 2px rgb(0 0 0 / 0.3), 0 1px 3px 1px rgb(0 0 0 / 0.15);
+  --shadow-level2: 0 1px 2px rgb(0 0 0 / 0.3), 0 2px 6px 2px rgb(0 0 0 / 0.15);
+  --shadow-level3: 0 1px 3px rgb(0 0 0 / 0.3), 0 4px 8px 3px rgb(0 0 0 / 0.15);
+  --shadow-level4: 0 2px 3px rgb(0 0 0 / 0.3), 0 6px 10px 4px rgb(0 0 0 / 0.15);
+  --shadow-level5: 0 4px 4px rgb(0 0 0 / 0.3), 0 8px 12px 6px rgb(0 0 0 / 0.15);
+
+  /* Motion: classic M3 easing */
+  --ease-*: initial;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-standard-decelerate: cubic-bezier(0, 0, 0, 1);
+  --ease-standard-accelerate: cubic-bezier(0.3, 0, 1, 1);
+  --ease-emphasized: cubic-bezier(0.2, 0, 0, 1);
+  --ease-emphasized-decelerate: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --ease-emphasized-accelerate: cubic-bezier(0.3, 0, 0.8, 0.15);
+  /* Motion: M3 Expressive springs. "spatial" overshoots (position, size,
+     shape); "effects" does not (color, opacity). */
+  --ease-spring-fast: cubic-bezier(0.42, 1.67, 0.21, 0.9);
+  --ease-spring: cubic-bezier(0.38, 1.21, 0.22, 1);
+  --ease-spring-slow: cubic-bezier(0.39, 1.29, 0.35, 0.98);
+  --ease-effects-fast: cubic-bezier(0.31, 0.94, 0.34, 1);
+  --ease-effects: cubic-bezier(0.34, 0.8, 0.34, 1);
+  --ease-effects-slow: cubic-bezier(0.34, 0.88, 0.34, 1);
+
+  /* Motion: durations (use as duration-(--duration-medium2)) */
+  --duration-short1: 50ms;
+  --duration-short2: 100ms;
+  --duration-short3: 150ms;
+  --duration-short4: 200ms;
+  --duration-medium1: 250ms;
+  --duration-medium2: 300ms;
+  --duration-medium3: 350ms;
+  --duration-medium4: 400ms;
+  --duration-long1: 450ms;
+  --duration-long2: 500ms;
+  --duration-long3: 550ms;
+  --duration-long4: 600ms;
+  --duration-spring-fast: 350ms;
+  --duration-spring: 500ms;
+  --duration-spring-slow: 650ms;
+
+}
+
+@keyframes drift {
+  to {
+    rotate: 200deg;
+  }
+}
+
+/*
+ * Decorative shapes turn as the page scrolls rather than spinning on their
+ * own, so nothing moves unless the reader moves it. Browsers without
+ * scroll-driven animations show the shape still.
+ */
+@utility animate-drift {
+  @supports (animation-timeline: scroll()) {
+    animation: drift linear both;
+    animation-timeline: scroll(root);
+  }
+}
+
+/* Icons: Material Symbols Rounded, subset by `npm run icons` and self-hosted. */
+@font-face {
+  font-family: 'Material Symbols Rounded';
+  font-style: normal;
+  font-weight: 400;
+  font-display: block;
+  /* Bundled, so the file name carries a content hash: adding an icon can never
+     leave a browser holding a cached font that lacks it. */
+  src: url('../assets/fonts/material-symbols-rounded.woff2') format('woff2');
+}
+
+@layer base {
+  html {
+    background-color: var(--color-surface);
+    color: var(--color-on-surface);
+    font-family: var(--font-sans);
+    font-size: 100%;
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 5.5rem;
+    /* Set on both: html's value goes to the viewport, so body's really clips
+       decorative shapes that bleed off the edge. */
+    overflow-x: clip;
+  }
+
+  body {
+    min-height: 100dvh;
+    overflow-x: clip;
+    font-size: var(--text-body-lg);
+    line-height: var(--text-body-lg--line-height);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Tailwind resets buttons to the default arrow; anything clickable gets the hand. */
+  button:not(:disabled),
+  [role='button'],
+  summary {
+    cursor: pointer;
+  }
+
+  ::selection {
+    background-color: var(--color-primary);
+    color: var(--color-on-primary);
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 3px;
+  }
+
+  /* Shiki `css-variables` theme, mapped to M3 roles so code follows the scheme */
+  :root {
+    --astro-code-foreground: var(--color-on-surface);
+    --astro-code-background: var(--color-surface-container);
+    --astro-code-token-constant: var(--color-tertiary);
+    --astro-code-token-string: var(--color-tertiary);
+    --astro-code-token-string-expression: var(--color-tertiary);
+    --astro-code-token-comment: var(--color-on-surface-variant);
+    --astro-code-token-keyword: var(--color-primary);
+    --astro-code-token-parameter: var(--color-on-surface-variant);
+    --astro-code-token-function: var(--color-secondary);
+    --astro-code-token-punctuation: var(--color-on-surface-variant);
+    --astro-code-token-link: var(--color-primary);
+  }
+}
+
+/*
+ * M3 Expressive transition: movement and shape use the overshooting spring,
+ * while color and opacity use the non-overshooting "effects" curve. Putting
+ * color on a spring makes it overshoot and flicker.
+ */
+@utility transition-expressive {
+  transition:
+    translate var(--duration-spring-fast) var(--ease-spring-fast),
+    rotate var(--duration-spring-fast) var(--ease-spring-fast),
+    scale var(--duration-spring-fast) var(--ease-spring-fast),
+    border-radius var(--duration-spring-fast) var(--ease-spring-fast),
+    gap var(--duration-spring-fast) var(--ease-spring-fast),
+    color var(--duration-short4) var(--ease-effects),
+    background-color var(--duration-short4) var(--ease-effects),
+    border-color var(--duration-short4) var(--ease-effects),
+    opacity var(--duration-short4) var(--ease-effects);
+}
+
+@layer components {
+  /* `hidden` is the fallback for browsers without `overflow: clip`. */
+  .bleed-clip {
+    overflow-x: hidden;
+    overflow-x: clip;
+  }
+
+  /* Material Symbols Rounded, rendered through ligatures. */
+  .icon {
+    font-family: 'Material Symbols Rounded';
+    font-weight: 400;
+    font-style: normal;
+    font-size: 1.25rem;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    white-space: nowrap;
+    direction: ltr;
+    display: inline-block;
+    flex: none;
+    width: 1em;
+    height: 1em;
+    overflow: hidden;
+    user-select: none;
+    font-variation-settings: 'FILL' var(--icon-fill, 0);
+    transition: font-variation-settings var(--duration-short4) var(--ease-effects);
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings: 'liga';
+  }
+
+  /* Hovering/focusing a .fill-on-hover ancestor fills its icons. */
+  .fill-on-hover:is(:hover, :focus-visible) {
+    --icon-fill: 1;
+  }
+
+  /* Pill chip. The corner radius springs from full to large on hover: the
+     M3 Expressive "shape morph" interaction. */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    height: 2.5rem;
+    padding-inline: 1rem;
+    border-radius: 1.25rem;
+    border: 1px solid var(--color-outline-variant);
+    font-size: var(--text-label-lg);
+    line-height: var(--text-label-lg--line-height);
+    letter-spacing: var(--text-label-lg--letter-spacing);
+    font-weight: var(--text-label-lg--font-weight);
+    white-space: nowrap;
+    transition:
+      border-radius var(--duration-spring-fast) var(--ease-spring-fast),
+      background-color var(--duration-short4) var(--ease-effects),
+      border-color var(--duration-short4) var(--ease-effects),
+      color var(--duration-short4) var(--ease-effects);
+  }
+
+  .chip:is(a, button):is(:hover, :focus-visible) {
+    border-radius: 0.75rem;
+    background-color: var(--color-secondary-container);
+    border-color: transparent;
+    color: var(--color-on-secondary-container);
+  }
+
+  .chip:is(a, button):active {
+    border-radius: 0.5rem;
+  }
+
+  .chip-filled {
+    background-color: var(--color-primary);
+    border-color: transparent;
+    color: var(--color-on-primary);
+  }
+
+  .chip-filled:is(a, button):is(:hover, :focus-visible) {
+    background-color: var(--color-primary);
+    color: var(--color-on-primary);
+    box-shadow: var(--shadow-level1);
+  }
+
+  .chip-sm {
+    height: 1.75rem;
+    padding-inline: 0.75rem;
+    border-radius: 0.875rem;
+    font-size: var(--text-label-md);
+    letter-spacing: var(--text-label-md--letter-spacing);
+  }
+
+  /* Tonal chip that adapts to whatever container it sits in. */
+  .chip-tonal {
+    border-color: transparent;
+    background-color: color-mix(in srgb, currentColor 10%, transparent);
+  }
+
+  /* A button that reads as a link in running text (it opens the mail app). */
+  .text-link {
+    color: var(--color-primary);
+    font-weight: 500;
+    text-align: start;
+    text-decoration: underline;
+    text-decoration-thickness: 0.09em;
+    text-underline-offset: 0.2em;
+    border-radius: var(--radius-xs);
+  }
+
+  /* Outlined text field: a label above an input, select or textarea, with an
+     optional error or hint below. */
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+
+  .field-label {
+    font-size: var(--text-label-lg);
+    line-height: var(--text-label-lg--line-height);
+    letter-spacing: var(--text-label-lg--letter-spacing);
+    font-weight: var(--text-label-lg--font-weight);
+    color: var(--color-on-surface-variant);
+  }
+
+  .field-input {
+    width: 100%;
+    min-height: 3.5rem;
+    padding: 0.875rem 1rem;
+    border: 1px solid var(--color-outline);
+    border-radius: var(--radius-md);
+    background-color: transparent;
+    color: var(--color-on-surface);
+    font-size: var(--text-body-lg);
+    line-height: var(--text-body-lg--line-height);
+    transition:
+      border-color var(--duration-short4) var(--ease-effects),
+      box-shadow var(--duration-short4) var(--ease-effects),
+      border-radius var(--duration-spring-fast) var(--ease-spring-fast);
+  }
+
+  .field-input::placeholder {
+    color: var(--color-on-surface-variant);
+    opacity: 0.8;
+  }
+
+  .field-input:hover {
+    border-color: var(--color-on-surface);
+  }
+
+  /* The thicker border is the focus indicator, as on M3 outlined fields. */
+  .field-input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    border-radius: var(--radius-lg);
+    box-shadow: inset 0 0 0 1px var(--color-primary);
+  }
+
+  .field-input[aria-invalid='true'] {
+    border-color: var(--color-error);
+  }
+
+  .field-input[aria-invalid='true']:focus {
+    box-shadow: inset 0 0 0 1px var(--color-error);
+  }
+
+  .field-error,
+  .field-hint {
+    padding-inline: 1rem;
+    font-size: var(--text-body-sm);
+    line-height: var(--text-body-sm--line-height);
+    color: var(--color-on-surface-variant);
+  }
+
+  .field-error {
+    color: var(--color-error);
+  }
+}
+
+/*
+ * Page transitions (Astro <ClientRouter />). The header stays put; the page
+ * content exits quickly and the new content rises in on the emphasized curve.
+ */
+body > header {
+  view-transition-name: site-header;
+}
+
+#main {
+  view-transition-name: page;
+}
+
+::view-transition-old(page) {
+  animation: page-out var(--duration-short3) var(--ease-emphasized-accelerate) both;
+}
+
+::view-transition-new(page) {
+  animation: page-in var(--duration-medium4) var(--ease-emphasized-decelerate) var(--duration-short2) both;
+}
+
+@keyframes page-out {
+  to {
+    opacity: 0;
+    translate: 0 -0.5rem;
+  }
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    translate: 0 1.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}

@@ -1,0 +1,13 @@
+---
+import type { IconName } from '../data/icons';
+
+interface Props {
+  name: IconName;
+  class?: string;
+}
+
+const { name, class: className } = Astro.props;
+---
+
+<!-- The icon name is a font ligature, not page text: keep it out of the search index. -->
+<span class:list={['icon', className]} aria-hidden="true" data-pagefind-ignore>{name}</span>

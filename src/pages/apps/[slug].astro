@@ -1,0 +1,149 @@
+---
+import { Image, getImage } from 'astro:assets';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import Chip from '../../components/Chip.astro';
+import FeatureList from '../../components/FeatureList.astro';
+import ScreenshotGallery from '../../components/ScreenshotGallery.astro';
+import { apps, type App } from '../../data/apps';
+import { brands, site } from '../../data/site';
+import Base from '../../layouts/Base.astro';
+
+export function getStaticPaths() {
+  return apps.map((app) => ({ params: { slug: app.slug }, props: { app } }));
+}
+
+interface Props {
+  app: App;
+}
+
+const { app } = Astro.props;
+const path = `/apps/${app.slug}/`;
+const absolute = (src: string) => new URL(src, Astro.site).href;
+
+const icon = await getImage({ src: app.icon, width: 512 });
+const shots = await Promise.all(app.screenshots.map((shot) => getImage({ src: shot.src, width: 720 })));
+
+const details = [
+  { term: 'Platform', description: app.requirements },
+  { term: 'Package name', description: app.packageId, code: true },
+  ...(app.license ? [{ term: 'License', description: app.license }] : []),
+];
+
+const appLd = {
+  '@type': 'MobileApplication',
+  name: app.name,
+  description: app.description,
+  url: absolute(path),
+  operatingSystem: 'Android',
+  applicationCategory: app.storeCategory,
+  installUrl: app.playStoreUrl,
+  downloadUrl: app.playStoreUrl,
+  image: absolute(icon.src),
+  screenshot: shots.map((shot) => absolute(shot.src)),
+  featureList: app.features.map((feature) => feature.title),
+  isAccessibleForFree: true,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  ...(app.license && { license: site.license.url }),
+  ...(app.sourceUrl && { codeRepository: app.sourceUrl }),
+};
+
+const onPanel = 'border-transparent bg-surface text-on-surface';
+const sectionTitle = 'font-display text-headline-md';
+---
+
+<Base
+  title={`${app.name}: ${app.tagline}`}
+  description={app.summary}
+  image={`/og/${app.slug}.png`}
+  imageAlt={`${app.name}: ${app.tagline}`}
+  breadcrumbs={[
+    { name: 'Apps', path: '/apps/' },
+    { name: app.name, path },
+  ]}
+  jsonLd={[appLd]}
+>
+  <div class="pt-2 sm:pt-6" data-pagefind-body>
+    <Breadcrumbs items={[{ label: 'Apps', href: '/apps/' }, { label: app.name }]} />
+
+    <header
+      class="mt-4 rounded-xl-inc rounded-tl-md bg-primary-container p-6 text-on-primary-container sm:rounded-2xl sm:rounded-tl-md sm:p-10 lg:rounded-3xl lg:rounded-tl-lg lg:p-14"
+    >
+      <div class="flex items-center gap-4 sm:gap-6">
+        <Image
+          src={app.icon}
+          alt=""
+          width={192}
+          height={192}
+          loading="eager"
+          class="size-16 flex-none rounded-[22%] sm:size-24"
+        />
+        <div class="min-w-0">
+          <h1 class="font-display text-[clamp(2.25rem,8vw,4.5rem)] leading-none font-extrabold tracking-[-0.035em]">
+            {app.name}
+          </h1>
+          <p class="mt-2 font-display text-title-lg text-pretty opacity-85 sm:text-headline-sm">{app.tagline}</p>
+        </div>
+      </div>
+
+      <p class="mt-6 max-w-2xl text-body-lg text-pretty sm:mt-8">{app.description}</p>
+
+      <ul class="mt-7 flex flex-wrap gap-2 sm:mt-9 sm:gap-2.5">
+        <li>
+          <Chip href={app.playStoreUrl} variant="filled">
+            <svg viewBox="0 0 24 24" class="size-4 flex-none" fill="currentColor" aria-hidden="true">
+              <path d={brands.googlePlay}></path>
+            </svg>
+            Get it on Google Play
+          </Chip>
+        </li>
+        {
+          app.sourceUrl && (
+            <li>
+              <Chip href={app.sourceUrl} class={onPanel}>
+                <svg viewBox="0 0 24 24" class="size-[1.125rem] flex-none" fill="currentColor" aria-hidden="true">
+                  <path d={brands.github} />
+                </svg>
+                Source code
+              </Chip>
+            </li>
+          )
+        }
+        <li>
+          <Chip href={app.privacyPath} icon="shield" class={onPanel}>Privacy policy</Chip>
+        </li>
+      </ul>
+    </header>
+
+    <section aria-labelledby="screenshots" class="mt-14 sm:mt-20">
+      <h2 id="screenshots" class={sectionTitle}>Screenshots</h2>
+      <div class="mt-5 sm:mt-6">
+        <ScreenshotGallery appName={app.name} screenshots={app.screenshots} />
+      </div>
+    </section>
+
+    <section aria-labelledby="features" class="mt-14 grid gap-x-10 gap-y-5 sm:mt-20 lg:grid-cols-[11rem_1fr]">
+      <h2 id="features" class={sectionTitle}>What it does</h2>
+      <FeatureList features={app.features} />
+    </section>
+
+    <section aria-labelledby="details" class="mt-14 grid gap-x-10 gap-y-5 sm:mt-20 lg:grid-cols-[11rem_1fr]">
+      <h2 id="details" class={sectionTitle}>Details</h2>
+      <div>
+        <dl class="divide-y divide-outline-variant border-y border-outline-variant">
+          {
+            details.map(({ term, description, code }) => (
+              <div class="grid gap-x-6 gap-y-1 py-4 sm:grid-cols-[10rem_1fr] sm:py-5">
+                <dt class="text-label-lg text-on-surface-variant">{term}</dt>
+                <dd>{code ? <code class="font-mono text-body-md break-all">{description}</code> : description}</dd>
+              </div>
+            ))
+          }
+        </dl>
+        <p class="mt-8 text-on-surface-variant">
+          Questions or feedback about {app.name}? Email{' '}
+          <button type="button" data-mailto={site.mail} class="text-link">{site.emailDisplay}</button>.
+        </p>
+      </div>
+    </section>
+  </div>
+</Base>

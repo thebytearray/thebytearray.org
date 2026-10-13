@@ -1,0 +1,34 @@
+---
+import Chip from '../components/Chip.astro';
+import PageHeader from '../components/PageHeader.astro';
+import RepoList from '../components/RepoList.astro';
+import { brands, site } from '../data/site';
+import Base from '../layouts/Base.astro';
+---
+
+<Base
+  title="Open source"
+  description="Libraries, developer tools and apps that The Byte Array publishes on GitHub, including OpenLoader and wireling."
+  breadcrumbs={[{ name: 'Open source', path: '/open-source/' }]}
+>
+  <div data-pagefind-body>
+    <PageHeader
+      title="Open source"
+      lede="Libraries, developer tools and apps we publish on GitHub. Read the code, open an issue, or build on it."
+      shape="sunny"
+      accent="pentagon"
+      tone="secondary"
+    >
+      <p class="mt-7 sm:mt-9">
+        <Chip href={site.github} class="bg-surface">
+          <svg viewBox="0 0 24 24" class="size-[1.125rem] flex-none" fill="currentColor" aria-hidden="true">
+            <path d={brands.github}></path>
+          </svg>
+          github.com/thebytearray
+        </Chip>
+      </p>
+    </PageHeader>
+  </div>
+
+  <RepoList />
+</Base>

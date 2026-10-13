@@ -1,0 +1,163 @@
+---
+import '@fontsource-variable/bricolage-grotesque/standard.css';
+import '@fontsource-variable/inter';
+import '@fontsource-variable/jetbrains-mono';
+import '../styles/global.css';
+
+import type { ComponentProps } from 'astro/types';
+import { ClientRouter } from 'astro:transitions';
+import iconFont from '../assets/fonts/material-symbols-rounded.woff2?url';
+import CommandPalette from '../components/CommandPalette.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import Seo from '../components/Seo.astro';
+import { site } from '../data/site';
+
+type Props = ComponentProps<typeof Seo>;
+---
+
+<!doctype html>
+<html lang={site.locale}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Sets the theme and accent color before first paint (no flash) and handles their controls. -->
+    <script is:inline>
+      (() => {
+        const key = 'theme';
+        const system = matchMedia('(prefers-color-scheme: dark)');
+        const systemTheme = () => (system.matches ? 'dark' : 'light');
+        const saved = () => {
+          try {
+            const value = localStorage.getItem(key);
+            return value === 'light' || value === 'dark' ? value : null;
+          } catch {
+            return null;
+          }
+        };
+        // The accent color chosen on the home page (components/ColorPicker.astro);
+        // none saved means the default.
+        const colorKey = 'color';
+        const savedColor = () => {
+          try {
+            const value = localStorage.getItem(colorKey);
+            return value && /^[a-z]+$/.test(value) ? value : null;
+          } catch {
+            return null;
+          }
+        };
+        const apply = (root, theme) => {
+          root.dataset.theme = theme ?? saved() ?? systemTheme();
+          const color = savedColor();
+          if (color) root.dataset.color = color;
+          else delete root.dataset.color;
+        };
+        // Tell assistive tech whether the dark theme is on.
+        const syncToggles = () => {
+          const dark = document.documentElement.dataset.theme === 'dark';
+          for (const toggle of document.querySelectorAll('[data-theme-toggle]')) {
+            toggle.setAttribute('aria-pressed', String(dark));
+          }
+          const color = document.documentElement.dataset.color ?? '';
+          for (const option of document.querySelectorAll('[data-color-option]')) {
+            option.setAttribute('aria-pressed', String(option.dataset.colorOption === color));
+          }
+        };
+
+        apply(document.documentElement);
+        document.addEventListener('DOMContentLoaded', syncToggles);
+        document.addEventListener('astro:page-load', syncToggles);
+        // Keep following the system until a choice is saved.
+        system.addEventListener('change', () => {
+          apply(document.documentElement);
+          syncToggles();
+        });
+        // View transitions swap in a fresh <html>; theme it before it is shown.
+        document.addEventListener('astro:before-swap', (event) => {
+          apply(event.newDocument.documentElement, document.documentElement.dataset.theme);
+        });
+        document.addEventListener('click', (event) => {
+          const option = event.target instanceof Element && event.target.closest('[data-color-option]');
+          if (!option) return;
+          const color = option.dataset.colorOption;
+          try {
+            // The default color is stored as "nothing saved".
+            if (color) localStorage.setItem(colorKey, color);
+            else localStorage.removeItem(colorKey);
+          } catch {}
+          apply(document.documentElement, document.documentElement.dataset.theme);
+          syncToggles();
+        });
+        document.addEventListener('click', (event) => {
+          if (!(event.target instanceof Element) || !event.target.closest('[data-theme-toggle]')) return;
+          const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+          try {
+            // Choosing what the system already uses means "follow the system
+            // again", so the choice is forgotten rather than pinned.
+            if (next === systemTheme()) localStorage.removeItem(key);
+            else localStorage.setItem(key, next);
+          } catch {}
+          apply(document.documentElement, next);
+          syncToggles();
+        });
+
+        // Elements with `data-mailto` open the mail app; the address is decoded
+        // only at that moment.
+        document.addEventListener('click', (event) => {
+          const link = event.target instanceof Element && event.target.closest('[data-mailto]');
+          if (link) location.href = `mailto:${atob(link.dataset.mailto)}`;
+        });
+
+        // Email chips carry the address base64-encoded; clicking one decodes it
+        // and copies the plain address, which never appears in the HTML.
+        document.addEventListener('click', async (event) => {
+          const chip = event.target instanceof Element && event.target.closest('[data-mail]');
+          if (!chip) return;
+          const label = chip.querySelector('[data-mail-label]');
+          const address = atob(chip.dataset.mail);
+          try {
+            await navigator.clipboard.writeText(address);
+          } catch {
+            // Copying is blocked: show the address so it can be selected by hand.
+            if (label) label.textContent = address;
+            return;
+          }
+          if (!label || label.dataset.busy) return;
+          const original = label.textContent;
+          label.dataset.busy = 'true';
+          label.textContent = 'Copied';
+          setTimeout(() => {
+            label.textContent = original;
+            delete label.dataset.busy;
+          }, 1800);
+        });
+      })();
+    </script>
+    <Seo {...Astro.props} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="preload" href={iconFont} as="font" type="font/woff2" crossorigin />
+    <ClientRouter />
+  </head>
+  <body class="flex flex-col">
+    <a
+      href="#main"
+      class="sr-only rounded-full bg-primary px-5 py-3 text-label-lg text-on-primary focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50"
+    >
+      Skip to content
+    </a>
+    <Header />
+    <!-- Decorative shapes bleed past the content column; this full-width
+         wrapper cuts them off at the screen edge so the page is never wider
+         than the viewport, in any browser. -->
+    <div class="bleed-clip flex-1">
+      <main id="main" class="mx-auto w-full max-w-6xl px-4 sm:px-8">
+        <slot />
+      </main>
+    </div>
+    <Footer />
+    <CommandPalette />
+  </body>
+</html>

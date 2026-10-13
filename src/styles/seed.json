@@ -1,0 +1,9 @@
+{
+  "seed": "#3DDC84",
+  "name": "Android",
+  "alternates": {
+    "Kotlin": "#7F52FF",
+    "Go": "#00ADD8",
+    "Swift": "#F05138"
+  }
+}

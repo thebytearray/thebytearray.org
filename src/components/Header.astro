@@ -1,0 +1,119 @@
+---
+import { nav, site } from '../data/site';
+import { getPosts } from '../lib/posts';
+import Shape from './Shape.astro';
+import Icon from './Icon.astro';
+import ThemeToggle from './ThemeToggle.astro';
+
+// Don't send visitors to an empty blog: the link appears with the first post.
+const hasPosts = (await getPosts()).length > 0;
+const links = nav.filter(({ href }) => href !== '/blog/' || hasPosts);
+const path = Astro.url.pathname;
+const isActive = (href: string) => path.startsWith(href);
+
+const iconButton =
+  'fill-on-hover grid size-10 flex-none place-items-center rounded-full text-on-surface-variant transition-expressive hover:bg-secondary-container hover:text-on-secondary-container active:scale-90 sm:size-11';
+---
+
+<header class="sticky top-0 z-40 bg-surface/80 backdrop-blur-md">
+  <div class="mx-auto flex w-full max-w-6xl items-center justify-between gap-2 px-4 py-3 sm:gap-4 sm:px-8 sm:py-4">
+    <a href="/" class="group flex items-center gap-3 rounded-full pr-2" aria-label={`${site.name}, home`}>
+      <Shape
+        lobes={8}
+        depth={0.12}
+        morphTo="clover"
+        class="size-9 text-primary transition-[rotate] duration-(--duration-spring-slow) ease-spring-slow group-hover:rotate-90 sm:size-10"
+      />
+      <span class="font-mono text-title-lg font-bold tracking-tight" aria-hidden="true">[]byte</span>
+    </a>
+
+    <div class="flex items-center gap-1 sm:gap-2">
+      <nav aria-label="Main" class="max-md:hidden">
+        <ul class="flex items-center gap-1 rounded-full bg-surface-container p-1">
+          {
+            links.map(({ label, href }) => (
+              <li>
+                <a
+                  href={href}
+                  aria-current={isActive(href) ? 'page' : undefined}
+                  class="block rounded-[1.25rem] px-4 py-2 text-label-lg whitespace-nowrap text-on-surface-variant transition-expressive hover:rounded-md hover:bg-secondary-container hover:text-on-secondary-container active:scale-95 aria-[current=page]:bg-primary aria-[current=page]:text-on-primary aria-[current=page]:hover:bg-primary aria-[current=page]:hover:text-on-primary"
+                >
+                  {label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+      <button
+        type="button"
+        data-palette-open
+        aria-label="Search"
+        aria-keyshortcuts="Meta+K Control+K"
+        title="Search (Ctrl or ⌘ + K)"
+        class={iconButton}
+      >
+        <Icon name="search" class="text-[1.375rem]" />
+      </button>
+      <ThemeToggle />
+      <!-- Phones: the pill nav does not fit, so the links move into a menu. -->
+      <button
+        type="button"
+        popovertarget="site-menu"
+        aria-label="Menu"
+        class:list={[iconButton, 'md:hidden']}
+      >
+        <Icon name="menu" class="text-[1.375rem]" />
+      </button>
+    </div>
+  </div>
+
+  <nav
+    id="site-menu"
+    popover
+    aria-label="Main"
+    class="site-menu fixed inset-auto top-[4.25rem] right-4 m-0 w-[min(18rem,calc(100vw-2rem))] rounded-xl-inc bg-surface-container-high p-2 text-on-surface shadow-level3 md:hidden"
+  >
+    <ul class="flex flex-col gap-1">
+      {
+        links.map(({ label, href }) => (
+          <li>
+            <a
+              href={href}
+              aria-current={isActive(href) ? 'page' : undefined}
+              class="flex min-h-12 items-center rounded-lg px-4 text-title-md transition-expressive hover:bg-secondary-container hover:text-on-secondary-container aria-[current=page]:bg-primary aria-[current=page]:text-on-primary"
+            >
+              {label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</header>
+
+<style>
+  /* The menu grows out of the button it belongs to. */
+  .site-menu {
+    transform-origin: top right;
+    opacity: 0;
+    scale: 0.9;
+    transition:
+      opacity var(--duration-short4) var(--ease-effects),
+      scale var(--duration-spring-fast) var(--ease-spring-fast),
+      overlay var(--duration-short4) allow-discrete,
+      display var(--duration-short4) allow-discrete;
+  }
+
+  .site-menu:popover-open {
+    opacity: 1;
+    scale: 1;
+  }
+
+  @starting-style {
+    .site-menu:popover-open {
+      opacity: 0;
+      scale: 0.9;
+    }
+  }
+</style>

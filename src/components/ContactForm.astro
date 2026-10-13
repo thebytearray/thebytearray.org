@@ -1,0 +1,225 @@
+---
+import { site } from '../data/site';
+import Chip from './Chip.astro';
+import Icon from './Icon.astro';
+
+const topics = [
+  { id: 'support', label: 'Help with an app' },
+  { id: 'collaboration', label: 'Working together' },
+  { id: 'other', label: 'Something else' },
+];
+
+// mailto: links get unreliable past a couple of thousand characters.
+const maxMessage = 1500;
+---
+
+<!--
+  There is no server behind this form: sending opens the visitor's mail app
+  with the message filled in. The address is decoded only at that moment.
+-->
+<div data-contact data-mail={site.mail} data-max={maxMessage}>
+  <form data-form novalidate aria-label="Contact form" class="flex flex-col gap-5">
+    <div class="grid gap-5 sm:grid-cols-2">
+      <div class="field">
+        <label class="field-label" for="contact-name">Name</label>
+        <input
+          id="contact-name"
+          name="name"
+          type="text"
+          required
+          autocomplete="name"
+          placeholder="Your name"
+          aria-describedby="contact-name-error"
+          class="field-input"
+        />
+        <p id="contact-name-error" class="field-error" hidden></p>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="contact-email">Email</label>
+        <input
+          id="contact-email"
+          name="email"
+          type="email"
+          required
+          autocomplete="email"
+          placeholder="name@example.com"
+          aria-describedby="contact-email-error"
+          class="field-input"
+        />
+        <p id="contact-email-error" class="field-error" hidden></p>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="field-label" for="contact-topic">What is it about?</label>
+      <span class="relative block">
+        <select
+          id="contact-topic"
+          name="topic"
+          required
+          aria-describedby="contact-topic-error"
+          class="field-input appearance-none pr-12"
+        >
+          <option value="" selected disabled>Choose a topic</option>
+          {topics.map(({ id, label }) => <option value={id}>{label}</option>)}
+        </select>
+        <Icon
+          name="expand_more"
+          class="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-[1.5rem] text-on-surface-variant"
+        />
+      </span>
+      <p id="contact-topic-error" class="field-error" hidden></p>
+    </div>
+
+    <div class="field">
+      <label class="field-label" for="contact-message">Message</label>
+      <textarea
+        id="contact-message"
+        name="message"
+        required
+        rows="6"
+        placeholder="How can we help?"
+        aria-describedby="contact-message-error contact-message-count"
+        class="field-input resize-y"></textarea>
+      <p id="contact-message-error" class="field-error" hidden></p>
+      <p id="contact-message-count" data-counter class="field-hint tabular-nums">
+        0 / {maxMessage.toLocaleString('en-US')} characters
+      </p>
+    </div>
+
+    <div class="flex flex-col gap-3 pt-1 sm:flex-row sm:items-center sm:justify-between">
+      <p class="text-body-md text-on-surface-variant">This opens your email app with the message ready to send.</p>
+      <button type="submit" class="chip chip-filled fill-on-hover h-12 flex-none justify-center px-6">
+        <Icon name="send" class="text-[1.125rem]" />
+        Open email app
+      </button>
+    </div>
+
+    <noscript>
+      <p class="text-body-md text-on-surface-variant">
+        This form needs JavaScript. You can also email us at {site.emailDisplay}.
+      </p>
+    </noscript>
+  </form>
+
+  <div data-sent hidden role="status" tabindex="-1" class="flex flex-col items-start gap-4 outline-none">
+    <span class="grid size-14 place-items-center rounded-full bg-primary-container text-on-primary-container">
+      <Icon name="check_circle" class="text-[1.75rem]" />
+    </span>
+    <div>
+      <h2 class="font-display text-headline-sm">Your email app should now be open</h2>
+      <p class="mt-2 text-on-surface-variant">
+        We’ve filled in your message. Press send in your email app to reach us. If nothing opened, email{' '}
+        <span class="font-medium text-on-surface">{site.emailDisplay}</span> directly.
+      </p>
+    </div>
+    <div class="flex flex-wrap gap-2">
+      <Chip button icon="content_copy" variant="filled" data-mail={site.mail}>
+        <span data-mail-label aria-live="polite">Copy email</span>
+      </Chip>
+      <Chip button data-again>Write another message</Chip>
+    </div>
+  </div>
+</div>
+
+<script>
+  type Field = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
+
+  function setup(root: HTMLElement) {
+    const form = root.querySelector<HTMLFormElement>('[data-form]')!;
+    const sent = root.querySelector<HTMLElement>('[data-sent]')!;
+    const counter = root.querySelector<HTMLElement>('[data-counter]')!;
+    const max = Number(root.dataset.max);
+    const fields = [...form.querySelectorAll<Field>('[name]')];
+    const field = (name: string) => form.elements.namedItem(name) as Field;
+    const limit = max.toLocaleString('en-US');
+
+    /** The problem with a field's current value, or '' when it is fine. */
+    function problem({ name, value }: Field): string {
+      const text = value.trim();
+      switch (name) {
+        case 'name':
+          if (!text) return 'Enter your name.';
+          return text.length > 100 ? 'Keep your name under 100 characters.' : '';
+        case 'email':
+          return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text) ? '' : 'Enter an email address like name@example.com.';
+        case 'topic':
+          return text ? '' : 'Choose what your message is about.';
+        case 'message':
+          if (text.length < 10) return 'Write at least 10 characters so we know how to help.';
+          return text.length > max ? `Keep it under ${limit} characters, or email us directly.` : '';
+        default:
+          return '';
+      }
+    }
+
+    function validate(input: Field): boolean {
+      const text = problem(input);
+      const error = document.getElementById(`${input.id}-error`)!;
+      error.textContent = text;
+      error.hidden = !text;
+      if (text) input.setAttribute('aria-invalid', 'true');
+      else input.removeAttribute('aria-invalid');
+      // The message field shows either its error or its character count.
+      if (input.name === 'message') counter.hidden = Boolean(text);
+      return !text;
+    }
+
+    function count() {
+      counter.textContent = `${field('message').value.length.toLocaleString('en-US')} / ${limit} characters`;
+    }
+
+    for (const input of fields) {
+      // Check a field once it has been left, then keep its error up to date.
+      input.addEventListener('blur', () => validate(input));
+      input.addEventListener('input', () => {
+        if (input.name === 'message') count();
+        if (input.hasAttribute('aria-invalid')) validate(input);
+      });
+    }
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const invalid = fields.filter((input) => !validate(input));
+      if (invalid.length > 0) return invalid[0].focus();
+
+      const name = field('name').value.trim();
+      const email = field('email').value.trim();
+      const topic = field('topic') as HTMLSelectElement;
+      const subject = `${topic.selectedOptions[0].textContent}: message from ${name}`;
+      const body = `${field('message').value.trim()}\n\n${name}\n${email}`;
+      location.assign(
+        `mailto:${atob(root.dataset.mail!)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`,
+      );
+
+      form.hidden = true;
+      sent.hidden = false;
+      sent.focus();
+    });
+
+    root.querySelector('[data-again]')!.addEventListener('click', () => {
+      form.reset();
+      for (const input of fields) {
+        // A fresh form shows no errors until it is used.
+        input.removeAttribute('aria-invalid');
+        document.getElementById(`${input.id}-error`)!.hidden = true;
+      }
+      counter.hidden = false;
+      count();
+      sent.hidden = true;
+      form.hidden = false;
+      field('name').focus();
+    });
+  }
+
+  function init() {
+    for (const root of document.querySelectorAll<HTMLElement>('[data-contact]:not([data-ready])')) {
+      root.dataset.ready = '';
+      setup(root);
+    }
+  }
+
+  init();
+  document.addEventListener('astro:page-load', init);
+</script>

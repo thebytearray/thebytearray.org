@@ -1,0 +1,127 @@
+---
+import { Image, getImage } from 'astro:assets';
+import type { Screenshot } from '../data/apps';
+import Icon from './Icon.astro';
+
+interface Props {
+  appName: string;
+  screenshots: Screenshot[];
+}
+
+const { appName, screenshots } = Astro.props;
+// The larger view loads its own, bigger rendition on demand.
+const full = await Promise.all(screenshots.map((shot) => getImage({ src: shot.src, width: 720 })));
+
+const step =
+  'fill-on-hover grid size-11 place-items-center rounded-full bg-surface-container-highest transition-expressive hover:bg-secondary-container hover:text-on-secondary-container active:scale-90';
+---
+
+<!-- A swipeable strip of screenshots; each opens a larger view you can step through. -->
+<div data-gallery>
+  <ul
+    role="region"
+    aria-label={`${appName} screenshots`}
+    tabindex="0"
+    class="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 sm:-mx-8 sm:gap-4 sm:px-8 lg:mx-0 lg:px-0"
+  >
+    {
+      screenshots.map(({ src, alt }, i) => (
+        <li class="w-[46%] flex-none snap-center sm:w-52">
+          <button
+            type="button"
+            data-shot={i}
+            data-full={full[i].src}
+            aria-label={`View larger: ${alt}`}
+            class="group block w-full cursor-zoom-in rounded-xl sm:rounded-xl-inc"
+          >
+            <Image
+              src={src}
+              alt={alt}
+              widths={[240, 360, 540]}
+              sizes="(min-width: 40rem) 13rem, 46vw"
+              loading={i < 3 ? 'eager' : 'lazy'}
+              class="aspect-9/20 w-full rounded-xl bg-surface-container object-cover transition-expressive group-hover:-translate-y-1 group-hover:rounded-2xl sm:rounded-xl-inc"
+            />
+          </button>
+        </li>
+      ))
+    }
+  </ul>
+
+  <dialog
+    data-lightbox
+    aria-label={`${appName} screenshots`}
+    class="m-auto max-h-[92dvh] w-[min(26rem,calc(100vw-2rem))] max-w-none flex-col gap-4 overflow-hidden rounded-xl-inc bg-surface-container-high p-4 text-on-surface shadow-level3 backdrop:bg-scrim/60 open:flex sm:p-5"
+  >
+    <div class="flex items-start justify-between gap-4">
+      <p data-caption class="pt-2 font-display text-title-md text-pretty"></p>
+      <button type="button" data-close aria-label="Close" class:list={[step, 'size-10 flex-none']}>
+        <Icon name="close" />
+      </button>
+    </div>
+    <img data-image alt="" class="min-h-0 flex-1 rounded-lg-inc object-contain" />
+    <div class="flex items-center justify-between">
+      <button type="button" data-step="-1" aria-label="Previous screenshot" class={step}>
+        <Icon name="chevron_left" class="text-[1.5rem]" />
+      </button>
+      <p data-count aria-live="polite" class="text-label-lg text-on-surface-variant tabular-nums"></p>
+      <button type="button" data-step="1" aria-label="Next screenshot" class={step}>
+        <Icon name="chevron_right" class="text-[1.5rem]" />
+      </button>
+    </div>
+  </dialog>
+</div>
+
+<script>
+  function setup(gallery: HTMLElement) {
+    const shots = [...gallery.querySelectorAll<HTMLButtonElement>('[data-shot]')];
+    const dialog = gallery.querySelector<HTMLDialogElement>('[data-lightbox]')!;
+    const image = dialog.querySelector<HTMLImageElement>('[data-image]')!;
+    const caption = dialog.querySelector<HTMLElement>('[data-caption]')!;
+    const count = dialog.querySelector<HTMLElement>('[data-count]')!;
+    let index = 0;
+
+    function show(next: number) {
+      index = (next + shots.length) % shots.length;
+      const shot = shots[index];
+      const alt = shot.querySelector('img')?.alt ?? '';
+      image.src = shot.dataset.full!;
+      image.alt = alt;
+      caption.textContent = alt;
+      count.textContent = `${index + 1} of ${shots.length}`;
+    }
+
+    for (const shot of shots) {
+      shot.addEventListener('click', () => {
+        show(Number(shot.dataset.shot));
+        dialog.showModal();
+      });
+    }
+
+    dialog.addEventListener('click', (event) => {
+      const target = event.target as Element;
+      // A click on the dialog element itself is a click on the backdrop.
+      if (target === dialog || target.closest('[data-close]')) return dialog.close();
+      const step = target.closest<HTMLElement>('[data-step]');
+      if (step) show(index + Number(step.dataset.step));
+    });
+
+    dialog.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowRight') show(index + 1);
+      if (event.key === 'ArrowLeft') show(index - 1);
+    });
+
+    // Back to the screenshot that was being viewed.
+    dialog.addEventListener('close', () => shots[index]?.focus());
+  }
+
+  function init() {
+    for (const gallery of document.querySelectorAll<HTMLElement>('[data-gallery]:not([data-ready])')) {
+      gallery.dataset.ready = '';
+      setup(gallery);
+    }
+  }
+
+  init();
+  document.addEventListener('astro:page-load', init);
+</script>

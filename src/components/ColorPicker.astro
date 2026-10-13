@@ -1,0 +1,42 @@
+---
+import palette from '../styles/seed.json';
+import Shape from './Shape.astro';
+
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+
+// Accent colors are named after the stack they come from (Android green by
+// default, then the brand colors of Kotlin, Go and Swift). The default has no
+// `data-color` value; alternates use their lowercased name.
+const colors = [
+  { name: palette.name, value: '', hex: palette.seed },
+  ...Object.entries(palette.alternates).map(([name, hex]) => ({ name, value: name.toLowerCase(), hex })),
+];
+---
+
+<!-- Accent color picker; the behavior is in the inline script in layouts/Base.astro. -->
+<div role="group" aria-label="Accent color" class:list={['flex items-center', className]}>
+  {
+    colors.map(({ name, value, hex }) => (
+      <button
+        type="button"
+        data-color-option={value}
+        aria-pressed={value === '' ? 'true' : 'false'}
+        aria-label={`${name} accent color`}
+        title={name}
+        class="group grid size-10 place-items-center rounded-full"
+      >
+        <!-- The chosen color is the full-size shape; the others sit smaller. -->
+        <span
+          class="block size-7 scale-[0.7] transition-expressive group-hover:scale-[0.85] group-aria-pressed:scale-100 group-aria-pressed:rotate-[22.5deg]"
+          style={`color: ${hex}`}
+        >
+          <Shape lobes={8} depth={0.12} />
+        </span>
+      </button>
+    ))
+  }
+</div>

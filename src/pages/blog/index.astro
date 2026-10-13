@@ -1,0 +1,11 @@
+---
+import BlogIndex from '../../components/BlogIndex.astro';
+import Base from '../../layouts/Base.astro';
+import { getPosts } from '../../lib/posts';
+
+const posts = await getPosts();
+---
+
+<Base title="Blog" description="Product updates and notes from The Byte Array.">
+  <BlogIndex posts={posts} allPosts={posts} />
+</Base>

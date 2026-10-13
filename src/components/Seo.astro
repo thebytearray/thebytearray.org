@@ -1,0 +1,141 @@
+---
+import { site, team } from '../data/site';
+
+export interface Crumb {
+  name: string;
+  path: string;
+}
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Absolute or root-relative image URL. Defaults to the site-wide card. */
+  image?: string;
+  imageAlt?: string;
+  type?: 'website' | 'article';
+  publishedTime?: Date;
+  modifiedTime?: Date;
+  /** Post author; matched against `team` to link their profile. */
+  author?: string;
+  tags?: string[];
+  /** Trail below Home, ending with this page. Published as a BreadcrumbList. */
+  breadcrumbs?: Crumb[];
+  /** Extra schema.org nodes for this page (an app, for example). */
+  jsonLd?: Record<string, unknown>[];
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description = site.description,
+  image = '/og/home.png',
+  imageAlt,
+  type = 'website',
+  publishedTime,
+  modifiedTime,
+  author,
+  tags = [],
+  breadcrumbs = [],
+  jsonLd = [],
+  noindex = false,
+} = Astro.props;
+
+const homeTitle = `${site.name}: ${site.tagline}`;
+const fullTitle = title ? `${title} · ${site.name}` : homeTitle;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const imageUrl = new URL(image, Astro.site);
+const home = new URL('/', Astro.site).href;
+// The generated cards (/og/<id>.png) are always this size.
+const generatedCard = image.startsWith('/og/');
+
+const founder = team[0];
+const organization = {
+  '@type': 'Organization',
+  '@id': `${home}#organization`,
+  name: site.name,
+  alternateName: '[]byte',
+  url: home,
+  logo: new URL('/apple-touch-icon.png', Astro.site).href,
+  description: site.description,
+  knowsAbout: site.topics,
+  sameAs: [site.github],
+  ...(founder && {
+    founder: { '@type': 'Person', name: founder.name, url: founder.github, jobTitle: founder.role },
+  }),
+};
+const website = {
+  '@type': 'WebSite',
+  '@id': `${home}#website`,
+  name: site.name,
+  url: home,
+  description: site.description,
+  inLanguage: site.locale,
+  publisher: { '@id': organization['@id'] },
+};
+
+const trail = type === 'article' ? [{ name: 'Blog', path: '/blog/' }, { name: title ?? '', path: Astro.url.pathname }] : breadcrumbs;
+const breadcrumbList = trail.length > 0 && {
+  '@type': 'BreadcrumbList',
+  itemListElement: [{ name: 'Home', path: '/' }, ...trail].map(({ name, path }, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name,
+    item: new URL(path, Astro.site).href,
+  })),
+};
+
+const member = team.find((person) => person.name === author);
+const article = type === 'article' && {
+  '@type': 'BlogPosting',
+  headline: title,
+  description,
+  datePublished: publishedTime?.toISOString(),
+  dateModified: (modifiedTime ?? publishedTime)?.toISOString(),
+  keywords: tags.length > 0 ? tags.join(', ') : undefined,
+  image: imageUrl.href,
+  url: canonical.href,
+  mainEntityOfPage: canonical.href,
+  inLanguage: site.locale,
+  author: author ? { '@type': 'Person', name: author, ...(member && { url: member.github }) } : { '@id': organization['@id'] },
+  publisher: { '@id': organization['@id'] },
+};
+
+const graph = [
+  organization,
+  Astro.url.pathname === '/' && website,
+  article,
+  ...jsonLd.map((node) => ({ ...node, publisher: { '@id': organization['@id'] } })),
+  breadcrumbList,
+].filter(Boolean);
+const structuredData = { '@context': 'https://schema.org', '@graph': graph };
+---
+
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<meta name="author" content={author ?? site.name} />
+{noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
+{!noindex && <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />}
+
+<meta property="og:site_name" content={site.name} />
+<meta property="og:type" content={type} />
+<meta property="og:title" content={title ?? homeTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={imageUrl} />
+{generatedCard && <meta property="og:image:width" content="1200" />}
+{generatedCard && <meta property="og:image:height" content="630" />}
+<meta property="og:image:alt" content={imageAlt ?? title ?? homeTitle} />
+<meta property="og:locale" content="en_US" />
+{publishedTime && <meta property="article:published_time" content={publishedTime.toISOString()} />}
+{modifiedTime && <meta property="article:modified_time" content={modifiedTime.toISOString()} />}
+{type === 'article' && author && <meta property="article:author" content={author} />}
+{type === 'article' && tags.map((tag) => <meta property="article:tag" content={tag} />)}
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title ?? homeTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={imageUrl} />
+<meta name="twitter:image:alt" content={imageAlt ?? title ?? homeTitle} />
+
+<link rel="alternate" type="application/rss+xml" title={`${site.name} — Blog`} href="/rss.xml" />
+<link rel="sitemap" href="/sitemap-index.xml" />

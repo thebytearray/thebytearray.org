@@ -1,0 +1,31 @@
+---
+import type { AppFeature } from '../data/apps';
+import Icon from './Icon.astro';
+
+interface Props {
+  features: AppFeature[];
+}
+
+const { features } = Astro.props;
+---
+
+<ul class="grid gap-3 sm:grid-cols-2 sm:gap-4">
+  {
+    features.map(({ icon, title, description }, i) => (
+      <li
+        class:list={[
+          'flex gap-4 rounded-xl bg-surface-container p-5 sm:p-6',
+          i === 0 && 'rounded-tl-2xl sm:rounded-tl-3xl',
+        ]}
+      >
+        <span class="grid size-12 flex-none place-items-center rounded-lg bg-primary-container text-on-primary-container">
+          <Icon name={icon} class="text-[1.5rem]" />
+        </span>
+        <div>
+          <h3 class="font-display text-title-lg">{title}</h3>
+          <p class="mt-1 text-body-md text-on-surface-variant">{description}</p>
+        </div>
+      </li>
+    ))
+  }
+</ul>

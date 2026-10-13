@@ -1,0 +1,36 @@
+---
+import { shapes, type ShapeKind } from '../lib/shape';
+
+interface Props {
+  /** Which Material 3 Expressive shape to draw (see lib/shape.ts). */
+  kind?: ShapeKind;
+  /** Lobe, petal or point count, for the shapes that have one. */
+  lobes?: number;
+  depth?: number;
+  /** Shape to morph into while a `.group` ancestor is hovered or focused. */
+  morphTo?: ShapeKind;
+  class?: string;
+}
+
+const { kind = 'cookie', lobes, depth, morphTo, class: className } = Astro.props;
+
+const path = (k: ShapeKind, n?: number, d?: number) => (shapes[k] as (n?: number, d?: number) => string)(n, d);
+const d = path(kind, lobes, depth);
+const style = morphTo ? `--d: path('${d}'); --d-morph: path('${path(morphTo)}')` : undefined;
+---
+
+<svg viewBox="0 0 100 100" class:list={['shape pointer-events-none', className]} aria-hidden="true" focusable="false">
+  <path d={d} fill="currentColor" style={style}></path>
+</svg>
+
+<style>
+  /* Morphing `d` is a progressive enhancement; browsers without it keep the base shape. */
+  path[style] {
+    d: var(--d);
+    transition: d var(--duration-spring) var(--ease-spring);
+  }
+
+  :global(.group:is(:hover, :focus-visible)) path[style] {
+    d: var(--d-morph);
+  }
+</style>
