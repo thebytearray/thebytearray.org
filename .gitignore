@@ -29,6 +29,9 @@ Thumbs.db
 !.vscode/extensions.json
 !.vscode/launch.json
 
+# APKs live in the thebytearray/downloads repo, never in public/
+public/downloads/**/*.apk
+
 # Local tool and agent state
 .claude/settings.local.json
 .agents/
