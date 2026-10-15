@@ -1,7 +1,7 @@
 # Build output and Astro's generated types/cache
 dist/
 .astro/
-
+.next/
 # Dependencies
 node_modules/
 
