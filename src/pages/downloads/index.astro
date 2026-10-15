@@ -1,0 +1,80 @@
+---
+import DownloadCard from '../../components/DownloadCard.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import { getApp } from '../../data/apps';
+import { downloads } from '../../data/downloads';
+import Base from '../../layouts/Base.astro';
+
+const entries = downloads.flatMap((download) => {
+  const app = getApp(download.appSlug);
+  return app ? [{ app, download }] : [];
+});
+
+const absolute = (src: string) => new URL(src, 'https://thebytearray.org').href;
+const jsonLd = entries.map(({ app, download }) => ({
+  '@type': 'MobileApplication',
+  name: app.name,
+  description: app.description,
+  url: absolute(`/apps/${app.slug}/`),
+  operatingSystem: 'Android',
+  applicationCategory: app.storeCategory,
+  installUrl: app.playStoreUrl,
+  downloadUrl: absolute(download.file),
+  softwareVersion: download.versionName,
+  isAccessibleForFree: true,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+}));
+---
+
+<Base
+  title="Downloads"
+  description="Download Convertit directly as an APK, with version, file size and SHA-256 checksum to verify your copy. No ads, no tracking, no accounts."
+  breadcrumbs={[{ name: 'Downloads', path: '/downloads/' }]}
+  jsonLd={jsonLd}
+>
+  <PageHeader
+    title="Downloads"
+    lede="Get our free apps straight from us as APK files. Every download lists its version, size and checksum so you can verify what you got."
+    shape="arch"
+    accent="sunny"
+  />
+
+  {
+    entries.length === 0 ? (
+      <p class="mt-6 max-w-prose text-body-lg text-on-surface-variant">
+        No direct downloads yet — check back soon, or get our apps on Google Play from the{' '}
+        <a href="/apps/" class="text-link">
+          Apps page
+        </a>
+        .
+      </p>
+    ) : (
+      <div class="grid gap-3 sm:gap-4" data-pagefind-body>
+        {entries.map(({ app, download }) => (
+          <DownloadCard app={app} download={download} />
+        ))}
+      </div>
+    )
+  }
+
+  <section aria-labelledby="install-note" class="mt-14 sm:mt-20">
+    <h2 id="install-note" class="font-display text-headline-md">Installing an APK</h2>
+    <ol class="mt-5 grid max-w-prose gap-4 text-body-lg">
+      <li>
+        <strong class="font-semibold">1. Download.</strong> Tap Download APK above, or from the app's page.
+      </li>
+      <li>
+        <strong class="font-semibold">2. Allow this install.</strong> Android asks you to allow installs from
+        your browser. This is normal for apps installed outside Google Play.
+      </li>
+      <li>
+        <strong class="font-semibold">3. Open the file.</strong> Open the downloaded APK from your
+        notifications or Files app and tap Install.
+      </li>
+      <li>
+        <strong class="font-semibold">4. Verify (optional, recommended).</strong> Compare the file's SHA-256
+        checksum with the value shown above before installing.
+      </li>
+    </ol>
+  </section>
+</Base>

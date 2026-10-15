@@ -38,6 +38,7 @@ export const site = {
 
 export const nav = [
   { label: 'Apps', href: '/apps/' },
+  { label: 'Downloads', href: '/downloads/' },
   { label: 'Open source', href: '/open-source/' },
   { label: 'Blog', href: '/blog/' },
   { label: 'About', href: '/about/' },
