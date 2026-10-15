@@ -1,0 +1,139 @@
+---
+import { Image } from 'astro:assets';
+import type { App } from '../data/apps';
+import { type DownloadRelease, formatSize } from '../data/downloads';
+import { brands } from '../data/site';
+import Chip from './Chip.astro';
+import Icon from './Icon.astro';
+
+interface Props {
+  app: App;
+  download: DownloadRelease;
+  heading?: 'h2' | 'h3';
+  class?: string;
+}
+
+const { app, download, heading: Heading = 'h2', class: className } = Astro.props;
+const details = `/apps/${app.slug}/`;
+const fileName = download.file.split('/').at(-1);
+---
+
+<article
+  id={app.slug}
+  aria-labelledby={`${app.slug}-name`}
+  class:list={[
+    'scroll-mt-24 overflow-clip rounded-xl-inc rounded-tl-md bg-surface-container sm:rounded-2xl sm:rounded-tl-md lg:rounded-3xl lg:rounded-tl-lg',
+    className,
+  ]}
+>
+  <div class="flex flex-col gap-6 p-6 sm:p-8 lg:p-10">
+    <div class="flex items-center gap-4 sm:gap-5">
+      <Image src={app.icon} alt="" width={128} height={128} class="size-14 flex-none rounded-[22%] sm:size-16" />
+      <div class="min-w-0">
+        <Heading id={`${app.slug}-name`} class="font-display text-headline-md sm:text-headline-lg">
+          {app.name}
+        </Heading>
+        <p class="mt-1 text-body-lg text-pretty text-on-surface-variant">{app.tagline}</p>
+        <p class="mt-1 text-label-lg text-primary">
+          v{download.versionName} · {formatSize(download.sizeBytes)} · Updated {download.updated}
+        </p>
+      </div>
+    </div>
+
+    <ul class="flex flex-wrap gap-2">
+      <li>
+        <a
+          href={download.file}
+          download={fileName}
+          class="chip chip-filled fill-on-hover"
+          aria-label={`Download ${app.name} v${download.versionName} APK, ${formatSize(download.sizeBytes)}`}
+        >
+          <Icon name="arrow_downward" class="text-[1.125rem]" />
+          Download APK
+        </a>
+      </li>
+      <li>
+        <Chip href={app.playStoreUrl} class="bg-surface" aria-label={`Get ${app.name} on Google Play instead`}>
+          <svg viewBox="0 0 24 24" class="size-4 flex-none" fill="currentColor" aria-hidden="true">
+            <path d={brands.googlePlay}></path>
+          </svg>
+          Google Play
+        </Chip>
+      </li>
+      <li>
+        <Chip href={details} aria-label={`${app.name} details`}>App details</Chip>
+      </li>
+    </ul>
+
+    <details class="group rounded-lg bg-surface p-4 sm:p-5">
+      <summary
+        class="cursor-pointer list-none font-display text-title-md [&::-webkit-details-marker]:hidden"
+      >
+        <span class="inline-flex items-center gap-2">
+          <Icon name="shield" class="text-[1.25rem] text-primary" />
+          Verify this download
+          <Icon
+            name="expand_more"
+            class="text-[1.25rem] text-on-surface-variant transition-transform group-open:rotate-180"
+          />
+        </span>
+      </summary>
+      <dl class="mt-4 grid gap-x-6 gap-y-3 text-body-md sm:grid-cols-[9rem_1fr]">
+        <dt class="text-on-surface-variant">File</dt>
+        <dd><code class="font-mono break-all">{fileName}</code></dd>
+        <dt class="text-on-surface-variant">Size</dt>
+        <dd>{formatSize(download.sizeBytes)}</dd>
+        <dt class="text-on-surface-variant">SHA-256</dt>
+        <dd class="flex flex-wrap items-center gap-2">
+          <code class="min-w-0 flex-1 font-mono text-body-sm break-all">{download.sha256}</code>
+          <button
+            type="button"
+            data-copy-sha={download.sha256}
+            class="chip chip-sm fill-on-hover shrink-0 cursor-pointer"
+          >
+            <Icon name="content_copy" class="text-[1rem]" />
+            Copy
+          </button>
+        </dd>
+        <dt class="text-on-surface-variant">Package</dt>
+        <dd><code class="font-mono break-all">{app.packageId}</code></dd>
+        <dt class="text-on-surface-variant">Requires</dt>
+        <dd>{download.minAndroid}</dd>
+      </dl>
+      <p class="mt-4 text-body-md text-on-surface-variant">
+        After downloading, compare the checksum on your device or computer, e.g.
+        <code class="font-mono text-body-sm">sha256sum {fileName}</code>. It must match the value above
+        exactly.
+      </p>
+    </details>
+
+    <p class="flex gap-2 text-body-md text-on-surface-variant">
+      <Icon name="info" class="mt-0.5 flex-none text-[1.25rem]" />
+      <span>
+        Android will ask you to allow installs from your browser — that is normal for direct downloads.
+        Only install Convertit from this site or Google Play.
+      </span>
+    </p>
+  </div>
+</article>
+
+<script>
+  for (const button of document.querySelectorAll('[data-copy-sha]')) {
+    if (!(button instanceof HTMLButtonElement) || button.dataset.bound) continue;
+    button.dataset.bound = 'true';
+    button.addEventListener('click', async () => {
+      const value = button.dataset.copySha ?? '';
+      try {
+        await navigator.clipboard.writeText(value);
+        const original = button.innerHTML;
+        button.innerHTML = 'Copied';
+        setTimeout(() => {
+          button.innerHTML = original;
+        }, 1500);
+      } catch {
+        // Clipboard unavailable (permissions, insecure context): the hash is
+        // visible right next to the button, so selecting it still works.
+      }
+    });
+  }
+</script>

@@ -1,0 +1,4 @@
+# Binaries: keep them out of text diffs.
+*.apk binary diff=excell
+*.woff2 binary
+*.png binary

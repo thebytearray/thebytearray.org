@@ -26,6 +26,7 @@ export const icons = [
   'fork_right',
   'graphic_eq',
   'home',
+  'info',
   'key',
   'library_music',
   'light_mode',
