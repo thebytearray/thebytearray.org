@@ -16,7 +16,7 @@ const columns = [
   {
     title: 'Privacy',
     links: apps.flatMap((app) =>
-      app.privacyPath ? [{ label: `${app.name} privacy policy`, href: app.privacyPath }] : [],
+      app.privacyPath ? [{ label: `${app.name} privacy`, href: app.privacyPath }] : [],
     ),
   },
   {
@@ -27,6 +27,7 @@ const columns = [
       ...(hasPosts ? [{ label: 'Blog', href: '/blog/' }] : []),
       { label: 'About', href: '/about/' },
       { label: 'Contact', href: '/contact/' },
+      { label: 'Refund policy', href: '/refund-policy/' },
     ],
   },
 ];
@@ -43,7 +44,7 @@ const iconLink =
         <span class="font-display text-title-lg font-semibold tracking-tight" aria-hidden="true">{site.name}</span>
       </a>
       <p class="mt-3 max-w-xs text-body-md text-on-surface-variant">
-        {site.name} makes apps and developer tools that get straight to the point. No ads, no tracking, no accounts.
+        Private apps and developer tools that get straight to the point.
       </p>
       <ul class="mt-4 -ml-2.5 flex items-center gap-1 text-on-surface-variant">
         <li>

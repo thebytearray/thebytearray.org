@@ -30,7 +30,7 @@ export const downloads: DownloadRelease[] = [
     file: 'https://raw.githubusercontent.com/thebytearray/downloads/main/convertit/1.3.18-lts/convertit-1.3.18-lts.apk',
     sizeBytes: 86358358,
     sha256: '39952626a403ef8911ba85cfb1264d49877c47171eab2fdb08effd41f9b288c8',
-    minAndroid: 'Android.',
+    minAndroid: 'Android 7.0+',
     updated: '2026-10-15',
   },
 ];

@@ -53,6 +53,11 @@ export interface App {
   playStoreUrl: string;
   packageId: string;
   sourceUrl?: string;
+  /** Points to a post explaining why this app's code is not public. */
+  sourcePost?: string;
+  /** Google Play app-signing certificate fingerprints, so users can verify an APK matches the Play copy. */
+  signingSha256?: string;
+  signingSha1?: string;
   license?: string;
   requirements: string;
   /** schema.org applicationCategory, for search engines. */
@@ -68,7 +73,7 @@ export const apps: App[] = [
     tagline: 'No BS. Straight to the point.',
     summary: 'An offline audio and video converter for Android, with no ads.',
     description:
-      'Convertit is an ad-free, offline audio and video converter for Android. Pick a file, pick a format (MP3, M4A, AAC, OGG, OPUS and more) and it converts in the background.',
+      'Convertit is an ad-free, offline audio and video converter for Android. Pick a file, pick a format (MP3, M4A, AAC, OGG and OPUS) and it converts in the background.',
     icon: convertitIcon,
     iconFile: 'src/assets/apps/convertit/icon.png',
     featureGraphic: {
@@ -77,7 +82,7 @@ export const apps: App[] = [
     },
     screenshots: [
       { src: convertitConvert, alt: 'Convert audio and video: one tap to start, no clutter' },
-      { src: convertitFormats, alt: 'Pick the format, done: MP3, M4A, AAC, OGG, OPUS and more' },
+      { src: convertitFormats, alt: 'Pick the format, done: MP3, M4A, AAC, OGG and OPUS' },
       { src: convertitBackground, alt: 'Keeps going in the background: queue files and carry on' },
       { src: convertitLibrary, alt: 'Everything you converted: open or share in a tap' },
       { src: convertitTags, alt: 'Fix the tags: title, artist, album and cover art' },
@@ -91,7 +96,7 @@ export const apps: App[] = [
       {
         icon: 'tune',
         title: 'Pick the format',
-        description: 'MP3, M4A, AAC, OGG, OPUS and more.',
+        description: 'MP3, M4A, AAC, OGG and OPUS.',
       },
       {
         icon: 'queue_music',
@@ -116,7 +121,8 @@ export const apps: App[] = [
     ],
     playStoreUrl: 'https://play.google.com/store/apps/details?id=com.nasahacker.convertit',
     packageId: 'com.nasahacker.convertit',
-    requirements: 'Android.',
+    sourcePost: '/blog/why-convertit-is-not-open-source/',
+    requirements: 'Android 7.0+',
     storeCategory: 'MultimediaApplication',
     privacyPath: '/convertit-privacy/',
   },
@@ -215,7 +221,9 @@ export const apps: App[] = [
     ],
     playStoreUrl: 'https://play.google.com/store/apps/details?id=org.thebytearray.hy2.ng',
     packageId: 'org.thebytearray.hy2.ng',
-    requirements: 'Android.',
+    signingSha256: 'AB:47:2A:13:FE:1F:CE:B2:F1:86:28:04:95:4D:A8:73:68:F0:52:B0:89:9A:A5:4E:E9:A5:52:BA:69:D7:98:69',
+    signingSha1: '91:11:2D:98:FF:F8:07:6C:01:81:FB:B3:AD:83:67:C5:D4:D5:32:D3',
+    requirements: 'Android 8.0+',
     storeCategory: 'UtilitiesApplication',
     privacyPath: '/hy2ng-privacy/',
   },

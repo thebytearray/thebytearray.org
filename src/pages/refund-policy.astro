@@ -1,0 +1,83 @@
+---
+import '../styles/prose.css';
+
+import { site } from '../data/site';
+import Base from '../layouts/Base.astro';
+---
+
+<Base
+  title="Refund policy"
+  description="If you buy one of our paid apps, when you can get a refund: accidental purchases, and features that do not work as promised."
+  breadcrumbs={[{ name: 'Refund policy', path: '/refund-policy/' }]}
+>
+  <div class="mx-auto max-w-2xl pt-4 sm:pt-10" data-pagefind-body>
+    <header class="mt-6 sm:mt-8">
+      <h1
+        class="font-display text-[clamp(2rem,7.5vw,3.75rem)] leading-[1.04] font-extrabold tracking-[-0.03em] text-balance"
+      >
+        Refund policy
+      </h1>
+      <p class="mt-4 text-label-lg text-on-surface-variant">Last updated October 2026</p>
+    </header>
+
+    <article class="prose mt-10 sm:mt-12">
+      <section>
+        <h2>Our promise</h2>
+        <p>
+          We want every purchase to feel fair. Our rule is simple: a deal should leave neither side
+          wronged. You should never pay for something that does not work as we promised. And a refund
+          should not be claimed for something that works fine and has been fully used. Everything below
+          follows from that.
+        </p>
+      </section>
+
+      <section>
+        <h2>Accidental or unauthorized purchases</h2>
+        <p>
+          Bought by mistake, or someone else bought without your permission (for example your child)?
+          Google Play processes all our payments, so the fastest route is to request the refund directly
+          from Google:{' '}
+          <a
+            href="https://support.google.com/googleplay/answer/2479637"
+            target="_blank"
+            rel="noopener"
+            class="text-link"
+          >
+            request a refund on Google Play
+          </a>.
+        </p>
+      </section>
+
+      <section>
+        <h2>Something does not work as promised</h2>
+        <p>
+          If a feature we advertise does not work for you, talk to us first. Email us your order number
+          (it starts with GPA), the purchase date, and what goes wrong. Then give us a fair chance to fix
+          it. We will confirm we received your message and tell you what to expect.
+        </p>
+        <p>
+          If we cannot fix it, you can ask for a refund. Requests of this kind must be made within 30 days
+          of purchase.
+        </p>
+      </section>
+
+      <section>
+        <h2>What is not covered</h2>
+        <p>
+          If the app works as described, the purchase is final once Google's own refund window has passed.
+          This policy only covers purchases made through Google Play.
+        </p>
+      </section>
+
+      <section>
+        <h2>Contact</h2>
+        <p>
+          To request a refund or ask anything about this policy, use our{' '}
+          <a href="/contact/" class="text-link">contact form</a> or email us at{' '}
+          <button type="button" data-mailto={site.mail} class="text-link">{site.emailDisplay}</button>.
+          Please include your order number, the purchase date, and a short description of what happened.
+        </p>
+      </section>
+    </article>
+  </div>
+</Base>

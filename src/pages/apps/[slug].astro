@@ -29,6 +29,12 @@ const details = [
   { term: 'Platform', description: app.requirements },
   { term: 'Package name', description: app.packageId, code: true },
   ...(app.license ? [{ term: 'License', description: app.license }] : []),
+  ...(app.signingSha256
+    ? [{ term: 'Signing certificate (SHA-256)', description: app.signingSha256, code: true }]
+    : []),
+  ...(app.signingSha1
+    ? [{ term: 'Signing certificate (SHA-1)', description: app.signingSha1, code: true }]
+    : []),
 ];
 
 const appLd = {
@@ -156,6 +162,20 @@ const sectionTitle = 'font-display text-headline-md';
       <FeatureList features={app.features} />
     </section>
 
+    {
+      app.sourcePost && (
+        <section aria-labelledby="source" class="mt-14 grid gap-x-10 gap-y-5 sm:mt-20 lg:grid-cols-[11rem_1fr]">
+          <h2 id="source" class={sectionTitle}>Open source</h2>
+          <p class="max-w-2xl text-body-lg text-pretty text-on-surface-variant">
+            {app.name} is not open source right now.{' '}
+            <a href={app.sourcePost} class="rounded-sm text-primary underline-offset-4 hover:underline">
+              We wrote about why.
+            </a>
+          </p>
+        </section>
+      )
+    }
+
     <section aria-labelledby="details" class="mt-14 grid gap-x-10 gap-y-5 sm:mt-20 lg:grid-cols-[11rem_1fr]">
       <h2 id="details" class={sectionTitle}>Details</h2>
       <div>
@@ -169,6 +189,14 @@ const sectionTitle = 'font-display text-headline-md';
             ))
           }
         </dl>
+        {
+          app.signingSha256 && (
+            <p class="mt-4 text-body-md text-on-surface-variant">
+              These fingerprints match the copy on Google Play. The same signature means the app comes
+              from the same author.
+            </p>
+          )
+        }
         <p class="mt-8 text-on-surface-variant">
           Questions or feedback about {app.name}? Email{' '}
           <button type="button" data-mailto={site.mail} class="text-link">{site.emailDisplay}</button>.

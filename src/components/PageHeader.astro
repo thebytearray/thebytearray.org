@@ -5,20 +5,21 @@ import Shape from './Shape.astro';
 interface Props {
   title: string;
   lede?: string;
-  /** The large drifting shape behind the title, and the small one beside it. */
+  /** The large drifting shape behind the title. */
   shape?: ShapeKind;
+  /** Kept for backwards compatibility; no longer rendered (one shape per header). */
   accent?: ShapeKind;
   tone?: 'primary' | 'secondary' | 'tertiary';
 }
 
-const { title, lede, shape = 'cookie', accent = 'clover', tone = 'tertiary' } = Astro.props;
+const { title, lede, shape = 'cookie', tone = 'tertiary' } = Astro.props;
 
 const tones = {
   primary: ['text-primary-container', 'text-tertiary-container'],
   secondary: ['text-secondary-container', 'text-primary-container'],
   tertiary: ['text-tertiary-container', 'text-primary-container'],
 };
-const [large, small] = tones[tone];
+const [large] = tones[tone];
 ---
 
 <header class="relative isolate pt-8 pb-10 sm:pt-14 sm:pb-16">
@@ -26,7 +27,6 @@ const [large, small] = tones[tone];
     class="pointer-events-none absolute top-2 right-[-18%] -z-10 aspect-square w-[min(13rem,52vw)] sm:right-[-4%] sm:w-60 lg:right-[4%] lg:w-72"
   >
     <Shape kind={shape} class:list={['absolute inset-0 animate-drift', large]} />
-    <Shape kind={accent} class:list={['absolute bottom-0 left-[-10%] w-[32%]', small]} />
   </div>
   <h1
     class="max-w-4xl font-display text-[clamp(2.75rem,11vw,6.5rem)] leading-[0.9] font-extrabold tracking-[-0.04em] text-balance"
