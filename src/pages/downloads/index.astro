@@ -34,7 +34,7 @@ const jsonLd = entries.map(({ app, download }) => ({
 >
   <PageHeader
     title="Downloads"
-    lede="Get our free apps straight from us as APK files. Every download lists its version, size and checksum so you can verify what you got."
+    lede="Get our free apps as APK files, hosted on our public GitHub downloads repository. Every download lists its version, size and checksum so you can verify what you got."
     shape="arch"
     accent="sunny"
   />
@@ -57,9 +57,16 @@ const jsonLd = entries.map(({ app, download }) => ({
     )
   }
 
-  <section aria-labelledby="install-note" class="mt-14 sm:mt-20">
-    <h2 id="install-note" class="font-display text-headline-md">Installing an APK</h2>
-    <ol class="mt-5 grid max-w-prose gap-4 text-body-lg">
+  <details class="group mt-14 sm:mt-20">
+    <summary
+      class="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full pr-4 font-display text-headline-md marker:hidden [&::-webkit-details-marker]:hidden"
+    >
+      <span class="grid size-9 place-items-center rounded-full bg-surface-container text-on-surface-variant transition-expressive group-open:rotate-180">
+        <svg viewBox="0 0 24 24" class="size-5" fill="currentColor" aria-hidden="true"><path d="M12 16.5 4.5 9l1.4-1.4L12 13.7l6.1-6.1L19.5 9z" /></svg>
+      </span>
+      Installing an APK
+    </summary>
+    <ol class="mt-5 grid max-w-prose gap-4 text-body-lg" id="install-note">
       <li>
         <strong class="font-semibold">1. Download.</strong> Tap Download APK above, or from the app's page.
       </li>
@@ -76,5 +83,5 @@ const jsonLd = entries.map(({ app, download }) => ({
         checksum with the value shown above before installing.
       </li>
     </ol>
-  </section>
+  </details>
 </Base>

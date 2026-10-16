@@ -38,11 +38,9 @@ export const site = {
 
 export const nav = [
   { label: 'Apps', href: '/apps/' },
-  { label: 'Downloads', href: '/downloads/' },
   { label: 'Open source', href: '/open-source/' },
   { label: 'Blog', href: '/blog/' },
   { label: 'About', href: '/about/' },
-  { label: 'Contact', href: '/contact/' },
 ];
 
 /** Simple Icons paths for the brand logos used on the site. */

@@ -1,5 +1,5 @@
 ---
-import AppCard from '../../components/AppCard.astro';
+import AppRow from '../../components/AppRow.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import FeaturedApp from '../../components/FeaturedApp.astro';
 import { featuredApp, otherApps } from '../../data/apps';
@@ -18,20 +18,21 @@ import Base from '../../layouts/Base.astro';
     accent="triangle"
   />
 
-  {featuredApp && <FeaturedApp app={featuredApp} heading="h2" />}
-  <div class="mt-3 grid gap-3 sm:mt-4 sm:gap-4 md:grid-cols-2">
-    {
-      otherApps.map((app, i) => (
-        <AppCard
-          app={app}
-          heading="h2"
-          tone={i % 2 === 0 ? 'primary' : 'tertiary'}
-          class:list={[
-            'rounded-xl-inc sm:rounded-2xl',
-            i === otherApps.length - 1 && 'rounded-br-md sm:rounded-br-md',
-          ]}
-        />
-      ))
-    }
-  </div>
+  {featuredApp && <FeaturedApp app={featuredApp} heading="h2" class="mt-10 sm:mt-14" />}
+
+  <section aria-labelledby="more-apps" class="mt-16 sm:mt-24">
+    <h2 id="more-apps" class="font-display text-headline-md text-on-surface-variant">More apps</h2>
+    <div class="mt-2 divide-y divide-outline-variant border-y border-outline-variant">
+      {
+        otherApps.map((app) => (
+          <AppRow app={app} heading="h3" />
+        ))
+      }
+    </div>
+  </section>
+
+  <p class="mt-12 max-w-prose text-body-lg text-on-surface-variant sm:mt-16">
+    Every app is free, with no ads, no tracking and no accounts.{' '}
+    <a href="/about/" class="rounded-sm text-primary underline-offset-4 hover:underline">How we work</a>
+  </p>
 </Base>

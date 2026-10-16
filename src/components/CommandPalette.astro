@@ -1,21 +1,18 @@
 ---
-import { nav, socials } from '../data/site';
+import { nav } from '../data/site';
 import Icon from './Icon.astro';
-
-const email = socials.find((s) => s.mail);
-const links = socials.filter((s) => s.brand);
 
 const option =
   'flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-body-md aria-selected:bg-secondary-container aria-selected:text-on-secondary-container';
 ---
 
 <!--
-  Search and shortcuts in one dialog. Opens with Cmd/Ctrl+K, "/", or any
+  Search and navigation in one dialog. Opens with Cmd/Ctrl+K, "/", or any
   element with `data-palette-open`. Post and page results come from the
   Pagefind index built by `npm run build`; under `astro dev` there is no
-  index, so only the commands below are listed.
-  `data-palette-open="posts"` opens it as a blog search instead: no commands,
-  and only posts in the results.
+  index, so only the navigation links below are listed.
+  `data-palette-open="posts"` opens it as a blog search instead: no nav
+  links, and only posts in the results.
 -->
 <dialog
   id="palette"
@@ -53,40 +50,6 @@ const option =
           </a>
         ))
       }
-      <button id="palette-theme" role="option" aria-selected="false" type="button" data-action="theme" class={option}>
-        <Icon name="dark_mode" class="text-on-surface-variant" />
-        Switch theme
-      </button>
-      {
-        email && (
-          <button id="palette-email" role="option" aria-selected="false" type="button" data-mail={email.mail} class={option}>
-            <Icon name="mail" class="text-on-surface-variant" />
-            <span data-mail-label>Copy email</span>
-          </button>
-        )
-      }
-      {
-        links.map((s, i) => (
-          <a
-            id={`palette-link-${i}`}
-            role="option"
-            aria-selected="false"
-            href={s.href}
-            target="_blank"
-            rel="noopener"
-            class={option}
-          >
-            <svg viewBox="0 0 24 24" class="size-5 flex-none text-on-surface-variant" fill="currentColor" aria-hidden="true">
-              <path d={s.brand} />
-            </svg>
-            {s.label}
-          </a>
-        ))
-      }
-      <a id="palette-rss" role="option" aria-selected="false" href="/rss.xml" class={option}>
-        <Icon name="rss_feed" class="text-on-surface-variant" />
-        RSS feed
-      </a>
     </div>
     <!-- Search results go under the commands, so typing a command name always puts it first. -->
     <div data-results></div>
@@ -251,13 +214,7 @@ const option =
     if (event.target === dialog) return dialog.close();
     const option = event.target instanceof Element && event.target.closest<HTMLElement>('[role=option]');
     if (!option) return;
-    if (option.dataset.action === 'theme') {
-      document.querySelector<HTMLElement>('header [data-theme-toggle]')?.click();
-    }
-    // The email option stays open briefly so its "Copied" confirmation is seen
-    // (the copying itself is the `data-mail` handler in layouts/Base.astro).
-    if (option.dataset.mail) setTimeout(() => dialog.close(), 900);
-    else dialog.close();
+    dialog.close();
   });
 
   document.addEventListener('astro:after-swap', () => dialog.close());

@@ -1,7 +1,6 @@
 ---
 import { Image } from 'astro:assets';
 import type { App } from '../data/apps';
-import { brands } from '../data/site';
 import Chip from './Chip.astro';
 
 interface Props {
@@ -41,22 +40,23 @@ const graphic = app.featureGraphic!;
       <div class="min-w-0">
         <p class="text-label-lg text-primary">Featured app</p>
         <Heading class="font-display text-headline-md sm:text-headline-lg">
-          <a href={details} class="rounded-sm decoration-2 underline-offset-4 hover:underline">{app.name}</a>
+          {app.name}
         </Heading>
         <p class="mt-1 max-w-prose text-body-lg text-pretty text-on-surface-variant">{app.summary}</p>
       </div>
     </div>
-    <ul class="flex flex-none flex-wrap gap-2">
+    <ul class="flex flex-none flex-wrap items-center gap-x-5 gap-y-2">
       <li>
         <Chip href={details} variant="filled" aria-label={`${app.name} details`}>Details</Chip>
       </li>
       <li>
-        <Chip href={app.playStoreUrl} class="bg-surface" aria-label={`Get ${app.name} on Google Play`}>
-          <svg viewBox="0 0 24 24" class="size-4 flex-none" fill="currentColor" aria-hidden="true">
-            <path d={brands.googlePlay}></path>
-          </svg>
+        <a
+          href={app.playStoreUrl}
+          aria-label={`Get ${app.name} on Google Play`}
+          class="rounded-sm text-label-lg underline-offset-4 opacity-80 hover:opacity-100 hover:underline"
+        >
           Google Play
-        </Chip>
+        </a>
       </li>
     </ul>
   </div>

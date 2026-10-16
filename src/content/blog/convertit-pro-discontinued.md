@@ -13,7 +13,7 @@ Convertit Pro is discontinued. Modified and pirated copies started spreading, sa
 
 We looked at the other option, which was to keep shipping updates to a product that no longer paid for itself. That does not work. Maintenance is not free, and a project with no sales does not earn the hours it takes.
 
-If you made a recent purchase, your refund has already been issued.
+If you made a recent purchase, we have issued refunds to as many buyers as our balance allowed. If yours has not come through yet, please [contact us](/contact/) and we will arrange it.
 
 The free version of Convertit is stopping too. With no revenue from Convertit Pro, we do not have the resources or the motivation to keep maintaining it.
 

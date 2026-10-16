@@ -19,10 +19,11 @@ const step =
 <!-- A swipeable strip of screenshots; each opens a larger view you can step through. -->
 <div data-gallery>
   <ul
+    data-strip
     role="region"
     aria-label={`${appName} screenshots`}
     tabindex="0"
-    class="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 sm:-mx-8 sm:gap-4 sm:px-8 lg:mx-0 lg:px-0"
+    class="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 sm:-mx-8 sm:gap-4 sm:px-8 lg:mx-0 lg:px-0 relative"
   >
     {
       screenshots.map(({ src, alt }, i) => (
@@ -49,6 +50,37 @@ const step =
     }
   </ul>
 
+  <div data-controls class="mt-2 hidden items-center justify-between">
+    <div data-dots class="flex items-center" role="group" aria-label="Choose screenshot">
+      {
+        screenshots.map((_, i) => (
+          <button
+            type="button"
+            data-dot={i}
+            aria-label={`Go to screenshot ${i + 1}`}
+            aria-current={i === 0 ? 'true' : 'false'}
+            class="grid h-11 w-7 cursor-pointer place-items-center"
+          >
+            <span
+              class:list={[
+                'block h-2 rounded-full transition-expressive',
+                i === 0 ? 'w-6 bg-primary' : 'w-2 bg-outline-variant',
+              ]}
+            />
+          </button>
+        ))
+      }
+    </div>
+    <div class="flex gap-2">
+      <button type="button" data-prev aria-label="Previous screenshots" class={step}>
+        <Icon name="chevron_left" class="text-[1.5rem]" />
+      </button>
+      <button type="button" data-next aria-label="Next screenshots" class={step}>
+        <Icon name="chevron_right" class="text-[1.5rem]" />
+      </button>
+    </div>
+  </div>
+
   <dialog
     data-lightbox
     aria-label={`${appName} screenshots`}
@@ -73,8 +105,21 @@ const step =
   </dialog>
 </div>
 
+<style>
+  /* The strip scrolls natively, but the native scrollbar is replaced by dots + arrows below. */
+  [data-gallery] [data-strip] {
+    scrollbar-width: none;
+  }
+  [data-gallery] [data-strip]::-webkit-scrollbar {
+    display: none;
+  }
+</style>
+
 <script>
   function setup(gallery: HTMLElement) {
+    const strip = gallery.querySelector<HTMLElement>('[data-strip]')!;
+    const controls = gallery.querySelector<HTMLElement>('[data-controls]')!;
+    const dots = [...gallery.querySelectorAll<HTMLButtonElement>('[data-dot]')];
     const shots = [...gallery.querySelectorAll<HTMLButtonElement>('[data-shot]')];
     const dialog = gallery.querySelector<HTMLDialogElement>('[data-lightbox]')!;
     const image = dialog.querySelector<HTMLImageElement>('[data-image]')!;
@@ -114,6 +159,85 @@ const step =
 
     // Back to the screenshot that was being viewed.
     dialog.addEventListener('close', () => shots[index]?.focus());
+
+    // Strip controls: arrows step one screenshot, dots jump and track progress.
+    // Items snap by center, so every target is computed as the scroll offset
+    // that centers that item — otherwise mandatory snapping pulls the strip
+    // back and the controls look dead.
+    const smooth = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // `relative` on the strip makes these relative to the strip itself.
+    function itemCenter(i: number) {
+      const list = [...strip.querySelectorAll('li')];
+      const item = list[Math.max(0, Math.min(list.length - 1, i))];
+      return item.offsetLeft + item.clientWidth / 2 - strip.clientWidth / 2;
+    }
+
+    function stripIndex() {
+      const list = [...strip.querySelectorAll('li')];
+      const center = strip.scrollLeft + strip.clientWidth / 2;
+      let best = 0;
+      let bestDist = Infinity;
+      list.forEach((item, i) => {
+        const dist = Math.abs(item.offsetLeft + item.clientWidth / 2 - center);
+        if (dist < bestDist) {
+          bestDist = dist;
+          best = i;
+        }
+      });
+      return Math.max(0, Math.min(dots.length - 1, best));
+    }
+
+    function syncDots() {
+      const active = stripIndex();
+      for (const [i, dot] of dots.entries()) {
+        const on = i === active;
+        dot.setAttribute('aria-current', on ? 'true' : 'false');
+        const pip = dot.firstElementChild!;
+        pip.classList.toggle('w-2', !on);
+        pip.classList.toggle('bg-outline-variant', !on);
+        pip.classList.toggle('w-6', on);
+        pip.classList.toggle('bg-primary', on);
+      }
+    }
+
+    function goTo(i: number) {
+      const clamped = Math.max(0, Math.min(dots.length - 1, i));
+      strip.scrollTo({ left: itemCenter(clamped), behavior: smooth ? 'smooth' : 'auto' });
+    }
+
+    gallery.querySelector('[data-prev]')?.addEventListener('click', () => goTo(stripIndex() - 1));
+    gallery.querySelector('[data-next]')?.addEventListener('click', () => goTo(stripIndex() + 1));
+    for (const [i, dot] of dots.entries()) {
+      dot.addEventListener('click', () => goTo(i));
+    }
+
+    let ticking = false;
+    strip.addEventListener(
+      'scroll',
+      () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+          syncDots();
+          ticking = false;
+        });
+      },
+      { passive: true },
+    );
+
+    // Dots and arrows are pointless when every screenshot fits on screen
+    // (wide desktop). Only show them when the strip actually overflows.
+    // Hidden by default in the markup (no-JS keeps the clean strip, too).
+    function updateControls() {
+      const overflows = strip.scrollWidth > strip.clientWidth + 1;
+      controls.classList.toggle('hidden', !overflows);
+      controls.classList.toggle('flex', overflows);
+      if (overflows) syncDots();
+    }
+
+    updateControls();
+    window.addEventListener('resize', updateControls);
   }
 
   function init() {

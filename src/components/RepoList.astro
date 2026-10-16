@@ -86,12 +86,6 @@ const skeletons = Array.from({ length: limit ?? 6 });
             <span class="sr-only">Stars:</span>
             <span data-stars class="tabular-nums"></span>
           </span>
-          <span class="inline-flex items-center gap-1">
-            <Icon name="fork_right" class="text-[0.9375rem]" />
-            <span class="sr-only">Forks:</span>
-            <span data-forks class="tabular-nums"></span>
-          </span>
-          <span data-updated></span>
           <span data-archived class="inline-flex items-center gap-1">
             <Icon name="archive" class="text-[0.9375rem]" />
             Archived
@@ -110,7 +104,7 @@ const skeletons = Array.from({ length: limit ?? 6 });
 </div>
 
 <script>
-  import { fetchRepos, formatRelative, GitHubError, languageColor, type Repo } from '../lib/github';
+  import { fetchRepos, GitHubError, languageColor, type Repo } from '../lib/github';
 
   function setup(root: HTMLElement) {
     const limit = Number(root.dataset.limit) || 0;
@@ -146,8 +140,6 @@ const skeletons = Array.from({ length: limit ?? 6 });
         part('language').remove();
       }
       part('stars').textContent = String(repo.stars);
-      part('forks').textContent = String(repo.forks);
-      part('updated').textContent = `Updated ${formatRelative(repo.pushedAt)}`;
       if (!repo.archived) part('archived').remove();
       return item;
     }

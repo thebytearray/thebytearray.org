@@ -1,8 +1,9 @@
 ---
 import { getTags, tagSlug, type Post } from '../lib/posts';
 import Chip from './Chip.astro';
+import Icon from './Icon.astro';
+import PageHeader from './PageHeader.astro';
 import PostRow from './PostRow.astro';
-import Shape from './Shape.astro';
 
 interface Props {
   /** The posts to list (already filtered when on a tag page). */
@@ -22,22 +23,12 @@ for (const post of posts) {
 }
 ---
 
-<header class="relative isolate pt-8 pb-10 sm:pt-14 sm:pb-14">
-  <div class="pointer-events-none absolute top-2 right-[-18%] -z-10 w-[min(13rem,52vw)] aspect-square sm:right-[-4%] sm:w-56 lg:right-[4%] lg:w-64">
-    <Shape kind="sunny" class="absolute inset-0 animate-drift text-secondary-container" />
-    <Shape kind="clover" class="absolute bottom-[4%] left-[-8%] w-[34%] text-primary-container" />
-  </div>
-  <h1 class="font-display text-[clamp(2.75rem,11vw,6.5rem)] leading-[0.9] font-extrabold tracking-[-0.04em] break-words">
-    {activeTag ? <span class="text-primary">#{activeTag}</span> : 'Blog'}
-  </h1>
-  <p class="mt-5 max-w-[17rem] font-display text-title-lg text-pretty text-on-surface-variant sm:mt-6 sm:max-w-xl sm:text-headline-sm">
-    {
-      activeTag
-        ? `${posts.length} ${posts.length === 1 ? 'post' : 'posts'} tagged “${activeTag}”.`
-        : 'Product updates and notes from The Byte Array.'
-    }
-  </p>
-</header>
+<PageHeader
+  title={activeTag ? `#${activeTag}` : 'Blog'}
+  lede={activeTag
+    ? `${posts.length} ${posts.length === 1 ? 'post' : 'posts'} tagged “${activeTag}”.`
+    : 'Product updates and notes from The Byte Array.'}
+/>
 
 <div
   class:list={[
@@ -70,7 +61,14 @@ for (const post of posts) {
   </ul>
 </nav>
 <!-- Opens the search dialog (components/CommandPalette.astro), limited to blog posts. -->
-<Chip button icon="search" data-palette-open="posts">Search posts</Chip>
+<button
+  type="button"
+  data-palette-open="posts"
+  class="inline-flex min-h-10 flex-none items-center gap-2 rounded-full px-3 text-label-lg text-primary transition-expressive hover:bg-primary-container hover:text-on-primary-container"
+>
+  <Icon name="search" class="text-[1.125rem]" />
+  Search posts
+</button>
 </div>
 
 <div class="flex flex-col gap-10 sm:gap-12">

@@ -16,6 +16,11 @@ interface Props {
 const { app, download, heading: Heading = 'h2', class: className } = Astro.props;
 const details = `/apps/${app.slug}/`;
 const fileName = download.file.split('/').at(-1);
+const updatedLabel = new Date(`${download.updated}T00:00:00Z`).toLocaleDateString('en-GB', {
+  day: 'numeric',
+  month: 'short',
+  year: 'numeric',
+});
 ---
 
 <article
@@ -35,7 +40,7 @@ const fileName = download.file.split('/').at(-1);
         </Heading>
         <p class="mt-1 text-body-lg text-pretty text-on-surface-variant">{app.tagline}</p>
         <p class="mt-1 text-label-lg text-primary">
-          v{download.versionName} · {formatSize(download.sizeBytes)} · Updated {download.updated}
+          v{download.versionName} · {formatSize(download.sizeBytes)} · Updated {updatedLabel}
         </p>
       </div>
     </div>
@@ -110,8 +115,8 @@ const fileName = download.file.split('/').at(-1);
     <p class="flex gap-2 text-body-md text-on-surface-variant">
       <Icon name="info" class="mt-0.5 flex-none text-[1.25rem]" />
       <span>
-        Android will ask you to allow installs from your browser — that is normal for direct downloads.
-        Only install Convertit from this site or Google Play.
+        Android will ask you to allow installs from your browser. That is normal for direct downloads.
+        Only install {app.name} from this site or Google Play.
       </span>
     </p>
   </div>
