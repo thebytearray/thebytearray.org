@@ -1,8 +1,9 @@
 ---
 title: 'Convertit is back'
 date: 2026-10-13
+updated: 2026-10-18
 author: Bat
-description: 'Convertit is available again, self-funded this time. Convertit Pro is still in development and returns in a few weeks.'
+description: 'Convertit is available again, self-funded this time. Convertit Pro returned on October 18.'
 tags: ['Convertit', 'Announcements']
 cover: ./images/convertit-is-back.png
 coverAlt: 'Convertit: we’re back. The free version is live again. Audio and video converter, offline, no ads.'
@@ -18,7 +19,7 @@ We're done worrying about mods. We're here for the people who love Convertit.
 
 ## Convertit Pro
 
-Convertit Pro is still in development and will return in a few weeks.
+Update: Convertit Pro is back too. Read [Convertit Pro is back](/blog/convertit-pro-is-back/).
 
 ## Download
 

@@ -1,6 +1,16 @@
 // Everything on the Apps pages comes from this file. Icons and screenshots
 // live in src/assets/apps/<slug>/.
 import type { ImageMetadata } from 'astro';
+import convertitProCompressVideo from '../assets/apps/convertit-pro/compress-video.png';
+import convertitProCompressCustom from '../assets/apps/convertit-pro/compress-custom.png';
+import convertitProConvertAudioFlac from '../assets/apps/convertit-pro/convert-audio-flac.png';
+import convertitProConvertImage from '../assets/apps/convertit-pro/convert-image.png';
+import convertitProFeatureGraphic from '../assets/apps/convertit-pro/feature-graphic.png';
+import convertitProIcon from '../assets/apps/convertit-pro/icon.png';
+import convertitProMediaInfo from '../assets/apps/convertit-pro/media-info.png';
+import convertitProReduceNoise from '../assets/apps/convertit-pro/reduce-noise.png';
+import convertitProTools from '../assets/apps/convertit-pro/tools.png';
+import convertitProTrim from '../assets/apps/convertit-pro/trim.png';
 import convertitBackground from '../assets/apps/convertit/background.png';
 import convertitConvert from '../assets/apps/convertit/convert.png';
 import convertitFeatureGraphic from '../assets/apps/convertit/feature-graphic.png';
@@ -21,7 +31,7 @@ import openloaderInstallQueue from '../assets/apps/openloader/install-queue.png'
 import openloaderSettings from '../assets/apps/openloader/settings.png';
 import type { IconName } from './icons';
 
-export type AppSlug = 'convertit' | 'openloader' | 'hy2ng';
+export type AppSlug = 'convertit-pro' | 'convertit' | 'openloader' | 'hy2ng';
 
 export interface Screenshot {
   src: ImageMetadata;
@@ -44,10 +54,13 @@ export interface App {
   /** The icon's path from the project root, for the generated social card. */
   iconFile: string;
   /**
-   * The store feature graphic. The app that has one is the featured app: it
-   * gets the banner on the home and Apps pages instead of a card.
+   * The store feature graphic, shown at the top of the app's own page. The
+   * app marked `featured` also gets it as the banner on the home and Apps
+   * pages instead of a card.
    */
   featureGraphic?: Screenshot;
+  /** The featured app: it gets the banner on the home and Apps pages. */
+  featured?: boolean;
   screenshots: Screenshot[];
   features: AppFeature[];
   playStoreUrl: string;
@@ -129,6 +142,102 @@ export const apps: App[] = [
     privacyPath: '/convertit-privacy/',
   },
   {
+    slug: 'convertit-pro',
+    name: 'Convertit Pro',
+    tagline: 'Every tool. Pay once.',
+    summary: 'Audio, video and image tools for Android. Offline, no ads, pay once.',
+    description:
+      'Convertit Pro is the paid version of Convertit. Pay once and every tool unlocks: audio, video and image conversion, video compression, noise reduction, a ringtone maker, EXIF and metadata tools, and media info. It runs offline and shows no ads.',
+    icon: convertitProIcon,
+    iconFile: 'src/assets/apps/convertit-pro/icon.png',
+    featured: true,
+    featureGraphic: {
+      src: convertitProFeatureGraphic,
+      alt: 'Convertit Pro. Every tool. Pay once. Audio, video and image tools, offline, no ads.',
+    },
+    screenshots: [
+      {
+        src: convertitProTools,
+        alt: 'The tools screen: convert, enhance and metadata tools in one place',
+      },
+      {
+        src: convertitProCompressVideo,
+        alt: 'Compress several videos at once, with HDR10+ handled with care',
+      },
+      {
+        src: convertitProReduceNoise,
+        alt: 'Reduce noise on a recording, with adjustable attenuation',
+      },
+      {
+        src: convertitProConvertAudioFlac,
+        alt: 'Convert audio to FLAC, with CUE track splitting and a compression level slider',
+      },
+      {
+        src: convertitProTrim,
+        alt: 'Trim video and normalize loudness, with a size and time estimate',
+      },
+      {
+        src: convertitProConvertImage,
+        alt: 'Convert images like HEIC, with a quality slider',
+      },
+      {
+        src: convertitProCompressCustom,
+        alt: 'Compress video with its own resolution, frame rate and audio settings',
+      },
+      {
+        src: convertitProMediaInfo,
+        alt: 'Media info: a plain verdict plus every detail of a file',
+      },
+    ],
+    features: [
+      {
+        icon: 'apps',
+        title: 'Every tool',
+        description: 'Convert, enhance and inspect media from one screen. Pay once, no ads.',
+      },
+      {
+        icon: 'compress',
+        title: 'Compress video',
+        description: 'Shrink files with your pick of speed, codec, format and resolution.',
+      },
+      {
+        icon: 'crop',
+        title: 'Trim and normalize',
+        description: 'Cut video to the part that matters and even out the loudness.',
+      },
+      {
+        icon: 'noise_control_off',
+        title: 'Reduce noise',
+        description: 'Scrub wind and hum out of voice recordings, on your device.',
+      },
+      {
+        icon: 'gif',
+        title: 'Video to GIF',
+        description: 'Turn a clip into a GIF without leaving the app.',
+      },
+      {
+        icon: 'cleaning_services',
+        title: 'EXIF and metadata',
+        description: 'Clean EXIF from images or a whole folder, and edit tags.',
+      },
+      {
+        icon: 'info',
+        title: 'Media info',
+        description: 'A plain verdict on any file: codec, resolution, HDR and chapters.',
+      },
+      {
+        icon: 'lock',
+        title: 'Offline, no ads',
+        description: 'Everything runs on your device. No ads and no tracking.',
+      },
+    ],
+    playStoreUrl: 'https://play.google.com/store/apps/details?id=org.thebytearray.convertit',
+    packageId: 'org.thebytearray.convertit',
+    requirements: 'Android 7.0+',
+    storeCategory: 'MultimediaApplication',
+    privacyPath: '/convertit-pro-privacy/',
+  },
+  {
     slug: 'openloader',
     name: 'OpenLoader',
     tagline: 'Install APKs on the Android devices you own',
@@ -193,6 +302,7 @@ export const apps: App[] = [
       'Hy2NG is a Hysteria2 client for Android. Import a configuration from a QR code or your clipboard, choose which apps go through the tunnel, or set up your own VPS with the built-in guide. No ads and no tracking.',
     icon: hy2ngIcon,
     iconFile: 'src/assets/apps/hy2ng/icon.png',
+    discontinued: true,
     screenshots: [
       { src: hy2ngConfigurations, alt: 'List of saved configurations' },
       { src: hy2ngAddConfiguration, alt: 'Adding a new configuration' },
@@ -232,8 +342,8 @@ export const apps: App[] = [
   },
 ];
 
-/** The app shown as a banner, and the ones shown as cards. */
-export const featuredApp = apps.find((app) => app.featureGraphic);
+/** The app marked `featured` is shown as a banner, and the ones as cards. */
+export const featuredApp = apps.find((app) => app.featured);
 export const otherApps = apps.filter((app) => app !== featuredApp);
 
 export function getApp(slug: string): App | undefined {
