@@ -8,6 +8,7 @@ import Icon from '../../components/Icon.astro';
 import TableOfContents from '../../components/TableOfContents.astro';
 import Base from '../../layouts/Base.astro';
 import { formatDate, getPosts, readingTime, tagSlug } from '../../lib/posts';
+import { team } from '../../data/site';
 
 export async function getStaticPaths() {
   const posts = await getPosts();
@@ -20,6 +21,7 @@ export async function getStaticPaths() {
 
 const { post, newer, older } = Astro.props;
 const { title, description, date, updated, author, tags, draft, cover, coverAlt } = post.data;
+const authorMember = team.find((m) => m.name === author);
 const { Content, headings } = await render(post);
 // Short posts don't need a table of contents.
 const toc = headings.filter(({ depth }) => depth === 2 || depth === 3);
@@ -57,7 +59,16 @@ const socialImage = ownCover ? cover.src : `/og/${post.id}.png`;
         <span aria-hidden="true" class="size-1 rounded-full bg-outline"></span>
         <span>{readingTime(post.body)} min read</span>
         <span aria-hidden="true" class="size-1 rounded-full bg-outline"></span>
-        <span>{author}</span>
+        <span class="inline-flex items-center gap-1.5">
+          {authorMember?.avatar ? (
+            <img src={authorMember.avatar} alt="" width="20" height="20" loading="lazy" class="size-5 rounded-full" />
+          ) : (
+            <span class="grid size-5 place-items-center rounded-full bg-primary-container text-[0.625rem] font-bold text-on-primary-container">
+              {author.charAt(0)}
+            </span>
+          )}
+          {author}
+        </span>
         {draft && <span class="chip chip-sm chip-tonal text-tertiary">Draft</span>}
       </p>
       <h1

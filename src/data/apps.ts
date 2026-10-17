@@ -64,6 +64,8 @@ export interface App {
   storeCategory: 'DeveloperApplication' | 'MultimediaApplication' | 'UtilitiesApplication';
   /** Kept at the legacy URL: store listings link to it. */
   privacyPath?: `/${string}/`;
+  /** App is discontinued and no longer available for install. */
+  discontinued?: boolean;
 }
 
 export const apps: App[] = [
@@ -180,6 +182,7 @@ export const apps: App[] = [
     requirements: 'Android. Wireless ADB needs Android 11 or newer.',
     storeCategory: 'DeveloperApplication',
     privacyPath: '/openloader-privacy/',
+    discontinued: true,
   },
   {
     slug: 'hy2ng',
