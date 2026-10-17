@@ -216,8 +216,10 @@
     /* Set on both: html's value goes to the viewport, so body's really clips
        decorative shapes that bleed off the edge. */
     overflow-x: clip;
+    scrollbar-gutter: stable;
+    scroll-behavior: smooth;
   }
-
+ 
   body {
     min-height: 100dvh;
     overflow-x: clip;

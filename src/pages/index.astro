@@ -6,6 +6,10 @@ import Shape from '../components/Shape.astro';
 import Icon from '../components/Icon.astro';
 import { apps } from '../data/apps';
 import Base from '../layouts/Base.astro';
+import PostRow from '../components/PostRow.astro';
+import { getPosts } from '../lib/posts';
+
+const latestPosts = (await getPosts()).slice(0, 3);
 ---
 
 <Base>
@@ -85,6 +89,34 @@ import Base from '../layouts/Base.astro';
         ))
       }
     </ul>
+  </section>
+
+  <!-- Blog: latest posts. -->
+  <section aria-labelledby="blog" class="mt-14 sm:mt-20">
+    <div class="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
+      <div>
+        <h2 id="blog" class="font-display text-headline-lg sm:text-display-sm">Blog</h2>
+        <p class="mt-1 text-body-lg text-on-surface-variant">Product updates and notes from The Byte Array.</p>
+      </div>
+      <a
+        href="/blog/"
+        class="inline-flex min-h-10 items-center gap-1 rounded-full px-3 text-label-lg text-primary transition-expressive hover:bg-primary-container hover:text-on-primary-container"
+      >
+        All posts
+        <Icon name="arrow_forward" class="text-[1.125rem]" />
+      </a>
+    </div>
+    {
+      latestPosts.length > 0 && (
+        <ul class="mt-6 divide-y divide-outline-variant border-y border-outline-variant sm:mt-8">
+          {latestPosts.map((post) => (
+            <li class="py-1">
+              <PostRow post={post} />
+            </li>
+          ))}
+        </ul>
+      )
+    }
   </section>
 
   <!-- Trust: one line, links out. Full story lives on /about/. -->

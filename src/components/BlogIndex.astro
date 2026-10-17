@@ -61,14 +61,9 @@ for (const post of posts) {
   </ul>
 </nav>
 <!-- Opens the search dialog (components/CommandPalette.astro), limited to blog posts. -->
-<button
-  type="button"
-  data-palette-open="posts"
-  class="inline-flex min-h-10 flex-none items-center gap-2 rounded-full px-3 text-label-lg text-primary transition-expressive hover:bg-primary-container hover:text-on-primary-container"
->
-  <Icon name="search" class="text-[1.125rem]" />
+<Chip button icon="search" data-palette-open="posts" variant="outlined">
   Search posts
-</button>
+</Chip>
 </div>
 
 <div class="flex flex-col gap-10 sm:gap-12">
