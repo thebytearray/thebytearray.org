@@ -111,9 +111,14 @@ const sectionTitle = 'font-display text-headline-md';
       {
         app.discontinued && (
           <p class="mt-6 rounded-xl bg-surface-container-high px-4 py-3 text-body-md text-on-surface">
-            OpenLoader is discontinued and is no longer available on Google Play or as a download. Existing installs
-            keep working. The source is archived on
-            <a href={app.sourceUrl} class="text-link">GitHub</a>.
+            {app.name} is discontinued and is no longer available on Google Play or as a download. Existing
+            installs keep working.
+            {
+              app.sourceUrl && (
+                <> The source is archived on <a href={app.sourceUrl} class="text-link">GitHub</a>.</>
+              )
+            }
+            {' '}The reasoning is in <a href={`/blog/${app.slug}-discontinued/`} class="text-link">our post</a>.
           </p>
         )
       }

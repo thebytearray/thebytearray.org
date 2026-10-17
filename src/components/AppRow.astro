@@ -24,23 +24,41 @@ const details = `/apps/${app.slug}/`;
     class="size-16 flex-none rounded-[22%] sm:size-20"
   />
   <div class="min-w-0 flex-1">
-    <Heading class="font-display text-headline-md sm:text-headline-lg">
-      {app.name}
-    </Heading>
+    <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
+      <Heading class="font-display text-headline-md sm:text-headline-lg">
+        {app.name}
+      </Heading>
+      {
+        app.discontinued && (
+          <Chip
+            variant="tonal"
+            size="sm"
+            aria-label={`${app.name} is discontinued`}
+            class="text-on-surface-variant"
+          >
+            Discontinued
+          </Chip>
+        )
+      }
+    </div>
     <p class="mt-2 max-w-prose text-body-lg text-pretty text-on-surface-variant">{app.summary}</p>
     <ul class="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2">
       <li>
         <Chip href={details} variant="filled" aria-label={`${app.name} details`}>Details</Chip>
       </li>
-      <li>
-        <a
-          href={app.playStoreUrl}
-          aria-label={`Get ${app.name} on Google Play`}
-          class="rounded-sm text-label-lg text-on-surface-variant underline-offset-4 hover:text-primary hover:underline"
-        >
-          Google Play
-        </a>
-      </li>
+      {
+        !app.discontinued && (
+          <li>
+            <a
+              href={app.playStoreUrl}
+              aria-label={`Get ${app.name} on Google Play`}
+              class="rounded-sm text-label-lg text-on-surface-variant underline-offset-4 hover:text-primary hover:underline"
+            >
+              Google Play
+            </a>
+          </li>
+        )
+      }
     </ul>
   </div>
 </article>
