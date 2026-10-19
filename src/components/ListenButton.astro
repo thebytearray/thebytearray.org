@@ -1,0 +1,378 @@
+---
+import Icon from './Icon.astro';
+
+interface Props {
+  /** Narration made by `npm run audio` (scripts/generate-audio.mjs). */
+  src: string;
+  duration: number;
+  /** Start time, in seconds, of each spoken block: title, description, then the body. */
+  marks: number[];
+  title: string;
+}
+
+const { src, duration, marks, title } = Astro.props;
+const SPEEDS = [0.75, 1, 1.25, 1.5, 1.75, 2];
+const format = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+---
+
+<!-- Plays the post's narration and highlights the paragraph being read. -->
+<section
+  data-listen
+  data-marks={JSON.stringify(marks)}
+  data-title={title}
+  aria-label="Listen to this post"
+  class="mt-8 flex items-center gap-3 rounded-2xl bg-surface-container p-2 pr-3 sm:gap-4 sm:p-3 sm:pr-4"
+  data-pagefind-ignore
+>
+  <audio src={src} preload="none"></audio>
+
+  <button
+    type="button"
+    data-listen-toggle
+    aria-label="Play"
+    class="grid size-12 flex-none place-items-center rounded-[50%] bg-primary text-on-primary transition-expressive hover:rounded-[32%] hover:shadow-level1 active:scale-95 sm:size-14"
+  >
+    <Icon name="play_arrow" class="text-[1.75rem] [--icon-fill:1]" />
+  </button>
+
+  <div class="flex min-w-0 flex-1 flex-col gap-1.5">
+    <div class="flex items-baseline justify-between gap-3">
+      <span data-listen-status class="truncate text-label-lg">Listen to this post</span>
+      <span class="flex-none text-label-md text-on-surface-variant tabular-nums">
+        <span data-listen-time hidden>0:00 / </span>{format(duration)}
+      </span>
+    </div>
+    <input
+      type="range"
+      data-listen-seek
+      min="0"
+      max={duration}
+      step="0.1"
+      value="0"
+      aria-label="Seek"
+      aria-valuetext="0:00"
+      class="listen-seek"
+    />
+  </div>
+
+  <div class="flex flex-none items-center gap-1">
+    <button
+      type="button"
+      data-listen-skip="-10"
+      aria-label="Back 10 seconds"
+      class="hidden size-10 place-items-center rounded-full text-on-surface-variant transition-expressive hover:bg-on-surface/8 hover:text-on-surface sm:grid"
+    >
+      <Icon name="replay_10" class="text-[1.375rem]" />
+    </button>
+    <button
+      type="button"
+      data-listen-skip="10"
+      aria-label="Forward 10 seconds"
+      class="hidden size-10 place-items-center rounded-full text-on-surface-variant transition-expressive hover:bg-on-surface/8 hover:text-on-surface sm:grid"
+    >
+      <Icon name="forward_10" class="text-[1.375rem]" />
+    </button>
+
+    <div data-listen-speed class="relative">
+      <button
+        type="button"
+        data-listen-speed-button
+        aria-haspopup="menu"
+        aria-expanded="false"
+        aria-label="Playback speed: 1×"
+        class="h-10 min-w-12 rounded-full px-3 text-label-lg text-on-surface-variant tabular-nums transition-expressive hover:bg-on-surface/8 hover:text-on-surface aria-expanded:bg-secondary-container aria-expanded:text-on-secondary-container"
+      >
+        <span data-listen-speed-label>1×</span>
+      </button>
+      <ul
+        role="menu"
+        aria-label="Playback speed"
+        hidden
+        class="absolute top-full right-0 z-20 mt-2 min-w-36 rounded-lg bg-surface-container-high py-2 shadow-level2"
+      >
+        {
+          SPEEDS.map((speed) => (
+            <li role="none">
+              <button
+                type="button"
+                role="menuitemradio"
+                aria-checked={speed === 1 ? 'true' : 'false'}
+                data-speed={speed}
+                class="group flex h-10 w-full items-center gap-3 px-4 text-left text-label-lg tabular-nums transition-colors hover:bg-on-surface/8 focus-visible:bg-on-surface/12 focus-visible:outline-none aria-checked:text-primary"
+              >
+                <Icon name="check" class="text-[1.125rem] opacity-0 group-aria-checked:opacity-100" />
+                {speed === 1 ? 'Normal' : `${speed}×`}
+              </button>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Thin M3-style slider: the played part is filled in, the thumb grows on hover. */
+  .listen-seek {
+    --progress: 0%;
+    appearance: none;
+    width: 100%;
+    height: 1rem;
+    background: transparent;
+    cursor: pointer;
+  }
+  .listen-seek::-webkit-slider-runnable-track {
+    height: 0.25rem;
+    border-radius: 9999px;
+    background: linear-gradient(
+      to right,
+      var(--color-primary) var(--progress),
+      color-mix(in srgb, var(--color-on-surface) 14%, transparent) var(--progress)
+    );
+  }
+  .listen-seek::-moz-range-track {
+    height: 0.25rem;
+    border-radius: 9999px;
+    background: color-mix(in srgb, var(--color-on-surface) 14%, transparent);
+  }
+  .listen-seek::-moz-range-progress {
+    height: 0.25rem;
+    border-radius: 9999px;
+    background: var(--color-primary);
+  }
+  .listen-seek::-webkit-slider-thumb {
+    appearance: none;
+    width: 0.875rem;
+    height: 0.875rem;
+    margin-top: -0.3125rem;
+    border-radius: 9999px;
+    background: var(--color-primary);
+    transition: transform var(--duration-short4) var(--ease-effects);
+  }
+  .listen-seek::-moz-range-thumb {
+    width: 0.875rem;
+    height: 0.875rem;
+    border: 0;
+    border-radius: 9999px;
+    background: var(--color-primary);
+  }
+  .listen-seek:is(:hover, :focus-visible)::-webkit-slider-thumb {
+    transform: scale(1.3);
+  }
+  .listen-seek:focus-visible {
+    outline: none;
+  }
+  .listen-seek:focus-visible::-webkit-slider-thumb {
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-primary) 30%, transparent);
+  }
+</style>
+
+<script>
+  const SPEED_KEY = 'listen-speed';
+
+  function format(seconds: number) {
+    const s = Math.floor(seconds);
+    return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+  }
+
+  // The same blocks, in the same order, that the narration script speaks
+  // (scripts/generate-audio.mjs): top-level blocks only, skipping anything
+  // inside a list item or quote, code, tables, footnotes and image-only paragraphs.
+  function blocks() {
+    const article = document.querySelector('article');
+    if (!article) return [];
+    return [
+      article.querySelector<HTMLElement>('h1'),
+      article.querySelector<HTMLElement>('header h1 + p'),
+      ...article.querySelectorAll<HTMLElement>(
+        '.prose :is(p, h1, h2, h3, h4, h5, h6, li, blockquote):not(li *, blockquote *, table *, .footnotes *)',
+      ),
+    ].filter((el): el is HTMLElement => !!el && !el.closest('pre') && !!el.innerText.trim());
+  }
+
+  function mark(el: HTMLElement | null) {
+    const current = document.querySelector('[data-speaking]');
+    if (current === el) return;
+    current?.removeAttribute('data-speaking');
+    el?.setAttribute('data-speaking', '');
+  }
+
+  function init() {
+    const root = document.querySelector<HTMLElement>('[data-listen]');
+    // Runs on first load and after every client-side navigation; set up once.
+    if (!root || root.dataset.ready === 'true') return;
+    root.dataset.ready = 'true';
+
+    const audio = root.querySelector('audio')!;
+    const toggle = root.querySelector<HTMLButtonElement>('[data-listen-toggle]')!;
+    const toggleIcon = toggle.querySelector('.icon')!;
+    const status = root.querySelector('[data-listen-status]')!;
+    const time = root.querySelector<HTMLElement>('[data-listen-time]')!;
+    const seek = root.querySelector<HTMLInputElement>('[data-listen-seek]')!;
+    const marks: number[] = JSON.parse(root.dataset.marks ?? '[]');
+    const els = blocks();
+    // Only highlight when the page and the narration agree on the blocks.
+    const highlight = els.length === marks.length;
+    const total = Number(seek.max);
+    // Listeners on document must go when the page does (client-side navigation).
+    const page = new AbortController();
+    // Set while a listening session is underway, so a paused or seeked
+    // position still shows which paragraph it is on.
+    let started = false;
+    let failed = false;
+
+    function render() {
+      if (failed) return;
+      const playing = !audio.paused;
+      toggleIcon.textContent = playing ? 'pause' : 'play_arrow';
+      toggle.setAttribute('aria-label', playing ? 'Pause' : 'Play');
+      if (playing) status.textContent = 'Playing';
+      else if (audio.currentTime > 0 && !audio.ended) status.textContent = 'Paused';
+    }
+
+    function progress() {
+      const t = audio.currentTime;
+      seek.value = String(t);
+      seek.style.setProperty('--progress', `${(t / total) * 100}%`);
+      seek.setAttribute('aria-valuetext', `${format(t)} of ${format(total)}`);
+      time.textContent = `${format(t)} / `;
+      if (!highlight || !started) return;
+      let i = marks.length - 1;
+      while (i > 0 && marks[i] > t) i--;
+      mark(els[i]);
+    }
+
+    function fail() {
+      failed = true;
+      started = false;
+      mark(null);
+      toggleIcon.textContent = 'play_arrow';
+      toggle.setAttribute('aria-label', 'Play');
+      status.textContent = 'Couldn’t load the audio';
+    }
+
+    toggle.addEventListener('click', () => {
+      time.hidden = false;
+      started = true;
+      if (!audio.paused) return audio.pause();
+      if (failed) {
+        // Try again: the network may be back.
+        failed = false;
+        audio.load();
+      }
+      audio.play().catch((error: DOMException) => {
+        // NotAllowedError/AbortError are the browser declining or a pause; anything else is a broken file.
+        if (error.name === 'NotSupportedError') fail();
+        else render();
+      });
+    });
+    audio.addEventListener('error', fail);
+    audio.addEventListener('play', render);
+    audio.addEventListener('pause', render);
+    audio.addEventListener('waiting', () => (status.textContent = 'Loading…'));
+    audio.addEventListener('playing', render);
+    audio.addEventListener('ended', () => {
+      started = false;
+      mark(null);
+      status.textContent = 'Finished. Play again?';
+      audio.currentTime = 0;
+      render();
+    });
+    audio.addEventListener('timeupdate', progress);
+    seek.addEventListener('input', () => {
+      time.hidden = false;
+      started = true;
+      audio.currentTime = Number(seek.value);
+      progress();
+    });
+    for (const skip of root.querySelectorAll<HTMLButtonElement>('[data-listen-skip]')) {
+      skip.addEventListener('click', () => {
+        time.hidden = false;
+        started = true;
+        audio.currentTime = Math.min(total, Math.max(0, audio.currentTime + Number(skip.dataset.listenSkip)));
+        progress();
+      });
+    }
+
+    // Speed menu. The choice carries over to other posts; the audio element
+    // resets its rate when it loads, so it is reapplied then.
+    const speedRoot = root.querySelector<HTMLElement>('[data-listen-speed]')!;
+    const speedButton = speedRoot.querySelector<HTMLButtonElement>('[data-listen-speed-button]')!;
+    const speedLabel = speedRoot.querySelector('[data-listen-speed-label]')!;
+    const menu = speedRoot.querySelector<HTMLElement>('[role="menu"]')!;
+    const items = [...menu.querySelectorAll<HTMLButtonElement>('[data-speed]')];
+    let rate = 1;
+
+    function setSpeed(value: number) {
+      rate = value;
+      audio.playbackRate = audio.defaultPlaybackRate = value;
+      speedLabel.textContent = `${value}×`;
+      speedButton.setAttribute('aria-label', `Playback speed: ${value}×`);
+      for (const item of items) item.setAttribute('aria-checked', String(Number(item.dataset.speed) === value));
+    }
+    try {
+      const saved = Number(localStorage.getItem(SPEED_KEY));
+      if (items.some((item) => Number(item.dataset.speed) === saved)) setSpeed(saved);
+    } catch {}
+    audio.addEventListener('loadedmetadata', () => setSpeed(rate));
+
+    function openMenu(open: boolean, focus = false) {
+      menu.hidden = !open;
+      speedButton.setAttribute('aria-expanded', String(open));
+      if (open && focus) (items.find((i) => i.getAttribute('aria-checked') === 'true') ?? items[0]).focus();
+    }
+    speedButton.addEventListener('click', () => openMenu(menu.hasAttribute('hidden')));
+    speedButton.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        openMenu(true, true);
+      }
+    });
+    for (const item of items) {
+      item.addEventListener('click', () => {
+        setSpeed(Number(item.dataset.speed));
+        try {
+          localStorage.setItem(SPEED_KEY, String(rate));
+        } catch {}
+        openMenu(false);
+        speedButton.focus();
+      });
+    }
+    menu.addEventListener('keydown', (e) => {
+      const i = items.indexOf(document.activeElement as HTMLButtonElement);
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        items[(i + (e.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length].focus();
+      } else if (e.key === 'Escape' || e.key === 'Tab') {
+        openMenu(false);
+        if (e.key === 'Escape') speedButton.focus();
+      }
+    });
+    document.addEventListener(
+      'click',
+      (e) => {
+        if (!menu.hasAttribute('hidden') && !speedRoot.contains(e.target as Node)) openMenu(false);
+      },
+      { signal: page.signal },
+    );
+
+    // Lock-screen and headset controls.
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.metadata = new MediaMetadata({ title: root.dataset.title, artist: 'The Byte Array' });
+    }
+
+    // Stop when leaving the page through the client router.
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        audio.pause();
+        mark(null);
+        page.abort();
+      },
+      { signal: page.signal },
+    );
+  }
+
+  init();
+  document.addEventListener('astro:page-load', init);
+</script>

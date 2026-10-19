@@ -5,10 +5,12 @@ import { Image } from 'astro:assets';
 import { render } from 'astro:content';
 import Chip from '../../components/Chip.astro';
 import Icon from '../../components/Icon.astro';
+import ListenButton from '../../components/ListenButton.astro';
 import TableOfContents from '../../components/TableOfContents.astro';
 import Base from '../../layouts/Base.astro';
 import { formatDate, getPosts, readingTime, tagSlug } from '../../lib/posts';
 import { team } from '../../data/site';
+import postAudio from '../../data/post-audio.json';
 
 export async function getStaticPaths() {
   const posts = await getPosts();
@@ -22,6 +24,8 @@ export async function getStaticPaths() {
 const { post, newer, older } = Astro.props;
 const { title, description, date, updated, author, tags, draft, cover, coverAlt } = post.data;
 const authorMember = team.find((m) => m.name === author);
+// Narration from `npm run audio`; posts without one get no Listen button.
+const audio = (postAudio as Record<string, { duration: number; marks: number[] }>)[post.id];
 const { Content, headings } = await render(post);
 // Short posts don't need a table of contents.
 const toc = headings.filter(({ depth }) => depth === 2 || depth === 3);
@@ -90,6 +94,7 @@ const socialImage = ownCover ? cover.src : `/og/${post.id}.png`;
           </ul>
         )
       }
+      {audio && <ListenButton src={`/audio/blog/${post.id}.mp3`} duration={audio.duration} marks={audio.marks} title={title} />}
     </header>
 
     {
