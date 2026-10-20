@@ -144,10 +144,10 @@ export const apps: App[] = [
   {
     slug: 'convertit-pro',
     name: 'Convertit Pro',
-    tagline: 'Every tool. Pay once.',
+    tagline: 'All tools listed below. Pay once.',
     summary: 'Audio, video and image tools for Android. Offline, no ads, pay once.',
     description:
-      'Convertit Pro is the paid version of Convertit. Pay once and every tool unlocks: audio, video and image conversion, video compression, noise reduction, a ringtone maker, EXIF and metadata tools, and media info. It runs offline and shows no ads.',
+      'Convertit Pro is the paid version of Convertit. One purchase unlocks the tools listed under What it does on this page as of 20 October 2026: audio, video and image conversion, video compression, noise reduction, a ringtone maker, EXIF and metadata tools, and media info. Future new tools may be separate and will be listed here before any charge. It runs offline and shows no ads.',
     icon: convertitProIcon,
     iconFile: 'src/assets/apps/convertit-pro/icon.png',
     featured: true,
@@ -192,8 +192,8 @@ export const apps: App[] = [
     features: [
       {
         icon: 'apps',
-        title: 'Every tool',
-        description: 'Convert, enhance and inspect media from one screen. Pay once, no ads.',
+        title: 'All tools in one place',
+        description: 'Convert, enhance and inspect media from one screen. One purchase unlocks the tools listed here, no ads.',
       },
       {
         icon: 'compress',

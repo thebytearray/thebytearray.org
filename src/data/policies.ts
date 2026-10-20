@@ -89,7 +89,7 @@ export const policies: Record<AppSlug, Policy> = {
         heading: "Changes to this policy",
         blocks: [
           p(
-            "We may update this privacy policy from time to time. Changes will be posted on this page.",
+            "We version this page. See the Last updated date and time above. If we make a material change, we add a dated note here and announce it on our blog at least 7 days before it takes effect.",
           ),
         ],
       },
@@ -171,7 +171,7 @@ export const policies: Record<AppSlug, Policy> = {
         heading: "Changes to this policy",
         blocks: [
           p(
-            "We may update this privacy policy from time to time. Changes will be posted on this page.",
+            "We version this page. See the Last updated date and time above. If we make a material change, we add a dated note here and announce it on our blog at least 7 days before it takes effect.",
           ),
         ],
       },
@@ -234,7 +234,7 @@ export const policies: Record<AppSlug, Policy> = {
         heading: "Changes to this policy",
         blocks: [
           p(
-            "We may update this privacy policy from time to time. Changes will be posted on this page. We encourage you to review this policy periodically.",
+            "We version this page. See the Last updated date and time above. If we make a material change, we add a dated note here and announce it on our blog at least 7 days before it takes effect.",
           ),
         ],
       },
@@ -316,7 +316,7 @@ export const policies: Record<AppSlug, Policy> = {
         heading: "Changes to this policy",
         blocks: [
           p(
-            "We may update this privacy policy from time to time. Changes will be posted on this page.",
+            "We version this page. See the Last updated date and time above. If we make a material change, we add a dated note here and announce it on our blog at least 7 days before it takes effect.",
           ),
         ],
       },
