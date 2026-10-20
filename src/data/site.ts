@@ -73,6 +73,7 @@ export interface TeamMember {
   role: string;
   bio?: string;
   github?: string;
+  website?: string;
   avatar?: string;
 }
 
@@ -82,6 +83,7 @@ export const team: TeamMember[] = [
     role: 'Founder and lead developer',
     bio: 'Building software and sharing what I learn along the way.',
     github: 'https://github.com/codewithtamim',
+    website: 'https://codewithtamim.dev/',
     avatar: 'https://github.com/codewithtamim.png',
   },
   {
