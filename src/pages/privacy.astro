@@ -1,0 +1,109 @@
+---
+import '../styles/prose.css';
+
+import { site } from '../data/site';
+import Base from '../layouts/Base.astro';
+
+const lastUpdated = new Date('2026-10-20T04:22:31Z');
+const lastUpdatedDisplay = new Intl.DateTimeFormat('en-GB', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
+  timeZone: 'UTC',
+  timeZoneName: 'short',
+}).format(lastUpdated);
+---
+
+<Base
+  title="Site privacy"
+  description="How thebytearray.org handles your data: no cookies, no analytics, no accounts. Theme choice stays in your browser, emails only if you contact us."
+  breadcrumbs={[{ name: 'Site privacy', path: '/privacy/' }]}
+>
+  <div class="mx-auto max-w-2xl pt-4 sm:pt-10" data-pagefind-body>
+    <header class="mt-6 sm:mt-8">
+      <h1
+        class="font-display text-[clamp(2rem,7.5vw,3.75rem)] leading-[1.04] font-extrabold tracking-[-0.03em] text-balance"
+      >
+        Site privacy
+      </h1>
+      <p class="mt-4 text-label-lg text-on-surface-variant">
+        Last updated <time datetime={lastUpdated.toISOString()}>{lastUpdatedDisplay}</time>
+      </p>
+    </header>
+
+    <article class="prose mt-10 sm:mt-12">
+      <section>
+        <h2>Who we are</h2>
+        <p>
+          This website is run by {site.company.name}, registered in {site.company.jurisdiction}, no.{' '}
+          {site.company.number}, office at {site.company.office}.
+        </p>
+      </section>
+
+      <section>
+        <h2>What we collect on this site</h2>
+        <p>
+          Nothing directly. There are no cookies, no analytics scripts, no accounts and no contact-form
+          server. The contact form opens your own email app — the message never passes through our
+          server.
+        </p>
+      </section>
+
+      <section>
+        <h2>Stored only in your browser</h2>
+        <p>
+          Theme (light/dark) and accent colour are saved in your browser localStorage and never sent
+          to us. Clearing site data removes them.
+        </p>
+      </section>
+
+      <section>
+        <h2>If you email us</h2>
+        <p>
+          We receive your name, email address and message in our inbox, only to handle your request.
+          We do not share it. Ask for deletion at any time via{' '}
+          <button type="button" data-mailto={site.mail} class="text-link">{site.emailDisplay}</button>{' '}
+          and we will delete it.
+        </p>
+      </section>
+
+      <section>
+        <h2>Hosting and delivery</h2>
+        <p>
+          The site is static files served by nginx behind Cloudflare, which may briefly process your
+          IP address for security. Server logs are kept briefly for security and debugging only.
+          We run no Google analytics, no verification scripts and no third-party trackers on these
+          pages.
+        </p>
+      </section>
+
+      <section>
+        <h2>External services</h2>
+        <p>
+          Clicking a link to GitHub, Google Play or another site sends your request to that service
+          under their policy. Purchases are handled entirely by Google Play — we never see your
+          payment details. Per-app handling is in each app privacy policy linked in the footer.
+        </p>
+      </section>
+
+      <section>
+        <h2>Your rights</h2>
+        <p>
+          Under UK GDPR you may ask for access, correction or deletion of emails you sent us. Use our{' '}
+          <a href="/contact/" class="text-link">contact form</a> or email us at{' '}
+          <button type="button" data-mailto={site.mail} class="text-link">{site.emailDisplay}</button>.
+        </p>
+      </section>
+
+      <section>
+        <h2>Changes</h2>
+        <p>
+          If we make a material change, we update the date above and note it here at least 7 days
+          before it takes effect.
+        </p>
+      </section>
+    </article>
+  </div>
+</Base>

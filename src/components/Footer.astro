@@ -15,9 +15,13 @@ const columns = [
   },
   {
     title: 'Privacy',
-    links: apps.flatMap((app) =>
-      app.privacyPath ? [{ label: `${app.name} privacy`, href: app.privacyPath }] : [],
-    ),
+    links: [
+      ...apps.flatMap((app) =>
+        app.privacyPath ? [{ label: `${app.name} privacy`, href: app.privacyPath }] : [],
+      ),
+      { label: 'Site privacy', href: '/privacy/' },
+      { label: 'Terms', href: '/terms/' },
+    ],
   },
   {
     title: 'Studio',

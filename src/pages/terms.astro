@@ -1,0 +1,103 @@
+---
+import '../styles/prose.css';
+
+import { site } from '../data/site';
+import Base from '../layouts/Base.astro';
+
+const lastUpdated = new Date('2026-10-20T04:22:31Z');
+const lastUpdatedDisplay = new Intl.DateTimeFormat('en-GB', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
+  timeZone: 'UTC',
+  timeZoneName: 'short',
+}).format(lastUpdated);
+---
+
+<Base
+  title="Terms"
+  description="Clear terms for thebytearray.org and our apps: what you get, pay-once price, requirements, updates, support and refunds. Fair deals only. No hidden charges."
+  breadcrumbs={[{ name: 'Terms', path: '/terms/' }]}
+>
+  <div class="mx-auto max-w-2xl pt-4 sm:pt-10" data-pagefind-body>
+    <header class="mt-6 sm:mt-8">
+      <h1
+        class="font-display text-[clamp(2rem,7.5vw,3.75rem)] leading-[1.04] font-extrabold tracking-[-0.03em] text-balance"
+      >
+        Terms
+      </h1>
+      <p class="mt-4 text-label-lg text-on-surface-variant">
+        Last updated <time datetime={lastUpdated.toISOString()}>{lastUpdatedDisplay}</time>
+      </p>
+    </header>
+
+    <article class="prose mt-10 sm:mt-12">
+      <section>
+        <h2>Our promise</h2>
+        <p>
+          A deal should leave neither side wronged. What is listed on an app page is what you get,
+          the price shown at purchase is the full price for that scope, and remedies follow our{' '}
+          <a href="/refund-policy/" class="text-link">refund policy</a>.
+        </p>
+      </section>
+
+      <section>
+        <h2>What you get</h2>
+        <p>
+          Each app page lists its features under What it does, its requirements (for example Android
+          7.0+), and whether it is free, pay-once or discontinued. Convertit Pro unlocks only the
+          tools listed as of 20 October 2026 — future new tools will be listed before any charge.
+        </p>
+      </section>
+
+      <section>
+        <h2>Price and payment</h2>
+        <p>
+          Free apps cost nothing. Paid apps are one purchase through Google Play, which handles
+          payment and VAT. We never see your payment details. No subscriptions, no ads to remove,
+          no in-app charges beyond the listed purchase.
+        </p>
+      </section>
+
+      <section>
+        <h2>Updates and support</h2>
+        <p>
+          We fix what we advertise. Contact us with your order number (GPA…), purchase date and
+          steps to reproduce. We aim to reply within 5 business days and fix or work around within
+          14 business days. Refund timing is in our{' '}
+          <a href="/refund-policy/" class="text-link">refund policy</a>.
+        </p>
+      </section>
+
+      <section>
+        <h2>Open and closed source</h2>
+        <p>
+          OpenLoader and this website are {site.license.name}. Convertit, Convertit Pro and Hy2NG
+          are closed — see{' '}
+          <a href="/blog/why-convertit-is-not-open-source/" class="text-link">why Convertit is not open source</a>.
+          Discontinued apps are marked and keep working for existing installs.
+        </p>
+      </section>
+
+      <section>
+        <h2>Site content</h2>
+        <p>
+          This website is open source under{' '}
+          <a href={site.repo} target="_blank" rel="noopener" class="text-link">{site.license.name}</a>.
+          Downloads list version, size and SHA-256 so you can verify what you install.
+        </p>
+      </section>
+
+      <section>
+        <h2>Contact</h2>
+        <p>
+          Questions about these terms use our{' '}
+          <a href="/contact/" class="text-link">contact form</a> or email us at{' '}
+          <button type="button" data-mailto={site.mail} class="text-link">{site.emailDisplay}</button>.
+        </p>
+      </section>
+    </article>
+  </div>
+</Base>

@@ -6,6 +6,9 @@ import { getPosts } from '../../lib/posts';
 const posts = await getPosts();
 ---
 
-<Base title="Blog" description="Product updates and notes from The Byte Array.">
+<Base
+  title="Blog"
+  description="Product updates and notes from The Byte Array: app releases, discontinuations, privacy changes and open-source work. No ads, no tracking. Straight to the point."
+>
   <BlogIndex posts={posts} allPosts={posts} />
 </Base>

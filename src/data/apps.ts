@@ -75,6 +75,10 @@ export interface App {
   requirements: string;
   /** schema.org applicationCategory, for search engines. */
   storeCategory: 'DeveloperApplication' | 'MultimediaApplication' | 'UtilitiesApplication';
+  /** SEO title (50-60 chars, query first). Falls back to `name: tagline` when omitted. */
+  seoTitle?: string;
+  /** SEO description (150-160 chars). Falls back to `summary` when omitted. */
+  seoDescription?: string;
   /** Kept at the legacy URL: store listings link to it. */
   privacyPath?: `/${string}/`;
   /** App is discontinued and no longer available for install. */
@@ -139,6 +143,9 @@ export const apps: App[] = [
     sourcePost: '/blog/why-convertit-is-not-open-source/',
     requirements: 'Android 7.0+',
     storeCategory: 'MultimediaApplication',
+    seoTitle: 'Convertit – Offline Audio Video Converter for Android',
+    seoDescription:
+      'Convertit converts audio and video offline on Android: MP3, M4A, AAC, OGG, OPUS in background with tags. No ads, no tracking, no account. Android 7.0+.',
     privacyPath: '/convertit-privacy/',
   },
   {
@@ -235,6 +242,9 @@ export const apps: App[] = [
     packageId: 'org.thebytearray.convertit',
     requirements: 'Android 7.0+',
     storeCategory: 'MultimediaApplication',
+    seoTitle: 'Convertit Pro – Offline Audio, Video, Image Tools',
+    seoDescription:
+      'Convertit Pro unlocks audio, video and image conversion, compression, noise reduction, metadata offline. One purchase, no ads or tracking. Android 7.0+.',
     privacyPath: '/convertit-pro-privacy/',
   },
   {
@@ -290,6 +300,9 @@ export const apps: App[] = [
     license: 'GPL-3.0',
     requirements: 'Android. Wireless ADB needs Android 11 or newer.',
     storeCategory: 'DeveloperApplication',
+    seoTitle: 'OpenLoader – Install APKs on Android Devices You Own',
+    seoDescription:
+      'OpenLoader installs APK files you provide via queue, wireless ADB or Shizuku. Open source GPL-3.0, no analytics, data stays on device. Discontinued.',
     privacyPath: '/openloader-privacy/',
     discontinued: true,
   },
@@ -338,6 +351,9 @@ export const apps: App[] = [
     signingSha1: '91:11:2D:98:FF:F8:07:6C:01:81:FB:B3:AD:83:67:C5:D4:D5:32:D3',
     requirements: 'Android 8.0+',
     storeCategory: 'UtilitiesApplication',
+    seoTitle: 'Hy2NG – Hysteria2 VPN Client for Android',
+    seoDescription:
+      'Hy2NG is a Hysteria2 client for Android: QR import, per-app proxy and VPS setup guide. No ads, no tracking, configs stay on device. Discontinued.',
     privacyPath: '/hy2ng-privacy/',
   },
 ];

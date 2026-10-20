@@ -60,8 +60,8 @@ const sectionTitle = 'font-display text-headline-md';
 ---
 
 <Base
-  title={`${app.name}: ${app.tagline}`}
-  description={app.summary}
+  title={app.seoTitle ?? `${app.name}: ${app.tagline}`}
+  description={app.seoDescription ?? app.summary}
   image={`/og/${app.slug}.png`}
   imageAlt={`${app.name}: ${app.tagline}`}
   breadcrumbs={[
@@ -217,6 +217,17 @@ const sectionTitle = 'font-display text-headline-md';
           )
         }
         <p class="mt-8 text-on-surface-variant">
+          Clear terms before you install:{' '}
+          {app.privacyPath && (
+            <>
+              <a href={app.privacyPath} class="text-link">{app.name} privacy</a>{', '}
+            </>
+          )}
+          <a href="/refund-policy/" class="text-link">refund policy</a>{', '}
+          <a href="/privacy/" class="text-link">site privacy</a>{' and '}
+          <a href="/terms/" class="text-link">site terms</a>.
+        </p>
+        <p class="mt-4 text-on-surface-variant">
           Questions or feedback about {app.name}? Email{' '}
           <button type="button" data-mailto={site.mail} class="text-link">{site.emailDisplay}</button>{' '}
           (we aim to reply within 5 business days).
