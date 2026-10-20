@@ -51,24 +51,51 @@ const maxMessage = 1500;
       </div>
     </div>
 
-    <div class="field">
-      <label class="field-label" for="contact-topic">What is it about?</label>
+    <div class="field" data-topic>
+      <label class="field-label" for="contact-topic-button">What is it about?</label>
       <span class="relative block">
-        <select
-          id="contact-topic"
-          name="topic"
-          required
+        <button
+          type="button"
+          id="contact-topic-button"
+          aria-haspopup="listbox"
+          aria-expanded="false"
+          aria-controls="contact-topic-menu"
           aria-describedby="contact-topic-error"
-          class="field-input appearance-none pr-12"
+          data-topic-button
+          class="field-input flex w-full items-center justify-between gap-3 text-left"
         >
-          <option value="" selected disabled>Choose a topic</option>
-          {topics.map(({ id, label }) => <option value={id}>{label}</option>)}
-        </select>
-        <Icon
-          name="expand_more"
-          class="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-[1.5rem] text-on-surface-variant"
-        />
+          <span id="contact-topic-text" data-topic-text class="text-on-surface-variant">Choose a topic</span>
+          <Icon
+            name="expand_more"
+            class="text-[1.5rem] text-on-surface-variant transition-transform duration-(--duration-short4)"
+          />
+        </button>
+        <span
+          id="contact-topic-menu"
+          role="listbox"
+          aria-label="Topic"
+          data-topic-menu
+          hidden
+          class="absolute inset-x-0 top-full z-10 mt-2 rounded-xl-inc bg-surface-container-high p-2 shadow-level3"
+        >
+          {
+            topics.map(({ id, label }) => (
+              <span
+                role="option"
+                id={`contact-topic-option-${id}`}
+                aria-selected="false"
+                data-value={id}
+                data-label={label}
+                class="flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-left text-body-md transition-colors duration-(--duration-short4) aria-selected:bg-secondary-container aria-selected:text-on-secondary-container"
+              >
+                <Icon name="check" class="hidden text-[1.25rem]" />
+                {label}
+              </span>
+            ))
+          }
+        </span>
       </span>
+      <input type="hidden" id="contact-topic" name="topic" data-topic-value />
       <p id="contact-topic-error" class="field-error" hidden></p>
     </div>
 
@@ -135,6 +162,18 @@ const maxMessage = 1500;
     const field = (name: string) => form.elements.namedItem(name) as Field;
     const limit = max.toLocaleString('en-US');
 
+    // Material 3 exposed dropdown menu for the topic field. The chosen value
+    // lives in a hidden input so the existing validation still applies; the
+    // visible button carries focus and the invalid state instead.
+    const topicButton = root.querySelector<HTMLButtonElement>('[data-topic-button]')!;
+    const topicMenu = root.querySelector<HTMLElement>('[data-topic-menu]')!;
+    const topicOptions = [...topicMenu.querySelectorAll<HTMLElement>('[role=option]')];
+    const topicText = root.querySelector<HTMLElement>('[data-topic-text]')!;
+    const topicChevron = topicButton.querySelector<HTMLElement>('.icon')!;
+    const topicValue = field('topic') as HTMLInputElement;
+    const topicLabel = () =>
+      topicOptions.find((option) => option.dataset.value === topicValue.value)?.dataset.label ?? '';
+
     /** The problem with a field's current value, or '' when it is fine. */
     function problem({ name, value }: Field): string {
       const text = value.trim();
@@ -159,8 +198,10 @@ const maxMessage = 1500;
       const error = document.getElementById(`${input.id}-error`)!;
       error.textContent = text;
       error.hidden = !text;
-      if (text) input.setAttribute('aria-invalid', 'true');
-      else input.removeAttribute('aria-invalid');
+      // The topic value lives in a hidden input; its visible button shows the state.
+      const control = input === topicValue ? topicButton : input;
+      if (text) control.setAttribute('aria-invalid', 'true');
+      else control.removeAttribute('aria-invalid');
       // The message field shows either its error or its character count.
       if (input.name === 'message') counter.hidden = Boolean(text);
       return !text;
@@ -169,6 +210,83 @@ const maxMessage = 1500;
     function count() {
       counter.textContent = `${field('message').value.length.toLocaleString('en-US')} / ${limit} characters`;
     }
+
+    function highlight(target: HTMLElement | undefined) {
+      for (const option of topicOptions) option.setAttribute('aria-selected', String(option === target));
+      if (target) topicButton.setAttribute('aria-activedescendant', target.id);
+      else topicButton.removeAttribute('aria-activedescendant');
+    }
+
+    function openMenu() {
+      if (!topicMenu.hidden) return;
+      topicMenu.hidden = false;
+      topicButton.setAttribute('aria-expanded', 'true');
+      topicChevron.classList.add('rotate-180');
+      highlight(topicOptions.find((option) => option.dataset.value === topicValue.value) ?? topicOptions[0]);
+    }
+
+    function closeMenu() {
+      if (topicMenu.hidden) return;
+      topicMenu.hidden = true;
+      topicButton.setAttribute('aria-expanded', 'false');
+      topicChevron.classList.remove('rotate-180');
+      topicButton.removeAttribute('aria-activedescendant');
+    }
+
+    function commit(option: HTMLElement) {
+      topicValue.value = option.dataset.value ?? '';
+      topicText.textContent = option.dataset.label ?? '';
+      topicText.classList.remove('text-on-surface-variant');
+      for (const other of topicOptions) other.querySelector('.icon')?.classList.toggle('hidden', other !== option);
+      closeMenu();
+      validate(topicValue);
+      topicButton.focus();
+    }
+
+    function resetTopic() {
+      topicValue.value = '';
+      topicText.textContent = 'Choose a topic';
+      topicText.classList.add('text-on-surface-variant');
+      for (const option of topicOptions) option.querySelector('.icon')?.classList.add('hidden');
+      closeMenu();
+    }
+
+    topicButton.addEventListener('click', () => (topicMenu.hidden ? openMenu() : closeMenu()));
+
+    for (const option of topicOptions) {
+      option.addEventListener('click', () => commit(option));
+      option.addEventListener('pointermove', () => highlight(option));
+    }
+
+    topicButton.addEventListener('keydown', (event) => {
+      const current = topicOptions.findIndex((option) => option.getAttribute('aria-selected') === 'true');
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+        event.preventDefault();
+        if (topicMenu.hidden) openMenu();
+        else {
+          const step = event.key === 'ArrowDown' ? 1 : -1;
+          highlight(topicOptions[(current + step + topicOptions.length) % topicOptions.length]);
+        }
+      } else if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        if (topicMenu.hidden) openMenu();
+        else if (topicOptions[current]) commit(topicOptions[current]);
+      } else if (event.key === 'Escape' && !topicMenu.hidden) {
+        closeMenu();
+      }
+    });
+
+    document.addEventListener('click', (event) => {
+      if (!root.isConnected || topicMenu.hidden) return;
+      if (event.target instanceof Element && event.target.closest('[data-topic]')) return;
+      closeMenu();
+    });
+
+    root.addEventListener('focusout', (event) => {
+      if (topicMenu.hidden) return;
+      if (event.relatedTarget instanceof Element && event.relatedTarget.closest('[data-topic]')) return;
+      closeMenu();
+    });
 
     for (const input of fields) {
       // Check a field once it has been left, then keep its error up to date.
@@ -182,12 +300,11 @@ const maxMessage = 1500;
     form.addEventListener('submit', (event) => {
       event.preventDefault();
       const invalid = fields.filter((input) => !validate(input));
-      if (invalid.length > 0) return invalid[0].focus();
+      if (invalid.length > 0) return (invalid[0] === topicValue ? topicButton : invalid[0]).focus();
 
       const name = field('name').value.trim();
       const email = field('email').value.trim();
-      const topic = field('topic') as HTMLSelectElement;
-      const subject = `${topic.selectedOptions[0].textContent}: message from ${name}`;
+      const subject = `${topicLabel()}: message from ${name}`;
       const body = `${field('message').value.trim()}\n\n${name}\n${email}`;
       location.assign(
         `mailto:${atob(root.dataset.mail!)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`,
@@ -200,6 +317,7 @@ const maxMessage = 1500;
 
     root.querySelector('[data-again]')!.addEventListener('click', () => {
       form.reset();
+      resetTopic();
       for (const input of fields) {
         // A fresh form shows no errors until it is used.
         input.removeAttribute('aria-invalid');
