@@ -3,6 +3,17 @@ import '../styles/prose.css';
 
 import { site } from '../data/site';
 import Base from '../layouts/Base.astro';
+
+const lastUpdated = new Date('2026-10-20T04:22:31Z');
+const lastUpdatedDisplay = new Intl.DateTimeFormat('en-GB', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
+  timeZone: 'UTC',
+  timeZoneName: 'short',
+}).format(lastUpdated);
 ---
 
 <Base
@@ -17,7 +28,9 @@ import Base from '../layouts/Base.astro';
       >
         Refund policy
       </h1>
-      <p class="mt-4 text-label-lg text-on-surface-variant">Last updated October 2026</p>
+      <p class="mt-4 text-label-lg text-on-surface-variant">
+        Last updated <time datetime={lastUpdated.toISOString()}>{lastUpdatedDisplay}</time>
+      </p>
     </header>
 
     <article class="prose mt-10 sm:mt-12">

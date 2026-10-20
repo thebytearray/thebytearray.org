@@ -12,6 +12,7 @@ export interface PolicySection {
 export interface Policy {
   app: AppSlug;
   title: string;
+  /** ISO 8601 timestamp of the last update, e.g. "2026-10-20T04:22:31Z". Shown with date and time for transparency. */
   lastUpdated: string;
   /** Sections before the shared "Contact" section, which PolicyDocument renders. */
   sections: readonly PolicySection[];
@@ -23,7 +24,7 @@ export const policies: Record<AppSlug, Policy> = {
   convertit: {
     app: "convertit",
     title: "Convertit privacy policy",
-    lastUpdated: "October 2026",
+    lastUpdated: "2026-10-20T04:22:31Z",
     sections: [
       {
         heading: "Introduction",
@@ -97,7 +98,7 @@ export const policies: Record<AppSlug, Policy> = {
   "convertit-pro": {
     app: "convertit-pro",
     title: "Convertit Pro privacy policy",
-    lastUpdated: "October 2026",
+    lastUpdated: "2026-10-20T04:22:31Z",
     sections: [
       {
         heading: "Introduction",
@@ -179,7 +180,7 @@ export const policies: Record<AppSlug, Policy> = {
   hy2ng: {
     app: "hy2ng",
     title: "Hy2NG privacy policy",
-    lastUpdated: "December 2024",
+    lastUpdated: "2026-10-20T04:22:31Z",
     sections: [
       {
         heading: "Introduction",
@@ -242,7 +243,7 @@ export const policies: Record<AppSlug, Policy> = {
   openloader: {
     app: "openloader",
     title: "OpenLoader privacy policy",
-    lastUpdated: "December 2024",
+    lastUpdated: "2026-10-20T04:22:31Z",
     sections: [
       {
         heading: "Introduction",
