@@ -59,7 +59,7 @@ const organization = {
   logo: new URL('/apple-touch-icon.png', Astro.site).href,
   description: site.description,
   knowsAbout: site.topics,
-  sameAs: [site.github],
+  sameAs: [site.github, site.youtube],
   ...(founder && {
     founder: { '@type': 'Person', name: founder.name, url: founder.github, jobTitle: founder.role },
   }),

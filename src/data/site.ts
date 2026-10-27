@@ -1,4 +1,4 @@
-import { siGithub, siGoogleplay } from 'simple-icons';
+import { siGithub, siGoogleplay, siYoutube } from 'simple-icons';
 import type { IconName } from './icons';
 
 // The address is kept base64-encoded everywhere (source and HTML) to keep it
@@ -22,6 +22,7 @@ export const site = {
     url: 'https://www.gnu.org/licenses/gpl-3.0.html',
   },
   github: 'https://github.com/thebytearray',
+  youtube: 'https://www.youtube.com/@thebytearray',
   /** Source of this website. */
   repo: 'https://github.com/thebytearray/thebytearray.org',
   /** The registered company, as listed at Companies House. Shown in the footer. */
@@ -47,6 +48,7 @@ export const nav = [
 export const brands = {
   github: siGithub.path,
   googlePlay: siGoogleplay.path,
+  youtube: siYoutube.path,
 };
 
 export interface SocialLink {
@@ -65,6 +67,14 @@ export interface SocialLink {
 
 export const socials: SocialLink[] = [
   { label: 'GitHub', handle: 'thebytearray', href: site.github, icon: 'code', brand: brands.github, hero: true },
+  {
+    label: 'YouTube',
+    handle: '@thebytearray',
+    href: site.youtube,
+    icon: 'play_arrow',
+    brand: brands.youtube,
+    hero: true,
+  },
   { label: 'Email', handle: 'Copy email', href: '', icon: 'mail', mail, hero: true },
 ];
 
