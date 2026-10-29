@@ -7,7 +7,7 @@ export async function GET(context: APIContext) {
   // Drafts never go in the feed, even in dev.
   const posts = (await getPosts()).filter((post) => !post.data.draft);
   return rss({
-    title: `${site.name} — Blog`,
+    title: `${site.name}: Blog`,
     description: site.description,
     site: context.site!,
     items: posts.map((post) => ({

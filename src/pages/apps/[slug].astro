@@ -25,6 +25,16 @@ const absolute = (src: string) => new URL(src, Astro.site).href;
 const icon = await getImage({ src: app.icon, width: 512 });
 const shots = await Promise.all(app.screenshots.map((shot) => getImage({ src: shot.src, width: 720 })));
 
+// Free apps advertise a zero price; paid apps advertise their Play price.
+const offer = app.paid
+  ? app.price && {
+      '@type': 'Offer',
+      price: app.price.amount,
+      priceCurrency: app.price.currency,
+      url: app.playStoreUrl,
+    }
+  : { '@type': 'Offer', price: '0', priceCurrency: 'USD' };
+
 const details = [
   { term: 'Platform', description: app.requirements },
   { term: 'Package name', description: app.packageId, code: true },
@@ -45,12 +55,18 @@ const appLd = {
   operatingSystem: 'Android',
   applicationCategory: app.storeCategory,
   installUrl: app.playStoreUrl,
-  downloadUrl: download ? absolute(download.file) : app.playStoreUrl,
+  // The Play listing and this page describe the same product.
+  sameAs: [app.playStoreUrl],
+  // Only apps we publish ourselves have a direct APK and a version here.
+  ...(download && {
+    downloadUrl: absolute(download.file),
+    softwareVersion: download.versionName,
+  }),
   image: absolute(icon.src),
   screenshot: shots.map((shot) => absolute(shot.src)),
   featureList: app.features.map((feature) => feature.title),
-  isAccessibleForFree: true,
-  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  isAccessibleForFree: !app.paid,
+  ...(offer && { offers: offer }),
   ...(app.license && { license: site.license.url }),
   ...(app.sourceUrl && { codeRepository: app.sourceUrl }),
 };
@@ -69,22 +85,10 @@ const sectionTitle = 'font-display text-headline-md';
     { name: app.name, path },
   ]}
   jsonLd={[appLd]}
+  titleSuffix={false}
 >
   <div class="pt-2 sm:pt-6" data-pagefind-body>
     <Breadcrumbs items={[{ label: 'Apps', href: '/apps/' }, { label: app.name }]} />
-
-    {
-      app.featureGraphic && (
-        <Image
-          src={app.featureGraphic.src}
-          alt={app.featureGraphic.alt}
-          widths={[640, 1024, 1536, 2048]}
-          sizes="(min-width: 72rem) 68rem, 100vw"
-          loading="eager"
-          class="mt-4 w-full rounded-xl-inc rounded-tl-md sm:rounded-2xl sm:rounded-tl-md lg:rounded-3xl lg:rounded-tl-lg"
-        />
-      )
-    }
 
     <header
       class="mt-4 rounded-xl-inc rounded-tl-md bg-primary-container p-6 text-on-primary-container sm:rounded-2xl sm:rounded-tl-md sm:p-10 lg:rounded-3xl lg:rounded-tl-lg lg:p-14"
@@ -105,8 +109,6 @@ const sectionTitle = 'font-display text-headline-md';
           <p class="mt-2 font-display text-title-lg text-pretty opacity-85 sm:text-headline-sm">{app.tagline}</p>
         </div>
       </div>
-
-      <p class="mt-6 max-w-2xl text-body-lg text-pretty sm:mt-8">{app.description}</p>
 
       {
         app.discontinued && (
@@ -181,6 +183,11 @@ const sectionTitle = 'font-display text-headline-md';
       <FeatureList features={app.features} />
     </section>
 
+    <section aria-labelledby="about" class="mt-14 grid gap-x-10 gap-y-5 sm:mt-20 lg:grid-cols-[11rem_1fr]">
+      <h2 id="about" class={sectionTitle}>About</h2>
+      <p class="max-w-2xl text-body-lg text-pretty">{app.description}</p>
+    </section>
+
     {
       app.sourcePost && (
         <section aria-labelledby="source" class="mt-14 grid gap-x-10 gap-y-5 sm:mt-20 lg:grid-cols-[11rem_1fr]">
@@ -220,16 +227,22 @@ const sectionTitle = 'font-display text-headline-md';
           Clear terms before you install:{' '}
           {app.privacyPath && (
             <>
-              <a href={app.privacyPath} class="text-link">{app.name} privacy</a>{', '}
+              <a href={app.privacyPath} class="text-link whitespace-nowrap">{app.name} privacy</a>{', '}
             </>
           )}
-          <a href="/refund-policy/" class="text-link">refund policy</a>{', '}
-          <a href="/privacy/" class="text-link">site privacy</a>{' and '}
-          <a href="/terms/" class="text-link">site terms</a>.
+          <a href="/refund-policy/" class="text-link whitespace-nowrap">refund policy</a>{', '}
+          <a href="/privacy/" class="text-link whitespace-nowrap">site privacy</a>{' and '}
+          <a href="/terms/" class="text-link whitespace-nowrap">site terms</a>.
         </p>
         <p class="mt-4 text-on-surface-variant">
           Questions or feedback about {app.name}? Email{' '}
-          <button type="button" data-mailto={site.mail} class="text-link">{site.emailDisplay}</button>{' '}
+          <button
+            type="button"
+            data-mailto={site.mail}
+            class="text-link -my-2.5 inline-flex min-h-11 items-center"
+          >
+            {site.emailDisplay}
+          </button>{' '}
           (we aim to reply within 5 business days).
         </p>
       </div>

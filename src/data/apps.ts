@@ -13,7 +13,6 @@ import convertitProTools from '../assets/apps/convertit-pro/tools.png';
 import convertitProTrim from '../assets/apps/convertit-pro/trim.png';
 import convertitBackground from '../assets/apps/convertit/background.png';
 import convertitConvert from '../assets/apps/convertit/convert.png';
-import convertitFeatureGraphic from '../assets/apps/convertit/feature-graphic.png';
 import convertitFormats from '../assets/apps/convertit/formats.png';
 import convertitIcon from '../assets/apps/convertit/icon.png';
 import convertitLibrary from '../assets/apps/convertit/library.png';
@@ -54,9 +53,8 @@ export interface App {
   /** The icon's path from the project root, for the generated social card. */
   iconFile: string;
   /**
-   * The store feature graphic, shown at the top of the app's own page. The
-   * app marked `featured` also gets it as the banner on the home and Apps
-   * pages instead of a card.
+   * The store feature graphic. The app marked `featured` uses it as the
+   * banner on the home and Apps pages instead of a card.
    */
   featureGraphic?: Screenshot;
   /** The featured app: it gets the banner on the home and Apps pages. */
@@ -79,6 +77,13 @@ export interface App {
   seoTitle?: string;
   /** SEO description (150-160 chars). Falls back to `summary` when omitted. */
   seoDescription?: string;
+  /**
+   * Paid app. Its `price` is used for the `offers` node in structured data,
+   * so a "pay once" app is never described to search engines as free.
+   */
+  paid?: boolean;
+  /** Play Store price, required when `paid` is set. */
+  price?: { amount: string; currency: string };
   /** Kept at the legacy URL: store listings link to it. */
   privacyPath?: `/${string}/`;
   /** App is discontinued and no longer available for install. */
@@ -95,10 +100,6 @@ export const apps: App[] = [
       'Convertit is an ad-free, offline audio and video converter for Android. Pick a file, pick a format (MP3, M4A, AAC, OGG and OPUS) and it converts in the background.',
     icon: convertitIcon,
     iconFile: 'src/assets/apps/convertit/icon.png',
-    featureGraphic: {
-      src: convertitFeatureGraphic,
-      alt: 'Convertit. No BS. Straight to the point. Audio and video converter, offline, no ads.',
-    },
     screenshots: [
       { src: convertitConvert, alt: 'Convert audio and video: one tap to start, no clutter' },
       { src: convertitFormats, alt: 'Pick the format, done: MP3, M4A, AAC, OGG and OPUS' },
@@ -143,7 +144,7 @@ export const apps: App[] = [
     sourcePost: '/blog/why-convertit-is-not-open-source/',
     requirements: 'Android 7.0+',
     storeCategory: 'MultimediaApplication',
-    seoTitle: 'Convertit – Offline Audio Video Converter for Android',
+    seoTitle: 'Convertit – Offline Audio & Video Converter for Android',
     seoDescription:
       'Convertit converts audio and video offline on Android: MP3, M4A, AAC, OGG, OPUS in background with tags. No ads, no tracking, no account. Android 7.0+.',
     privacyPath: '/convertit-privacy/',
@@ -208,6 +209,11 @@ export const apps: App[] = [
         description: 'Shrink files with your pick of speed, codec, format and resolution.',
       },
       {
+        icon: 'movie',
+        title: 'HDR10+ metadata kept',
+        description: 'Compress HDR10+ video without losing its dynamic metadata.',
+      },
+      {
         icon: 'crop',
         title: 'Trim and normalize',
         description: 'Cut video to the part that matters and even out the loudness.',
@@ -221,6 +227,11 @@ export const apps: App[] = [
         icon: 'gif',
         title: 'Video to GIF',
         description: 'Turn a clip into a GIF without leaving the app.',
+      },
+      {
+        icon: 'queue_music',
+        title: 'FLAC and CUE',
+        description: 'Convert to FLAC, with CUE track splitting and a compression level slider.',
       },
       {
         icon: 'cleaning_services',
@@ -242,9 +253,11 @@ export const apps: App[] = [
     packageId: 'org.thebytearray.convertit',
     requirements: 'Android 7.0+',
     storeCategory: 'MultimediaApplication',
-    seoTitle: 'Convertit Pro – Offline Audio, Video, Image Tools',
+    seoTitle: 'Convertit Pro – Video Compressor with HDR10+ on Android',
     seoDescription:
-      'Convertit Pro unlocks audio, video and image conversion, compression, noise reduction, metadata offline. One purchase, no ads or tracking. Android 7.0+.',
+      'Compress video with HDR10+ metadata intact, and convert audio and images offline on Android. One purchase, no ads or tracking. Android 7.0+.',
+    paid: true,
+    price: { amount: '5.99', currency: 'USD' },
     privacyPath: '/convertit-pro-privacy/',
   },
   {
