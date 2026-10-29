@@ -13,14 +13,13 @@ const { appName, screenshots } = Astro.props;
 const full = await Promise.all(screenshots.map((shot) => getImage({ src: shot.src, width: 720 })));
 
 const step =
-  'fill-on-hover grid size-11 place-items-center rounded-full bg-surface-container-highest transition-expressive hover:bg-secondary-container hover:text-on-secondary-container active:scale-90';
+  'fill-on-hover grid size-11 place-items-center rounded-full bg-surface-container-highest transition-expressive hover:bg-secondary-container hover:text-on-secondary-container active:scale-95 active:duration-(--duration-press) active:ease-[var(--ease-press)]';
 ---
 
 <!-- A swipeable strip of screenshots; each opens a larger view you can step through. -->
 <div data-gallery>
   <ul
     data-strip
-    role="region"
     aria-label={`${appName} screenshots`}
     tabindex="0"
     class="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 sm:-mx-8 sm:gap-4 sm:px-8 lg:mx-0 lg:px-0 relative"
@@ -112,6 +111,45 @@ const step =
   }
   [data-gallery] [data-strip]::-webkit-scrollbar {
     display: none;
+  }
+
+  /* The lightbox is an occasional spatial action: a short enter/exit keeps
+     context without delaying the image. */
+  [data-lightbox] {
+    opacity: 0;
+    scale: 0.98;
+    transition:
+      opacity 160ms var(--ease-effects),
+      scale 160ms var(--ease-effects),
+      overlay 160ms allow-discrete,
+      display 160ms allow-discrete;
+  }
+
+  [data-lightbox]:open {
+    opacity: 1;
+    scale: 1;
+  }
+
+  @starting-style {
+    [data-lightbox]:open {
+      opacity: 0;
+      scale: 0.98;
+    }
+  }
+
+  [data-lightbox]::backdrop {
+    opacity: 0;
+    transition: opacity 160ms var(--ease-effects);
+  }
+
+  [data-lightbox]:open::backdrop {
+    opacity: 1;
+  }
+
+  @starting-style {
+    [data-lightbox]:open::backdrop {
+      opacity: 0;
+    }
   }
 </style>
 

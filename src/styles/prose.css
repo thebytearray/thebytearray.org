@@ -59,9 +59,16 @@
     color var(--duration-short4) var(--ease-effects);
 }
 
-.prose a:hover {
+.prose a:focus-visible {
   background-color: var(--color-primary-container);
   color: var(--color-on-primary-container);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .prose a:hover {
+    background-color: var(--color-primary-container);
+    color: var(--color-on-primary-container);
+  }
 }
 
 .prose strong {
@@ -237,8 +244,10 @@
   border-top: 1px solid var(--color-outline-variant);
 }
 
-.prose tbody tr:hover td {
-  background-color: var(--color-surface-container-low);
+@media (hover: hover) and (pointer: fine) {
+  .prose tbody tr:hover td {
+    background-color: var(--color-surface-container-low);
+  }
 }
 
 /* Divider: a short pill */

@@ -156,6 +156,8 @@
   --ease-effects-fast: cubic-bezier(0.31, 0.94, 0.34, 1);
   --ease-effects: cubic-bezier(0.34, 0.8, 0.34, 1);
   --ease-effects-slow: cubic-bezier(0.34, 0.88, 0.34, 1);
+  /* Press feedback: quick and non-overshooting. */
+  --ease-press: cubic-bezier(0.2, 0, 0, 1);
 
   /* Motion: durations (use as duration-(--duration-medium2)) */
   --duration-short1: 50ms;
@@ -173,6 +175,7 @@
   --duration-spring-fast: 350ms;
   --duration-spring: 500ms;
   --duration-spring-slow: 650ms;
+  --duration-press: 120ms;
 
 }
 
@@ -206,13 +209,25 @@
 }
 
 @layer base {
+  /* Kept in one place so the sticky header, the mobile menu and anchor links
+     agree on where the header ends. */
+  :root {
+    --header-height: 4rem;
+  }
+
+  @media (min-width: 40rem) {
+    :root {
+      --header-height: 4.75rem;
+    }
+  }
+
   html {
     background-color: var(--color-surface);
     color: var(--color-on-surface);
     font-family: var(--font-sans);
     font-size: 100%;
     -webkit-text-size-adjust: 100%;
-    scroll-padding-top: 5.5rem;
+    scroll-padding-top: calc(var(--header-height) + 1rem);
     /* Set on both: html's value goes to the viewport, so body's really clips
        decorative shapes that bleed off the edge. */
     overflow-x: clip;
@@ -277,6 +292,7 @@
     color var(--duration-short4) var(--ease-effects),
     background-color var(--duration-short4) var(--ease-effects),
     border-color var(--duration-short4) var(--ease-effects),
+    box-shadow var(--duration-short4) var(--ease-effects),
     opacity var(--duration-short4) var(--ease-effects);
 }
 
@@ -310,9 +326,16 @@
     font-feature-settings: 'liga';
   }
 
-  /* Hovering/focusing a .fill-on-hover ancestor fills its icons. */
-  .fill-on-hover:is(:hover, :focus-visible) {
+  /* Focusing a .fill-on-hover ancestor fills its icons. Pointer hover is
+     gated below so a tap does not leave the icons filled. */
+  .fill-on-hover:focus-visible {
     --icon-fill: 1;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .fill-on-hover:hover {
+      --icon-fill: 1;
+    }
   }
 
   /* Pill chip. The corner radius springs from full to large on hover: the
@@ -324,7 +347,7 @@
     height: 2.5rem;
     padding-inline: 1rem;
     border-radius: 1.25rem;
-    border: 1px solid var(--color-outline-variant);
+    border: 1px solid var(--color-outline);
     font-size: var(--text-label-lg);
     line-height: var(--text-label-lg--line-height);
     letter-spacing: var(--text-label-lg--letter-spacing);
@@ -334,18 +357,30 @@
       border-radius var(--duration-spring-fast) var(--ease-spring-fast),
       background-color var(--duration-short4) var(--ease-effects),
       border-color var(--duration-short4) var(--ease-effects),
+      box-shadow var(--duration-short4) var(--ease-effects),
       color var(--duration-short4) var(--ease-effects);
   }
 
-  .chip:is(a, button):is(:hover, :focus-visible) {
+  .chip:is(a, button):focus-visible {
     border-radius: 0.75rem;
     background-color: var(--color-secondary-container);
     border-color: transparent;
     color: var(--color-on-secondary-container);
   }
 
+  @media (hover: hover) and (pointer: fine) {
+    .chip:is(a, button):hover {
+      border-radius: 0.75rem;
+      background-color: var(--color-secondary-container);
+      border-color: transparent;
+      color: var(--color-on-secondary-container);
+    }
+  }
+
   .chip:is(a, button):active {
     border-radius: 0.5rem;
+    transition-duration: var(--duration-press);
+    transition-timing-function: var(--ease-press);
   }
 
   .chip-filled {
@@ -354,10 +389,18 @@
     color: var(--color-on-primary);
   }
 
-  .chip-filled:is(a, button):is(:hover, :focus-visible) {
+  .chip-filled:is(a, button):focus-visible {
     background-color: var(--color-primary);
     color: var(--color-on-primary);
     box-shadow: var(--shadow-level1);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .chip-filled:is(a, button):hover {
+      background-color: var(--color-primary);
+      color: var(--color-on-primary);
+      box-shadow: var(--shadow-level1);
+    }
   }
 
   .chip-sm {
@@ -422,8 +465,10 @@
     opacity: 0.8;
   }
 
-  .field-input:hover {
-    border-color: var(--color-on-surface);
+  @media (hover: hover) and (pointer: fine) {
+    .field-input:hover {
+      border-color: var(--color-on-surface);
+    }
   }
 
   /* The thicker border is the focus indicator, as on M3 outlined fields. */
@@ -468,24 +513,24 @@ body > header {
 }
 
 ::view-transition-old(page) {
-  animation: page-out var(--duration-short3) var(--ease-emphasized-accelerate) both;
+  animation: page-out var(--duration-short2) var(--ease-emphasized-accelerate) both;
 }
 
 ::view-transition-new(page) {
-  animation: page-in var(--duration-medium4) var(--ease-emphasized-decelerate) var(--duration-short2) both;
+  animation: page-in var(--duration-short4) var(--ease-emphasized-decelerate) both;
 }
 
 @keyframes page-out {
   to {
     opacity: 0;
-    translate: 0 -0.5rem;
+    translate: 0 -0.25rem;
   }
 }
 
 @keyframes page-in {
   from {
     opacity: 0;
-    translate: 0 1.5rem;
+    translate: 0 0.5rem;
   }
 }
 
@@ -493,8 +538,9 @@ body > header {
   *,
   *::before,
   *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
+    /* Scroll-driven animations ignore time-based duration, so stop them
+       outright rather than shortening them. */
+    animation: none !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }

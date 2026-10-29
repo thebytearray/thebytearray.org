@@ -51,7 +51,7 @@ const updatedLabel = new Date(`${download.updated}T00:00:00Z`).toLocaleDateStrin
           href={download.file}
           download={fileName}
           class="chip chip-filled fill-on-hover"
-          aria-label={`Download ${app.name} v${download.versionName} APK, ${formatSize(download.sizeBytes)}`}
+          aria-label={`Download APK: ${app.name} v${download.versionName}, ${formatSize(download.sizeBytes)}`}
         >
           <Icon name="arrow_downward" class="text-[1.125rem]" />
           Download APK
@@ -66,7 +66,7 @@ const updatedLabel = new Date(`${download.updated}T00:00:00Z`).toLocaleDateStrin
         </Chip>
       </li>
       <li>
-        <Chip href={details} aria-label={`${app.name} details`}>App details</Chip>
+        <Chip href={details} aria-label={`${app.name} app details`}>App details</Chip>
       </li>
     </ul>
 

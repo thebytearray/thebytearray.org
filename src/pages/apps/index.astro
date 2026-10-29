@@ -15,7 +15,6 @@ import Base from '../../layouts/Base.astro';
     title="Apps"
     lede="Mobile apps that do one job well. None of them show ads, track you or ask you to sign up."
     shape="flower"
-    accent="triangle"
   />
 
   {featuredApp && <FeaturedApp app={featuredApp} heading="h2" class="mt-10 sm:mt-14" />}
@@ -33,6 +32,6 @@ import Base from '../../layouts/Base.astro';
 
   <p class="mt-12 max-w-prose text-body-lg text-on-surface-variant sm:mt-16">
     No ads, no tracking and no accounts in all of them. Convertit Pro is paid once, the rest are free.{' '}
-    <a href="/about/" class="rounded-sm text-primary underline-offset-4 hover:underline">How we work</a>
+    <a href="/about/" class="rounded-sm text-primary underline decoration-1 underline-offset-4 hover:decoration-2">How we work</a>
   </p>
 </Base>

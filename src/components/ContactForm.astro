@@ -57,9 +57,11 @@ const maxMessage = 1500;
         <button
           type="button"
           id="contact-topic-button"
+          role="combobox"
           aria-haspopup="listbox"
           aria-expanded="false"
           aria-controls="contact-topic-menu"
+          aria-required="true"
           aria-describedby="contact-topic-error"
           data-topic-button
           class="field-input flex w-full items-center justify-between gap-3 text-left"
@@ -86,7 +88,7 @@ const maxMessage = 1500;
                 aria-selected="false"
                 data-value={id}
                 data-label={label}
-                class="flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-left text-body-md transition-colors duration-(--duration-short4) aria-selected:bg-secondary-container aria-selected:text-on-secondary-container"
+                class="flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-left text-body-md transition-colors duration-(--duration-short4) data-[active]:bg-secondary-container data-[active]:text-on-secondary-container"
               >
                 <Icon name="check" class="hidden text-[1.25rem]" />
                 {label}
@@ -212,9 +214,14 @@ const maxMessage = 1500;
     }
 
     function highlight(target: HTMLElement | undefined) {
-      for (const option of topicOptions) option.setAttribute('aria-selected', String(option === target));
+      for (const option of topicOptions) option.toggleAttribute('data-active', option === target);
       if (target) topicButton.setAttribute('aria-activedescendant', target.id);
       else topicButton.removeAttribute('aria-activedescendant');
+    }
+
+    /** Mark the committed value; the highlighted option is tracked separately. */
+    function select(target: HTMLElement | undefined) {
+      for (const option of topicOptions) option.setAttribute('aria-selected', String(option === target));
     }
 
     function openMenu() {
@@ -230,7 +237,7 @@ const maxMessage = 1500;
       topicMenu.hidden = true;
       topicButton.setAttribute('aria-expanded', 'false');
       topicChevron.classList.remove('rotate-180');
-      topicButton.removeAttribute('aria-activedescendant');
+      highlight(undefined);
     }
 
     function commit(option: HTMLElement) {
@@ -238,6 +245,7 @@ const maxMessage = 1500;
       topicText.textContent = option.dataset.label ?? '';
       topicText.classList.remove('text-on-surface-variant');
       for (const other of topicOptions) other.querySelector('.icon')?.classList.toggle('hidden', other !== option);
+      select(option);
       closeMenu();
       validate(topicValue);
       topicButton.focus();
@@ -248,6 +256,7 @@ const maxMessage = 1500;
       topicText.textContent = 'Choose a topic';
       topicText.classList.add('text-on-surface-variant');
       for (const option of topicOptions) option.querySelector('.icon')?.classList.add('hidden');
+      select(undefined);
       closeMenu();
     }
 
@@ -259,7 +268,7 @@ const maxMessage = 1500;
     }
 
     topicButton.addEventListener('keydown', (event) => {
-      const current = topicOptions.findIndex((option) => option.getAttribute('aria-selected') === 'true');
+      const current = topicOptions.findIndex((option) => option.hasAttribute('data-active'));
       if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
         event.preventDefault();
         if (topicMenu.hidden) openMenu();

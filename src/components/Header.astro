@@ -12,13 +12,13 @@ const path = Astro.url.pathname;
 const isActive = (href: string) => path.startsWith(href);
 
 const iconButton =
-  'fill-on-hover grid size-10 flex-none place-items-center rounded-full text-on-surface-variant transition-expressive hover:bg-secondary-container hover:text-on-secondary-container active:scale-90 sm:size-11';
+  'fill-on-hover grid size-10 flex-none place-items-center rounded-full text-on-surface-variant transition-expressive hover:bg-secondary-container hover:text-on-secondary-container active:scale-95 active:duration-(--duration-press) active:ease-[var(--ease-press)] sm:size-11';
 ---
 
 <header class="sticky top-0 z-40 bg-surface/80 backdrop-blur-md">
   <div class="mx-auto flex w-full max-w-6xl items-center justify-between gap-2 px-4 py-3 sm:gap-4 sm:px-8 sm:py-4">
     <a href="/" class="group flex items-center gap-3 rounded-full pr-2" aria-label={`${site.name}, home`}>
-      <Logo class="size-9 transition-[scale] duration-(--duration-spring-fast) ease-spring-fast group-hover:scale-110 sm:size-10" />
+      <Logo class="size-9 transition-[scale] duration-(--duration-spring-fast) ease-spring-fast group-hover:scale-110 group-active:scale-95 group-active:duration-(--duration-press) group-active:ease-[var(--ease-press)] sm:size-10" />
       <!-- The narrowest phones only have room for the mark. -->
       <span class="font-display text-title-lg font-semibold tracking-tight whitespace-nowrap max-[22.5rem]:sr-only" aria-hidden="true">
         {site.name}
@@ -34,7 +34,7 @@ const iconButton =
                 <a
                   href={href}
                   aria-current={isActive(href) ? 'page' : undefined}
-                  class="block rounded-[1.25rem] px-4 py-2 text-label-lg whitespace-nowrap text-on-surface-variant transition-expressive hover:rounded-md hover:bg-secondary-container hover:text-on-secondary-container active:scale-95 aria-[current=page]:bg-primary aria-[current=page]:text-on-primary aria-[current=page]:hover:bg-primary aria-[current=page]:hover:text-on-primary"
+                  class="block rounded-[1.25rem] px-4 py-2 text-label-lg whitespace-nowrap text-on-surface-variant transition-expressive hover:rounded-md hover:bg-secondary-container hover:text-on-secondary-container active:scale-95 active:duration-(--duration-press) active:ease-[var(--ease-press)] aria-[current=page]:bg-primary aria-[current=page]:text-on-primary aria-[current=page]:hover:bg-primary aria-[current=page]:hover:text-on-primary"
                 >
                   {label}
                 </a>
@@ -70,7 +70,7 @@ const iconButton =
     id="site-menu"
     popover
     aria-label="Main"
-    class="site-menu fixed inset-auto top-[4.25rem] right-4 m-0 w-[min(18rem,calc(100vw-2rem))] rounded-xl-inc bg-surface-container-high p-2 text-on-surface shadow-level3 md:hidden"
+    class="site-menu fixed inset-auto top-[calc(var(--header-height)+0.5rem)] right-4 m-0 w-[min(18rem,calc(100vw-2rem))] rounded-xl-inc bg-surface-container-high p-2 text-on-surface shadow-level3 md:hidden"
   >
     <ul class="flex flex-col gap-1">
       {

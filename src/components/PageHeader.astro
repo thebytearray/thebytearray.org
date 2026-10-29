@@ -7,8 +7,6 @@ interface Props {
   lede?: string;
   /** The large drifting shape behind the title. */
   shape?: ShapeKind;
-  /** Kept for backwards compatibility; no longer rendered (one shape per header). */
-  accent?: ShapeKind;
   tone?: 'primary' | 'secondary' | 'tertiary';
 }
 
@@ -35,7 +33,7 @@ const [large] = tones[tone];
   </h1>
   {
     lede && (
-      <p class="mt-5 max-w-[17rem] font-display text-title-lg text-pretty text-on-surface-variant sm:mt-6 sm:max-w-xl sm:text-headline-sm">
+      <p class="mt-5 max-w-xl font-display text-title-lg text-pretty text-on-surface-variant sm:mt-6 sm:text-headline-sm">
         {lede}
       </p>
     )

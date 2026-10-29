@@ -1,7 +1,6 @@
 ---
 import { getTags, tagSlug, type Post } from '../lib/posts';
 import Chip from './Chip.astro';
-import Icon from './Icon.astro';
 import PageHeader from './PageHeader.astro';
 import PostRow from './PostRow.astro';
 
@@ -41,7 +40,7 @@ for (const post of posts) {
     <li>
       <Chip href="/blog/" variant={activeTag ? 'outlined' : 'filled'} aria-current={activeTag ? undefined : 'page'}>
         All
-        <span class="opacity-70">{allPosts.length}</span>
+        <span class="opacity-80">{allPosts.length}</span>
       </Chip>
     </li>
     {
@@ -53,7 +52,7 @@ for (const post of posts) {
             aria-current={tag === activeTag ? 'page' : undefined}
           >
             {tag}
-            <span class="opacity-70">{count}</span>
+            <span class="opacity-80">{count}</span>
           </Chip>
         </li>
       ))

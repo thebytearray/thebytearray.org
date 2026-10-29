@@ -30,7 +30,13 @@ const style = morphTo ? `--d: path('${d}'); --d-morph: path('${path(morphTo)}')`
     transition: d var(--duration-spring) var(--ease-spring);
   }
 
-  :global(.group:is(:hover, :focus-visible)) path[style] {
+  :global(.group:focus-visible) path[style] {
     d: var(--d-morph);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    :global(.group:hover) path[style] {
+      d: var(--d-morph);
+    }
   }
 </style>
