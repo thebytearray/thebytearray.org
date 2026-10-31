@@ -3,6 +3,7 @@ import { Image, getImage } from 'astro:assets';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import Chip from '../../components/Chip.astro';
 import FeatureList from '../../components/FeatureList.astro';
+import PromoVideo from '../../components/PromoVideo.astro';
 import ScreenshotGallery from '../../components/ScreenshotGallery.astro';
 import { apps, type App } from '../../data/apps';
 import { getDownload } from '../../data/downloads';
@@ -71,6 +72,16 @@ const appLd = {
   ...(app.sourceUrl && { codeRepository: app.sourceUrl }),
 };
 
+const videoLd = app.video && {
+  '@type': 'VideoObject',
+  name: app.video.title,
+  description: `${app.name}: ${app.summary}`,
+  thumbnailUrl: `https://i.ytimg.com/vi/${app.video.id}/hqdefault.jpg`,
+  embedUrl: `https://www.youtube-nocookie.com/embed/${app.video.id}`,
+  contentUrl: `https://www.youtube.com/watch?v=${app.video.id}`,
+  ...(app.video.uploadDate && { uploadDate: app.video.uploadDate }),
+};
+
 const onPanel = 'border-transparent bg-surface text-on-surface';
 const sectionTitle = 'font-display text-headline-md';
 ---
@@ -84,7 +95,7 @@ const sectionTitle = 'font-display text-headline-md';
     { name: 'Apps', path: '/apps/' },
     { name: app.name, path },
   ]}
-  jsonLd={[appLd]}
+  jsonLd={videoLd ? [appLd, videoLd] : [appLd]}
   titleSuffix={false}
 >
   <div class="pt-2 sm:pt-6" data-pagefind-body>
@@ -170,6 +181,17 @@ const sectionTitle = 'font-display text-headline-md';
         }
       </ul>
     </header>
+
+    {
+      app.video && (
+        <section aria-labelledby="video" class="mt-14 sm:mt-20">
+          <h2 id="video" class={sectionTitle}>Watch</h2>
+          <div class="mt-5 max-w-3xl sm:mt-6">
+            <PromoVideo id={app.video.id} title={app.video.title} />
+          </div>
+        </section>
+      )
+    }
 
     <section aria-labelledby="screenshots" class="mt-14 sm:mt-20">
       <h2 id="screenshots" class={sectionTitle}>Screenshots</h2>

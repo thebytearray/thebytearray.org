@@ -60,6 +60,8 @@ export interface App {
   /** The featured app: it gets the banner on the home and Apps pages. */
   featured?: boolean;
   screenshots: Screenshot[];
+  /** Promo video on YouTube. `id` is the video ID from its URL. */
+  video?: { id: string; title: string; uploadDate?: string };
   features: AppFeature[];
   playStoreUrl: string;
   packageId: string;
@@ -93,6 +95,7 @@ export interface App {
 export const apps: App[] = [
   {
     slug: 'convertit',
+    video: { id: 'y99jlwEYT5k', title: 'Convertit promo video' },
     name: 'Convertit',
     tagline: 'No BS. Straight to the point.',
     summary: 'An offline audio and video converter for Android, with no ads.',
@@ -151,6 +154,7 @@ export const apps: App[] = [
   },
   {
     slug: 'convertit-pro',
+    video: { id: 'MDA3KWgDElg', title: 'Convertit Pro promo video' },
     name: 'Convertit Pro',
     tagline: 'All tools listed below. Pay once.',
     summary: 'Audio, video and image tools for Android. Offline, no ads, pay once.',
