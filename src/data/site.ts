@@ -100,6 +100,10 @@ export const team: TeamMember[] = [
     name: 'Bat',
     role: 'Chief operating officer',
   },
+  {
+    name: 'Shafin',
+    role: 'QA intern',
+  },
 ];
 
 export const workAreas: { title: string; description: string; icon: IconName }[] = [
