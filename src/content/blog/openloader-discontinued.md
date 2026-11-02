@@ -3,19 +3,21 @@ title: 'OpenLoader is discontinued'
 date: 2026-10-17
 updated: 2026-10-30
 author: Bat
-description: 'OpenLoader is discontinued. Sideloading is now better handled by other mature apps, so we are stepping back.'
+description: "We discontinued OpenLoader, our APK installer for Android, on October 17, 2026."
 tags: ['OpenLoader', 'Announcements']
 ---
 
-OpenLoader is discontinued.
+Hi everyone,
 
-Most people used it to sideload apps. Other mature apps handle that better now, so we are stepping back rather than ship half-maintained releases.
+We discontinued OpenLoader, our APK installer for Android, on October 17, 2026.
 
-OpenLoader is no longer on Google Play or available as a download here. Existing installs keep working.
+Most of you used OpenLoader for sideloading, and other, more mature apps now do that better. We'd rather stop than keep releasing updates we can't maintain properly.
 
-The source is archived at [github.com/thebytearray/OpenLoader](https://github.com/thebytearray/OpenLoader) (read-only, GPL-3.0). Fork it if you want to carry it forward.
+OpenLoader is no longer on Google Play or on our downloads page. If you already have it installed, it will keep working.
 
-Thanks to everyone who used it.
+The source code is archived as read-only at [github.com/thebytearray/OpenLoader](https://github.com/thebytearray/OpenLoader) under GPL-3.0. You're welcome to fork it.
+
+Thank you for using OpenLoader.
 
 Bat<br />
 COO, The Byte Array

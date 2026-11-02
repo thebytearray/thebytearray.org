@@ -14,7 +14,7 @@ const details = `/apps/${app.slug}/`;
 ---
 
 <!-- One app as a roomy row: icon, name, one-line summary, one action. -->
-<article class="flex flex-col gap-5 py-8 sm:flex-row sm:items-center sm:gap-8 sm:py-10">
+<article class="flex flex-col gap-5 py-8 sm:flex-row sm:items-start sm:gap-8 sm:py-10">
   <Image
     src={app.icon}
     alt=""
@@ -44,7 +44,7 @@ const details = `/apps/${app.slug}/`;
     <p class="mt-2 max-w-prose text-body-lg text-pretty text-on-surface-variant">{app.summary}</p>
     <ul class="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2">
       <li>
-        <Chip href={details} variant="filled" aria-label={`${app.name} details`}>Details</Chip>
+        <Chip href={details} aria-label={`${app.name} details`}>Details</Chip>
       </li>
       {
         !app.discontinued && (

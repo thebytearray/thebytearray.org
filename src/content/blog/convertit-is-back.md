@@ -3,29 +3,21 @@ title: 'Convertit is back'
 date: 2026-10-13
 updated: 2026-10-30
 author: Bat
-description: 'Convertit is available again, self-funded this time. Convertit Pro returned on October 18.'
+description: "Convertit is back on Google Play as of October 13, 2026. We're funding it ourselves, and Convertit Pro followed on October 18."
 tags: ['Convertit', 'Announcements']
 cover: ./images/convertit-is-back.png
 coverAlt: 'Convertit: we’re back. The free version is live again. Audio and video converter, offline, no ads.'
 ---
 
-Hey everyone,
+Hi everyone,
 
-Convertit is back! ❤️
+Convertit is available on Google Play again as of October 13, 2026. We [shut it down in September](/blog/convertit-pro-discontinued/) along with Convertit Pro, and we've now brought it back with our own funding.
 
-A few weeks ago we [announced that Convertit and Convertit Pro were discontinued](/blog/convertit-pro-discontinued/). We are back, self-funded and ready to keep things running. Your messages after the shutdown showed how much you care about Convertit, and that means a lot.
+Many of you messaged us after the shutdown, and those messages are a big reason we came back. Thank you. We're no longer going to spend our time trying to stop modded copies. Our focus is on the people who use the app.
 
-We are done worrying about mods. We are here for the people who love the app.
+Convertit Pro came back on October 18. You can read about it in [Convertit Pro is back](/blog/convertit-pro-is-back/).
 
-## Convertit Pro
-
-Update: Convertit Pro is back too. Read [Convertit Pro is back](/blog/convertit-pro-is-back/).
-
-## Download
-
-Convertit is on Google Play again: [get Convertit](https://play.google.com/store/apps/details?id=com.nasahacker.convertit), or read [more about the app](/apps/convertit/).
-
-Thank you for sticking with us!
+You can [download Convertit from Google Play](https://play.google.com/store/apps/details?id=com.nasahacker.convertit) or read [more about the app](/apps/convertit/).
 
 Bat<br />
 COO, The Byte Array

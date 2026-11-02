@@ -15,31 +15,58 @@ const latestPosts = (await getPosts()).slice(0, 3);
 <Base
   description="The Byte Array makes offline Android apps and open-source developer tools: Convertit audio-video converter, utilities, no ads, no tracking, no accounts."
 >
-  <!-- Hero: one job (trust + explore), one primary CTA. ColorPicker stays but demoted. -->
+  <!-- Hero: one job (trust + explore), one primary CTA. The shape sits in the
+       open space beside the lede and holds the app icons, so it is proof
+       rather than decoration. -->
   <section class="relative isolate pt-8 pb-14 sm:pt-14 sm:pb-20">
-    <div
-      class="pointer-events-none absolute top-2 right-[-24%] -z-10 aspect-square w-[min(17rem,66vw)] sm:right-[-10%] sm:w-80 lg:top-0 lg:right-[-2%] lg:w-[31rem]"
-    >
-      <Shape lobes={9} depth={0.07} class="absolute inset-0 animate-drift text-primary-container" />
-    </div>
-
-    <h1 class="font-display text-[clamp(2.75rem,10.5vw,7rem)] leading-[0.9] font-extrabold tracking-[-0.045em]">
+    <h1 class="font-display text-[clamp(2.75rem,10.5vw,7rem)] leading-[0.92] font-extrabold tracking-[-0.035em] text-balance">
       No BS.<br /><span class="text-primary">Straight to the point.</span>
     </h1>
 
-    <p class="mt-7 max-w-md font-display text-title-lg text-pretty sm:mt-10 sm:max-w-2xl sm:text-headline-sm">
-      The Byte Array makes mobile apps, libraries and developer tools that do one job well. Our apps have no ads, no
-      tracking and no accounts.
-    </p>
+    <div class="mt-7 grid gap-10 sm:mt-10 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-start lg:gap-16">
+      <div>
+        <p class="max-w-xl font-display text-title-lg text-pretty sm:text-headline-sm">
+          We make Android apps and developer tools. Our main apps, Convertit and Convertit Pro, convert audio, video
+          and images on your phone, offline and with no ads.
+        </p>
 
-    <div class="mt-8 flex flex-wrap items-center gap-2 sm:mt-10 sm:gap-2.5">
-      <Chip href="/apps/" variant="filled">See our apps</Chip>
-      <Chip href="/open-source/" icon="code">Browse open source</Chip>
-    </div>
+        <div class="mt-8 flex flex-wrap items-center gap-2 sm:mt-10 sm:gap-2.5">
+          <Chip href="/apps/" variant="filled">See our apps</Chip>
+          <Chip href="/open-source/" icon="code">Browse open source</Chip>
+        </div>
 
-    <div class="mt-6 flex items-center gap-3 opacity-80 sm:mt-7">
-      <span class="text-label-md text-on-surface-variant">Accent:</span>
-      <ColorPicker class="-ml-2 [&_button]:size-8 [&_span]:size-6" />
+        <div class="mt-6 flex items-center gap-2 sm:mt-7">
+          <span class="text-label-md text-on-surface-variant">Accent</span>
+          <ColorPicker class="[&_button]:size-8 [&_span]:size-6" />
+        </div>
+      </div>
+
+      <div aria-hidden="true" class="relative mx-auto aspect-square w-full max-w-[22rem] max-lg:hidden lg:-mt-4">
+        <Shape lobes={9} depth={0.07} class="absolute inset-0 animate-drift text-primary-container" />
+        <!-- Only apps you can still install: this is the "what we ship" proof. -->
+        <div class="absolute inset-0 grid place-items-center">
+          <div class="relative h-44 w-56">
+            {
+              apps
+                .filter((app) => !app.discontinued)
+                .slice(0, 2)
+                .map((app, i) => (
+                  <Image
+                    src={app.icon}
+                    alt=""
+                    width={192}
+                    height={192}
+                    loading="lazy"
+                    class:list={[
+                      'absolute size-28 rounded-[22%] shadow-level3',
+                      i === 0 ? 'top-0 left-0 -rotate-8' : 'right-0 bottom-0 rotate-6',
+                    ]}
+                  />
+                ))
+            }
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -48,7 +75,7 @@ const latestPosts = (await getPosts()).slice(0, 3);
     <div class="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
       <div>
         <h2 id="apps" class="font-display text-headline-lg sm:text-display-sm">Apps</h2>
-        <p class="mt-1 text-body-lg text-on-surface-variant">Three apps. Each does one job well.</p>
+        <p class="mt-1 text-body-lg text-on-surface-variant">Everything we’ve built, including the apps we no longer maintain.</p>
       </div>
       <a
         href="/apps/"
@@ -75,10 +102,15 @@ const latestPosts = (await getPosts()).slice(0, 3);
                 class="size-12 flex-none rounded-[22%] sm:size-14"
               />
               <span class="min-w-0 flex-1">
-                <span class="block font-display text-title-lg leading-tight group-hover:text-primary group-hover:underline group-hover:decoration-2 group-hover:underline-offset-4">
-                  {app.name}
+                <span class="flex flex-wrap items-center gap-x-3 gap-y-1">
+                  <span class="font-display text-title-lg leading-tight group-hover:text-primary group-hover:underline group-hover:decoration-2 group-hover:underline-offset-4">
+                    {app.name}
+                  </span>
+                  {app.discontinued && (
+                    <span class="chip chip-sm chip-tonal text-on-surface-variant">Discontinued</span>
+                  )}
                 </span>
-                <span class="mt-0.5 block truncate text-body-md text-on-surface-variant sm:whitespace-normal">
+                <span class="mt-0.5 line-clamp-2 block text-body-md text-pretty text-on-surface-variant">
                   {app.summary}
                 </span>
               </span>
@@ -91,14 +123,18 @@ const latestPosts = (await getPosts()).slice(0, 3);
         ))
       }
     </ul>
+    <p class="mt-5 max-w-2xl text-body-md text-pretty text-on-surface-variant">
+      Our apps keep your data on your device, and several of our projects are open source.{' '}
+      <a href="/about/" class="rounded-sm whitespace-nowrap text-primary underline decoration-1 underline-offset-4 hover:decoration-2">About us</a>
+    </p>
   </section>
 
   <!-- Blog: latest posts. -->
-  <section aria-labelledby="blog" class="mt-14 sm:mt-20">
+  <section aria-labelledby="blog" class="mt-16 sm:mt-24">
     <div class="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
       <div>
         <h2 id="blog" class="font-display text-headline-lg sm:text-display-sm">Blog</h2>
-        <p class="mt-1 text-body-lg text-on-surface-variant">Product updates and notes from The Byte Array.</p>
+        <p class="mt-1 text-body-lg text-on-surface-variant">Updates on our apps, and why we made the decisions we did.</p>
       </div>
       <a
         href="/blog/"
@@ -121,25 +157,18 @@ const latestPosts = (await getPosts()).slice(0, 3);
     }
   </section>
 
-  <!-- Trust: one line, links out. Full story lives on /about/. -->
-  <section aria-label="Our promise" class="mt-14 sm:mt-20">
-    <p class="max-w-2xl text-body-lg text-pretty text-on-surface-variant">
-      Everything we ship is <strong class="font-semibold text-on-surface">private by default</strong> and much of it
-      is open source. <a href="/about/" class="rounded-sm text-primary underline decoration-1 underline-offset-4 hover:decoration-2">How we work</a>
-    </p>
-  </section>
-
   <!-- Contact: demoted from second hero to quiet closer. Single CTA. -->
   <section
     aria-labelledby="contact-title"
     id="contact"
-    class="mt-14 scroll-mt-24 rounded-xl-inc bg-surface-container p-6 sm:mt-20 sm:rounded-2xl sm:p-10 lg:p-12"
+    class="mt-16 scroll-mt-24 rounded-xl-inc bg-surface-container p-6 sm:mt-24 sm:rounded-2xl sm:p-10 lg:p-12"
   >
     <h2 id="contact-title" class="font-display text-headline-md sm:text-headline-lg">
-      Questions or ideas?
+      Get in touch
     </h2>
     <p class="mt-2 max-w-xl text-body-lg text-pretty text-on-surface-variant">
-      Get help with one of our apps, suggest a feature, or talk to us about working together.
+      Need help with one of our apps, have a feature idea or want to work with us? Send us a message and we’ll
+      get back to you.
     </p>
     <p class="mt-6">
       <Chip href="/contact/" icon="send" variant="filled">Contact us</Chip>

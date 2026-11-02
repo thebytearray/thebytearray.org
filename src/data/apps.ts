@@ -97,10 +97,10 @@ export const apps: App[] = [
     slug: 'convertit',
     video: { id: 'y99jlwEYT5k', title: 'Convertit promo video' },
     name: 'Convertit',
-    tagline: 'No BS. Straight to the point.',
+    tagline: 'Offline audio and video converter for Android',
     summary: 'An offline audio and video converter for Android, with no ads.',
     description:
-      'Convertit is an ad-free, offline audio and video converter for Android. Pick a file, pick a format (MP3, M4A, AAC, OGG and OPUS) and it converts in the background.',
+      'Convertit is an offline audio and video converter for Android. Pick a file and a format (MP3, M4A, AAC, OGG or OPUS), and it converts in the background. It shows no ads.',
     icon: convertitIcon,
     iconFile: 'src/assets/apps/convertit/icon.png',
     screenshots: [
@@ -114,7 +114,7 @@ export const apps: App[] = [
       {
         icon: 'graphic_eq',
         title: 'Audio and video',
-        description: 'One tap to start a conversion. No clutter in the way.',
+        description: 'Start a conversion with a single tap.',
       },
       {
         icon: 'tune',
@@ -139,7 +139,7 @@ export const apps: App[] = [
       {
         icon: 'wifi_off',
         title: 'Offline, no ads',
-        description: 'Files are converted on your device, and the app shows no ads.',
+        description: 'Your files are converted on your device, and the app shows no ads.',
       },
     ],
     playStoreUrl: 'https://play.google.com/store/apps/details?id=com.nasahacker.convertit',
@@ -156,7 +156,7 @@ export const apps: App[] = [
     slug: 'convertit-pro',
     video: { id: 'MDA3KWgDElg', title: 'Convertit Pro promo video' },
     name: 'Convertit Pro',
-    tagline: 'All tools listed below. Pay once.',
+    tagline: 'Audio, video and image tools for Android. One purchase covers the tools listed below.',
     summary: 'Audio, video and image tools for Android. Offline, no ads, pay once.',
     description:
       'Convertit Pro is the paid version of Convertit. One purchase unlocks the tools listed under What it does on this page as of 20 October 2026: audio, video and image conversion, video compression, noise reduction, a ringtone maker, EXIF and metadata tools, and media info. Future new tools may be separate and will be listed here before any charge. It runs offline and shows no ads.',
@@ -270,7 +270,7 @@ export const apps: App[] = [
     tagline: 'Install APKs on the Android devices you own',
     summary: 'Sideload APK files you already have, one at a time or as a queue, to one device or several.',
     description:
-      'OpenLoader installs APK files you provide, outside the store flow. It is built with Android developers in mind: queue installs, push builds to several devices over wireless ADB, and use Shizuku for privileged installs when you grant it access. Open source under GPL-3.0.',
+      'OpenLoader is an APK installer for Android, designed for Android developers. It installs APK files outside an app store, supports install queues and installation to several devices over wireless ADB, and can use Shizuku for privileged installs when access is granted. It is open source under GPL-3.0.',
     icon: openloaderIcon,
     iconFile: 'src/assets/apps/openloader/icon.png',
     screenshots: [
@@ -329,7 +329,7 @@ export const apps: App[] = [
     tagline: 'A Hysteria2 VPN client for Android',
     summary: 'Connect to Hysteria2 servers, or set up your own with the built-in wizard.',
     description:
-      'Hy2NG is a Hysteria2 client for Android. Import a configuration from a QR code or your clipboard, choose which apps go through the tunnel, or set up your own VPS with the built-in guide. No ads and no tracking.',
+      'Hy2NG is a Hysteria2 client for Android. Configurations can be imported from a QR code or the clipboard, individual apps can be routed through the tunnel, and a built-in guide assists with setting up a VPS. It has no ads and no tracking.',
     icon: hy2ngIcon,
     iconFile: 'src/assets/apps/hy2ng/icon.png',
     discontinued: true,

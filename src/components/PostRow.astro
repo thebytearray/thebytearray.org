@@ -1,6 +1,5 @@
 ---
 import { formatDate, readingTime, type Post } from '../lib/posts';
-import { team } from '../data/site';
 import Icon from './Icon.astro';
 
 interface Props {
@@ -9,7 +8,6 @@ interface Props {
 
 const { post } = Astro.props;
 const { title, description, date, draft, author } = post.data;
-const authorMember = team.find((m) => m.name === author);
 ---
 
 <div class="@container">
@@ -19,18 +17,8 @@ const authorMember = team.find((m) => m.name === author);
 >
   <p class="col-span-2 text-label-lg text-on-surface-variant @2xl:col-span-1">
     <time datetime={date.toISOString()}>{formatDate(date)}</time>
-    <span class="@2xl:hidden"> · {readingTime(post.body)} min read</span>
-    <span class="inline-flex items-center gap-1.5 @2xl:mt-1 @2xl:block">
-      <span aria-hidden="true" class="size-1 rounded-full bg-outline @2xl:hidden">·</span>
-      {authorMember?.avatar ? (
-        <img src={authorMember.avatar} alt="" width="20" height="20" loading="lazy" class="size-5 rounded-full" />
-      ) : (
-        <span class="grid size-5 place-items-center rounded-full bg-primary-container text-[0.625rem] font-bold text-on-primary-container">
-          {author.charAt(0)}
-        </span>
-      )}
-      {author}
-    </span>
+    <span class="@2xl:hidden"> · {readingTime(post.body)} min read · {author}</span>
+    <span class="hidden @2xl:mt-1 @2xl:block">{author}</span>
   </p>
   <div class="min-w-0">
     <h3 class="font-display text-title-lg text-balance transition-colors @2xl:text-headline-sm duration-(--duration-short4) group-hover:text-primary">
@@ -39,13 +27,12 @@ const authorMember = team.find((m) => m.name === author);
     </h3>
     <p class="mt-1 text-body-md text-on-surface-variant">{description}</p>
   </div>
-  <div class="flex items-center gap-4 text-label-lg text-on-surface-variant">
+  <div class="flex items-center gap-5 text-label-lg text-on-surface-variant">
     <span class="hidden whitespace-nowrap @2xl:inline">{readingTime(post.body)} min read</span>
-    <span
-      class="grid size-10 place-items-center rounded-full bg-surface-container-high text-on-surface transition-expressive group-hover:translate-x-1 group-hover:bg-primary group-hover:text-on-primary"
-    >
-      <Icon name="arrow_forward" />
-    </span>
+    <Icon
+      name="arrow_forward"
+      class="flex-none transition-expressive group-hover:translate-x-1 group-hover:text-primary"
+    />
   </div>
 </a>
 </div>

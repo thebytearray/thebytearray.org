@@ -3,22 +3,28 @@ title: 'Why Convertit is not open source anymore'
 date: 2026-10-16
 updated: 2026-10-30
 author: Tamim
-description: 'Convertit used to be open source, until cloners republished it under our name with ads. The full source comes back at 100,000 Google Play installs.'
+description: "Convertit used to be open source. We closed the source after clones appeared on Google Play under our name, and we'll reopen it at 100,000 installs."
 tags: ['Convertit', 'Open source']
 ---
 
-Convertit used to be open source. It is not anymore.
+Convertit used to be open source. We closed the source after clones of the app started appearing on Google Play.
 
-Soon after we published the code, copies started appearing on Google Play under our exact name, "Convertit", with our logo and a slightly changed background color. It was our app with ads added, pretending to be the real thing. People who downloaded those copies thought they were supporting us.
+## What happened
 
-One example is still live today: an app called "Convertit: Audio in Seconds", published by Akarshit Bathla under the package name com.akarshit.convertit. It uses our name, a near copy of our icon, and ads. That is not us. We reached out to the publisher and got no response.
+After we published the code, copies of Convertit appeared on Google Play under the name "Convertit", using our logo with a different background color. They were our app with ads added, and people who installed them thought they were supporting us.
 
-We filed takedown requests. Google refused to act, so the fakes stayed up.
+One of these copies is still available as of October 2026: "Convertit: Audio in Seconds" by Akarshit Bathla, package name com.akarshit.convertit. It uses our name, a near-identical icon and ads. It isn't ours. We contacted the publisher and never got a reply.
 
-The code was published under GPLv3. That license allows anyone to reuse and even sell the code, but with conditions the clones ignored: publish your modified source under the same license, and keep the original copyright notices intact. They never published their modified source, and our name stayed on it.
+We also filed takedown requests with Google, but Google declined to act.
 
-The clones used that openness to mislead our own users, so we closed the source to protect them. Treat every copy of Convertit outside this site and Google Play as untrusted.
+## The license
 
-Once Convertit passes 100,000 installs on Google Play, we will publish the full source again and announce it here.
+We released the code under GPLv3. That license lets anyone reuse and even sell the code, as long as they publish their modified source under the same license and keep the original copyright notices. The clones never published their modified source, and they kept using our name.
 
-Until then, get Convertit from [Google Play](https://play.google.com/store/apps/details?id=com.nasahacker.convertit) or [directly from us](/downloads/#convertit), and read [more about the app](/apps/convertit/).
+## What this means for you
+
+We closed the source to protect you from these clones. If you got Convertit anywhere other than this website or Google Play, don't trust it.
+
+We'll publish the full source again once Convertit reaches 100,000 installs on Google Play.
+
+You can get Convertit on [Google Play](https://play.google.com/store/apps/details?id=com.nasahacker.convertit) or [directly from us](/downloads/#convertit), and read [more about the app](/apps/convertit/).

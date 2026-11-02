@@ -3,38 +3,38 @@ title: 'A message to modders and mod users'
 date: 2026-10-19
 updated: 2026-10-30
 author: Tamim
-description: 'We cannot stop anyone from patching Convertit Pro, and we will not pretend otherwise. A short, honest request to the people who mod and use it.'
+description: "If you mod Convertit Pro or use a modded copy, this post is for you. We can't stop mods, so we're asking you to buy the app if you can."
 tags: ['Mods', 'Announcements']
 cover: ./images/a-message-to-modders-and-mod-users.png
 coverAlt: 'Convertit Pro: dear modders. An open padlock with a thank-you sticker. Buy it if you can. No mod protection, just an honest request.'
 ---
 
-To the modders and mod users,
+If you mod Convertit Pro, or you use a modded copy, this post is for you.
 
-We do not protect Convertit Pro against mods. With AI, cracking a license check takes an afternoon. Protection tools cost more than we can pay, and since the app runs entirely on your device, a server check would not help anyway.
+## Why we can't stop mods
 
-So please do not mod Convertit Pro. If you use a modded copy, buy it when you can.
+Convertit Pro has no protection against modification. With AI tools, a license check can be bypassed in an afternoon, and the tools that would make that harder cost more than we can afford. A server check wouldn't help either, because the app runs entirely on your device.
+
+So we're asking you directly: please don't mod Convertit Pro. If you're using a modded copy, please buy the app when you can.
 
 ## What went into it
 
-Convertit Pro is built on two years and thousands of dollars of work, most of it spent learning things we did not know. How video codecs and containers work. Why the same file plays on one phone and fails on another. How to compress video without wrecking it, normalize loudness, and reduce noise. How to keep HDR10+ metadata intact through a conversion, which no other app on Google Play does.
+We spent two years and thousands of dollars building Convertit Pro. Most of that time went into learning how video codecs and containers work, why a file plays on one phone and fails on another, and how to compress video, normalize loudness and reduce noise without damaging the file. Convertit Pro also keeps HDR10+ metadata through a conversion, which no other app on Google Play does.
 
-All of it has to run offline, on a phone, across every Android version from 7.0 up, on devices we have never held. Every Android release breaks something, and every fix is ours to find.
+All of this runs offline on Android 7.0 and later, including on devices we've never tested. Each Android release breaks something, and we have to find and fix it ourselves.
 
-## More than code
+## Why the code isn't the hard part
 
-Anyone can vibe-code an app like this now. Describe it to an AI and in a weekend you have the same buttons and feature list.
+You can now build an app with the same screens and feature list using AI in a weekend. What takes longer is making sure the output is right: that a compressed video keeps its quality, that HDR metadata survives and that audio stays in sync. That requires understanding what happens to the file, and it's what we spent two years learning. It's also how we catch errors that look fine on screen but show up in the file.
 
-Making the features actually work is the hard part. To know a compressed video kept its quality, that HDR metadata survived, or that audio stayed in sync, you have to understand what happens under the hood. That is what our two years went into, and it is how we catch mistakes that look fine on screen and only show up in the file.
+If something breaks, you can report it to us. We'll reply quickly and keep working on it until it's fixed. Many apps, including paid ones, leave reports unanswered for months.
 
-When something breaks, we are accountable in a way a machine is not. We answer fast and keep working until the issue is solved. Plenty of apps, paid ones included, leave reports untouched for months.
+## Why your purchase matters
 
-## Why buying matters
+Convertit Pro sales are our only income. It's a single purchase with no subscription or ads, and we don't sell your data. The free version of Convertit has never earned us anything.
 
-- Sales are our only income. Convertit Pro is one purchase: no subscriptions, no ads, no tracking, no data to sell. The free version has never made a cent.
-- Mods already ended it once. Modded copies pushed sales close to zero and we shut it down. We came back because you asked.
-- There are only a few of us. Every sale buys time for the next update. Every modded copy is time we do not have.
+In September 2026, modded copies pushed sales close to zero and we shut the app down. We brought it back in October because users asked us to. We're a small team, and every sale pays for the next update.
 
-If you can afford Convertit Pro, [please buy it](https://play.google.com/store/apps/details?id=org.thebytearray.convertit). If you truly cannot, use it, and we hope it serves you well. As Arsi "Hakita" Patala, the developer of ULTRAKILL, put it:
+If you can afford Convertit Pro, please [buy it](https://play.google.com/store/apps/details?id=org.thebytearray.convertit). If you can't, you're welcome to keep using it. As Arsi "Hakita" Patala, the developer of ULTRAKILL, said:
 
 > "Culture shouldn't exist only for those who can afford it."

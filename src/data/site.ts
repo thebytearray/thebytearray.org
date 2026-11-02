@@ -10,7 +10,7 @@ const mail = 'Y29udGFjdEB0aGVieXRlYXJyYXkub3Jn';
 export const site = {
   name: 'The Byte Array',
   title: 'The Byte Array',
-  tagline: 'No BS. Straight to the point.',
+  tagline: 'Android apps and developer tools',
   description:
     'The Byte Array makes mobile apps, libraries and developer tools that do one job well. Our apps have no ads, no tracking and no accounts.',
   locale: 'en',
@@ -109,19 +109,19 @@ export const team: TeamMember[] = [
 export const workAreas: { title: string; description: string; icon: IconName }[] = [
   {
     title: 'Developer tools',
-    description: "Command-line apps, build tools and utilities that take repetitive steps out of a developer's day.",
+    description: "Command-line apps, build tools and utilities that take repetitive work off your hands.",
     icon: 'code',
   },
   {
     title: 'Libraries and packages',
     description:
-      'Reusable packages for common problems, across several languages. Built to be reliable and documented.',
+      'Documented packages for common problems, in several programming languages, that you can reuse in your projects.',
     icon: 'folder_code',
   },
   {
     title: 'Applications',
     description:
-      'End-user software built with privacy in mind: local-first, clear policies and no unnecessary tracking.',
+      'Everyday apps that keep your data on your device, with short privacy policies you can read in minutes.',
     icon: 'apps',
   },
 ];

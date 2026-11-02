@@ -18,14 +18,14 @@ const sectionTitle = 'font-display text-headline-md text-balance';
   <div data-pagefind-body>
     <PageHeader
       title="About The Byte Array"
-      lede="We make software that solves real problems without trading away your privacy. Much of our work is open source, so you can see how it works."
+      lede="We’re The Byte Array, a small software company. We make mobile apps, libraries and developer tools, and much of our code is open source."
       shape="clover"
       tone="primary"
     />
 
     <div class="flex flex-col gap-16 sm:gap-24">
       <section aria-labelledby="what-we-build" class={section}>
-        <h2 id="what-we-build" class={sectionTitle}>What we build</h2>
+        <h2 id="what-we-build" class={sectionTitle}>Products</h2>
         <ul class="grid gap-3 sm:gap-4 md:grid-cols-3">
           {
             workAreas.map(({ title, description, icon }, i) => (
@@ -47,14 +47,14 @@ const sectionTitle = 'font-display text-headline-md text-balance';
       </section>
 
       <section aria-labelledby="data" class={section}>
-        <h2 id="data" class={sectionTitle}>How we handle data</h2>
+        <h2 id="data" class={sectionTitle}>Data handling</h2>
         <div class="max-w-2xl space-y-4 text-body-lg text-pretty">
           <p>
-            Our apps work on your device. They don’t include analytics, ads or tracking, and none of them ask you to
-            create an account. When an app needs the network, it only talks to devices or servers you choose.
+            Our apps run on your device. They don’t include analytics, ads or tracking, and you don’t need an account
+            to use them. If an app needs the internet, it only connects to devices or servers you choose.
           </p>
           <p>
-            We share code when it helps the community, and we keep our policies short and plain about the rest. Read
+            We share our code when it can help others, and we keep our policies short so you can read them quickly. Read
             the full policies for{' '}
             {
               apps.filter((app) => app.privacyPath).map((app, i) => (
@@ -69,11 +69,11 @@ const sectionTitle = 'font-display text-headline-md text-balance';
       </section>
 
       <section aria-labelledby="team" class={section}>
-        <h2 id="team" class={sectionTitle}>Who we are</h2>
-        <ul class="grid max-w-3xl gap-3 sm:grid-cols-2 sm:gap-4">
+        <h2 id="team" class={sectionTitle}>Team</h2>
+        <ul class="grid gap-3 sm:gap-4 lg:grid-cols-3">
           {
             team.map((member) => (
-              <li class="flex items-start gap-4 rounded-xl bg-surface-container p-6">
+              <li class="flex items-start gap-4 rounded-xl bg-surface-container p-6 lg:flex-col">
                 {member.avatar ? (
                   <img
                     src={member.avatar}
@@ -120,8 +120,8 @@ const sectionTitle = 'font-display text-headline-md text-balance';
         <h2 id="license" class={sectionTitle}>Open source</h2>
         <div>
           <p class="max-w-2xl text-body-lg text-pretty">
-            OpenLoader and this website are open source under {site.license.name}. Our libraries and tools are on
-            GitHub too.
+            OpenLoader and this website are open source under {site.license.name}. Our libraries and tools are also
+            published on GitHub.
           </p>
           <ul class="mt-7 flex flex-wrap gap-2 sm:gap-2.5">
             <li><Chip href="/open-source/" variant="filled">Browse repositories</Chip></li>

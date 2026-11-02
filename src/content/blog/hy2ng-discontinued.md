@@ -3,19 +3,21 @@ title: 'Hy2NG is discontinued'
 date: 2026-10-18
 updated: 2026-10-30
 author: Bat
-description: 'Hy2NG is discontinued. Too few people used it to justify the maintenance a VPN client needs every month.'
+description: "We discontinued Hy2NG, our Hysteria2 client for Android, on October 18, 2026, because too few people were using it."
 tags: ['Hy2NG', 'Announcements']
 ---
 
-Hy2NG is discontinued.
+Hi everyone,
 
-Not many people used it. A VPN client needs steady maintenance to keep up with Android, Hysteria2 and the networks people connect through. With our user numbers, those hours did not pay for themselves, and shipping half-maintained releases would let down the people who did rely on it.
+We discontinued Hy2NG, our Hysteria2 client for Android, on October 18, 2026.
 
-Hy2NG is no longer on Google Play. Existing installs keep working, and your configurations stay on your device.
+The main reason is that not many people were using it. A VPN client needs regular updates to keep working with Android, the Hysteria2 protocol and the networks you connect through, and our user numbers didn't justify that work. We also didn't want to keep releasing updates we couldn't maintain properly.
 
-If you run Hysteria2 servers, Android coverage is good now. Solid clients exist, and the protocol is still being developed.
+Hy2NG is no longer on Google Play. If you already have it installed, it will keep working, and your configurations stay on your device.
 
-Thanks to everyone who used it. Our other apps are unaffected: [Convertit](/blog/convertit-is-back/) and [Convertit Pro](/blog/convertit-pro-is-back/) are live, and we keep working on them.
+If you run Hysteria2 servers, there are other good Android clients available, and the protocol is still being developed.
+
+Thank you for using Hy2NG. Our other apps, [Convertit](/blog/convertit-is-back/) and [Convertit Pro](/blog/convertit-pro-is-back/), are not affected.
 
 Bat<br />
 COO, The Byte Array
