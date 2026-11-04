@@ -28,6 +28,7 @@ export const icons = [
   'folder_code',
   'fork_right',
   'forward_10',
+  'gavel',
   'gif',
   'graphic_eq',
   'home',

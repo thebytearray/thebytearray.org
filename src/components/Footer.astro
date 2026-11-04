@@ -19,6 +19,9 @@ const columns = [
       ...apps.flatMap((app) =>
         app.privacyPath ? [{ label: `${app.name} privacy`, href: app.privacyPath }] : [],
       ),
+      ...apps.flatMap((app) =>
+        app.termsPath ? [{ label: `${app.name} terms`, href: app.termsPath }] : [],
+      ),
       { label: 'Site privacy', href: '/privacy/' },
       { label: 'Terms', href: '/terms/' },
     ],

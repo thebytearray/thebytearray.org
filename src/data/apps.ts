@@ -88,6 +88,8 @@ export interface App {
   price?: { amount: string; currency: string };
   /** Kept at the legacy URL: store listings link to it. */
   privacyPath?: `/${string}/`;
+  /** App-specific terms of service, when the app has its own. */
+  termsPath?: `/${string}/`;
   /** App is discontinued and no longer available for install. */
   discontinued?: boolean;
 }
@@ -263,6 +265,7 @@ export const apps: App[] = [
     paid: true,
     price: { amount: '5.99', currency: 'USD' },
     privacyPath: '/convertit-pro-privacy/',
+    termsPath: '/convertit-pro-terms/',
   },
   {
     slug: 'openloader',

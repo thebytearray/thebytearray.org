@@ -179,6 +179,15 @@ const sectionTitle = 'font-display text-headline-md';
             </li>
           )
         }
+        {
+          app.termsPath && (
+            <li>
+              <Chip href={app.termsPath} icon="gavel" class={onPanel}>
+                Terms of service
+              </Chip>
+            </li>
+          )
+        }
       </ul>
     </header>
 
@@ -250,6 +259,11 @@ const sectionTitle = 'font-display text-headline-md';
           {app.privacyPath && (
             <>
               <a href={app.privacyPath} class="text-link whitespace-nowrap">{app.name} privacy</a>{', '}
+            </>
+          )}
+          {app.termsPath && (
+            <>
+              <a href={app.termsPath} class="text-link whitespace-nowrap">{app.name} terms</a>{', '}
             </>
           )}
           <a href="/refund-policy/" class="text-link whitespace-nowrap">refund policy</a>{', '}
