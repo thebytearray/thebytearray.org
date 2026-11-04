@@ -4,7 +4,7 @@ import '../styles/prose.css';
 import { site } from '../data/site';
 import Base from '../layouts/Base.astro';
 
-const lastUpdated = new Date('2026-10-20T04:22:31Z');
+const lastUpdated = new Date('2026-11-04T21:24:40Z');
 const lastUpdatedDisplay = new Intl.DateTimeFormat('en-GB', {
   day: 'numeric',
   month: 'long',
@@ -38,7 +38,8 @@ const lastUpdatedDisplay = new Intl.DateTimeFormat('en-GB', {
         <h2>Who we are</h2>
         <p>
           This website is run by {site.company.name}, registered in {site.company.jurisdiction}, no.{' '}
-          {site.company.number}, office at {site.company.office}.
+          {site.company.number}, office at {site.company.office}. For any personal data this site
+          handles, {site.company.name} is the data controller.
         </p>
       </section>
 
@@ -54,8 +55,10 @@ const lastUpdatedDisplay = new Intl.DateTimeFormat('en-GB', {
       <section>
         <h2>Stored only in your browser</h2>
         <p>
-          Theme (light/dark) and accent colour are saved in your browser localStorage and never sent
-          to us. Clearing site data removes them.
+          A few small preferences are saved in your own browser and never sent to us: your theme
+          (light/dark), accent colour and audio playback speed in localStorage, and a short-lived
+          cache of our public GitHub repository list in sessionStorage so the Open source page does
+          not re-fetch on every visit. Clearing site data removes them.
         </p>
       </section>
 
@@ -63,7 +66,10 @@ const lastUpdatedDisplay = new Intl.DateTimeFormat('en-GB', {
         <h2>If you email us</h2>
         <p>
           We receive your name, email address and message in our inbox, only to handle your request.
-          We do not share it. Ask for deletion at any time via{' '}
+          Our lawful basis is our legitimate interest in answering people who contact us. We do not
+          share it or use it for marketing. We keep enquiry emails only as long as we need them to
+          deal with your request and any related follow-up, then delete them. Our email is hosted by
+          a third-party email provider acting on our instructions. Ask for deletion at any time via{' '}
           <button type="button" data-mailto={site.mail} class="text-link">{site.emailDisplay}</button>{' '}
           and we will delete it.
         </p>
@@ -72,36 +78,67 @@ const lastUpdatedDisplay = new Intl.DateTimeFormat('en-GB', {
       <section>
         <h2>Hosting and delivery</h2>
         <p>
-          The site is static files served by nginx behind Cloudflare, which may briefly process your
-          IP address for security. Server logs are kept briefly for security and debugging only.
-          We run no Google analytics, no verification scripts and no third-party trackers on these
-          pages.
+          The site is static files served by nginx behind Cloudflare, our hosting and security
+          provider, which acts on our instructions and may briefly process your IP address to deliver
+          and protect the site. This can involve servers outside the UK under appropriate safeguards.
+          Server logs are kept briefly for security and debugging only. We run no analytics, no
+          tracking pixels and no advertising on these pages.
         </p>
       </section>
 
       <section>
-        <h2>External services</h2>
+        <h2>Content loaded from other services</h2>
         <p>
-          Clicking a link to GitHub, Google Play or another site sends your request to that service
-          under their policy. Purchases are handled entirely by Google Play. We never see your
-          payment details. Per-app handling is in each app privacy policy linked in the footer.
+          Some pages load content directly from other companies, which means your browser contacts
+          them and they receive your IP address and basic request details:
+        </p>
+        <ul>
+          <li>App pages with a video show its thumbnail from YouTube (Google).</li>
+          <li>The Open source page lists our repositories using GitHub's public API.</li>
+          <li>The About page and blog posts show profile photos from GitHub.</li>
+        </ul>
+        <p>
+          A video only starts loading from youtube-nocookie.com once you click play. Clicking any link
+          to GitHub, Google Play or another site likewise sends your request to that service under its
+          own policy. Purchases are handled entirely by Google Play; we never see your payment details.
+          Per-app handling is in each app privacy policy linked in the footer.
         </p>
       </section>
 
       <section>
         <h2>Your rights</h2>
         <p>
-          Under UK GDPR you may ask for access, correction or deletion of emails you sent us. Use our{' '}
+          Under UK GDPR you may ask for access to, correction or deletion of emails you sent us, and
+          you may object to or ask us to restrict our handling of them. Use our{' '}
           <a href="/contact/" class="text-link">contact form</a> or email us at{' '}
           <button type="button" data-mailto={site.mail} class="text-link">{site.emailDisplay}</button>.
         </p>
       </section>
 
       <section>
+        <h2>Complaints</h2>
+        <p>
+          If you are unhappy with how we have handled your personal data, please tell us first using
+          our <a href="/contact/" class="text-link">contact form</a> or by email at{' '}
+          <button type="button" data-mailto={site.mail} class="text-link">{site.emailDisplay}</button>.
+          We will acknowledge your complaint within 30 days and try to put things right. You also have
+          the right to complain to the Information Commissioner's Office (ICO) at{' '}
+          <a href="https://ico.org.uk/make-a-complaint/" target="_blank" rel="noopener" class="text-link">
+            ico.org.uk
+          </a>.
+        </p>
+      </section>
+
+      <section>
         <h2>Changes</h2>
         <p>
-          If we make a material change, we update the date above and note it here at least 7 days
-          before it takes effect.
+          4 November 2026: added the content loaded from YouTube and GitHub, the lawful basis and
+          retention for emails, our processors, and your complaint and objection/restriction rights.
+          These only add disclosures and rights, so they take effect immediately.
+        </p>
+        <p>
+          If we make a material change in future, we update the date above and note it here at least
+          7 days before it takes effect.
         </p>
       </section>
     </article>
