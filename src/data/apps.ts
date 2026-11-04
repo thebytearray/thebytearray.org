@@ -153,6 +153,7 @@ export const apps: App[] = [
     seoDescription:
       'Convertit converts audio and video offline on Android: MP3, M4A, AAC, OGG, OPUS in background with tags. No ads, no tracking, no account. Android 7.0+.',
     privacyPath: '/convertit-privacy/',
+    termsPath: '/convertit-terms/',
   },
   {
     slug: 'convertit-pro',

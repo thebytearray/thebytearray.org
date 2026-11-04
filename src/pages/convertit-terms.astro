@@ -1,0 +1,196 @@
+---
+import '../styles/prose.css';
+
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { getApp } from '../data/apps';
+import { site } from '../data/site';
+import Base from '../layouts/Base.astro';
+
+const app = getApp('convertit')!;
+const appPath = `/apps/${app.slug}/`;
+
+const lastUpdated = new Date('2026-11-04T15:44:10Z');
+const lastUpdatedDisplay = new Intl.DateTimeFormat('en-GB', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
+  timeZone: 'UTC',
+  timeZoneName: 'short',
+}).format(lastUpdated);
+
+const title = `${app.name} terms of service`;
+const description =
+  'Terms of service for Convertit by The Byte Array Ltd: a free offline audio and video converter, your licence, your files stay on your device, and your statutory rights.';
+---
+
+<Base
+  title={title}
+  description={description}
+  breadcrumbs={[
+    { name: 'Apps', path: '/apps/' },
+    { name: app.name, path: appPath },
+    { name: 'Terms of service', path: Astro.url.pathname },
+  ]}
+>
+  <div class="mx-auto max-w-2xl pt-4 sm:pt-10" data-pagefind-body>
+    <Breadcrumbs
+      items={[
+        { label: 'Apps', href: '/apps/' },
+        { label: app.name, href: appPath },
+        { label: 'Terms of service' },
+      ]}
+    />
+
+    <header class="mt-6 sm:mt-8">
+      <h1
+        class="font-display text-[clamp(2rem,7.5vw,3.75rem)] leading-[1.04] font-extrabold tracking-[-0.03em] text-balance"
+      >
+        {title}
+      </h1>
+      <p class="mt-4 text-label-lg text-on-surface-variant">
+        Last updated <time datetime={lastUpdated.toISOString()}>{lastUpdatedDisplay}</time>
+      </p>
+    </header>
+
+    <article class="prose mt-10 sm:mt-12">
+      <section>
+        <h2>Who we are</h2>
+        <p>
+          Convertit (“the App”) is published by {site.company.name}, a company registered in{' '}
+          {site.company.jurisdiction} (company number{' '}
+          <a href={site.company.url} target="_blank" rel="noopener" class="text-link">{site.company.number}</a>),
+          with its registered office at {site.company.office}. In these terms, “we” and “us” mean{' '}
+          {site.company.name}, and “you” means the person using the App.
+        </p>
+      </section>
+
+      <section>
+        <h2>These terms</h2>
+        <p>
+          These terms govern your use of the App. By installing or using it, you agree to them. If you do not
+          agree, do not use the App. They sit alongside our{' '}
+          <a href={app.privacyPath} class="text-link">privacy policy</a>, which is part of your agreement with
+          us. Our <a href="/terms/" class="text-link">site terms</a> cover this website. Where the two differ,
+          these terms apply to the App.
+        </p>
+      </section>
+
+      <section>
+        <h2>What the App does</h2>
+        <p>
+          Convertit is a free, offline audio and video converter for Android. You pick a file and a format
+          (MP3, M4A, AAC, OGG or OPUS) and it converts on your device, in the background, and it can edit the
+          tags and cover art. It shows no ads. The current features are listed under What it does on the{' '}
+          <a href={appPath} class="text-link">Convertit page</a>. A separate paid app,{' '}
+          <a href="/apps/convertit-pro/" class="text-link">Convertit Pro</a>, offers more tools.
+        </p>
+      </section>
+
+      <section>
+        <h2>Price</h2>
+        <p>
+          Convertit is free. There is no purchase, no subscription, no in-app charges and no ads. If we ever
+          offer paid features, we will say so clearly before any charge.
+        </p>
+      </section>
+
+      <section>
+        <h2>Your licence</h2>
+        <p>
+          Convertit is free to download and use. We give you a personal, non-transferable, non-exclusive
+          licence to install and use the App on devices you control, for your own use. You may not sell, rent,
+          sub-license or redistribute the App, or copy it except as normal use and the law allow.
+        </p>
+        <p>
+          You may not reverse engineer, decompile or disassemble the App, except where applicable law
+          expressly permits it (for example, to achieve interoperability). The App may include open-source
+          components that are licensed to you under their own licences. Nothing in these terms limits or
+          overrides your rights under those licences.
+        </p>
+      </section>
+
+      <section>
+        <h2>Your files</h2>
+        <p>
+          You keep ownership of the files you open and the files the App produces. The App processes your
+          files on your device and does not upload them to us or to anyone else. You are responsible for
+          keeping your own backups and for having the right to use the files you process. See our{' '}
+          <a href={app.privacyPath} class="text-link">privacy policy</a> for how the App handles data.
+        </p>
+      </section>
+
+      <section>
+        <h2>Updates and support</h2>
+        <p>
+          We fix what we advertise. Contact us with your device and Android version and steps to reproduce the
+          problem. We aim to reply within 5 business days and to fix it or provide a workaround within 14
+          business days.
+        </p>
+      </section>
+
+      <section>
+        <h2>Warranties and your statutory rights</h2>
+        <p>
+          We provide the App with reasonable care and skill, but we cannot promise it is error-free or that it
+          will run on every device or with every file. As far as the law allows, the App is provided “as is”
+          and we exclude other warranties and conditions that would otherwise apply. None of this affects any
+          statutory rights you have that cannot be excluded.
+        </p>
+      </section>
+
+      <section>
+        <h2>Our liability</h2>
+        <p>
+          We do not exclude or limit our liability where it would be unlawful to do so. This includes
+          liability for death or personal injury caused by our negligence, for fraud, and, if you are a
+          consumer, for damage to your device or to other digital content caused by our failure to use
+          reasonable care and skill.
+        </p>
+        <p>
+          Subject to that, and because the App is provided free of charge, we are not liable for loss that was
+          not reasonably foreseeable, for loss of data you could have backed up, or for indirect or
+          consequential loss.
+        </p>
+      </section>
+
+      <section>
+        <h2>Termination</h2>
+        <p>
+          You can stop using the App at any time by uninstalling it. We may end your licence only if you
+          materially breach these terms. If your licence ends, you must stop using the App. Your statutory
+          rights are not affected.
+        </p>
+      </section>
+
+      <section>
+        <h2>Changes to these terms</h2>
+        <p>
+          We version this page. See the Last updated date and time above. If we make a material change, we add
+          a dated note here and announce it on our blog at least 7 days before it takes effect. Continuing to
+          use the App after a change takes effect means you accept the updated terms.
+        </p>
+      </section>
+
+      <section>
+        <h2>Governing law</h2>
+        <p>
+          These terms are governed by the law of England and Wales, and disputes are subject to the courts of
+          England and Wales. If you are a consumer living in Scotland or Northern Ireland, you can also bring
+          proceedings in your local courts, and you keep the benefit of any mandatory consumer protections
+          that apply where you live.
+        </p>
+      </section>
+
+      <section>
+        <h2>Contact</h2>
+        <p>
+          Questions about these terms use our{' '}
+          <a href="/contact/" class="text-link">contact form</a> or email us at{' '}
+          <button type="button" data-mailto={site.mail} class="text-link">{site.emailDisplay}</button>.
+        </p>
+      </section>
+    </article>
+  </div>
+</Base>
