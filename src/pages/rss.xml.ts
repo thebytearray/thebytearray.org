@@ -16,6 +16,8 @@ export async function GET(context: APIContext) {
       pubDate: post.data.date,
       categories: post.data.tags,
       link: `/blog/${post.id}/`,
+      // The whole post, so feed readers and AI tools get more than the summary.
+      content: post.rendered?.html.replace(/href="\//g, `href="${new URL('/', context.site)}`),
     })),
   });
 }

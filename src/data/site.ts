@@ -31,6 +31,8 @@ export const site = {
     number: '16581435',
     jurisdiction: 'England and Wales',
     office: '124-128 City Road, London, England, EC1V 2NX',
+    /** The same office split into parts, for schema.org `PostalAddress`. */
+    address: { street: '124-128 City Road', city: 'London', postcode: 'EC1V 2NX', country: 'GB' },
     url: 'https://find-and-update.company-information.service.gov.uk/company/16581435',
   },
   /** Topics for search engines (schema.org `knowsAbout`). */

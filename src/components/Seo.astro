@@ -53,6 +53,9 @@ const imageUrl = new URL(image, Astro.site);
 const home = new URL('/', Astro.site).href;
 // The generated cards (/og/<id>.png) are always this size.
 const generatedCard = image.startsWith('/og/');
+// App pages and blog posts have a Markdown copy (src/pages/apps/[slug].md.ts,
+// src/pages/blog/[id].md.ts) that AI assistants can read without parsing HTML.
+const markdownCopy = !noindex && /^\/(apps|blog)\/[^/]+\/$/.test(Astro.url.pathname) && Astro.url.pathname.replace(/\/$/, '.md');
 
 const founder = team[0];
 const organization = {
@@ -63,6 +66,14 @@ const organization = {
   alternateName: '[]byte',
   url: home,
   logo: new URL('/apple-touch-icon.png', Astro.site).href,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: site.company.address.street,
+    addressLocality: site.company.address.city,
+    postalCode: site.company.address.postcode,
+    addressCountry: site.company.address.country,
+  },
+  identifier: { '@type': 'PropertyValue', propertyID: 'Companies House', value: site.company.number },
   description: site.description,
   knowsAbout: site.topics,
   sameAs: [site.github, site.youtube],
@@ -120,7 +131,16 @@ const structuredData = { '@context': 'https://schema.org', '@graph': graph };
 <title>{fullTitle}</title>
 <meta name="description" content={description} />
 <meta name="author" content={author ?? site.name} />
-{noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
+{
+  noindex ? (
+    <meta name="robots" content="noindex" />
+  ) : (
+    <>
+      <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+      <link rel="canonical" href={canonical} />
+    </>
+  )
+}
 {!noindex && <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />}
 
 <meta property="og:site_name" content={site.name} />
@@ -146,3 +166,4 @@ const structuredData = { '@context': 'https://schema.org', '@graph': graph };
 
 <link rel="alternate" type="application/rss+xml" title={`${site.name}: Blog`} href="/rss.xml" />
 <link rel="sitemap" href="/sitemap-index.xml" />
+{markdownCopy && <link rel="alternate" type="text/markdown" title="Markdown" href={markdownCopy} />}
