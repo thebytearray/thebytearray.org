@@ -1,5 +1,5 @@
 ---
-import { nav } from '../data/site';
+import { morePages, nav } from '../data/site';
 import Icon from './Icon.astro';
 
 const option =
@@ -43,7 +43,7 @@ const option =
   <div id="palette-list" role="listbox" aria-label="Results" class="overflow-y-auto p-2">
     <div data-commands>
       {
-        nav.map(({ label, href }, i) => (
+        [...nav, ...morePages].map(({ label, href }, i) => (
           <a id={`palette-page-${i}`} role="option" aria-selected="false" href={href} class={option}>
             <Icon name="arrow_forward" class="text-on-surface-variant" />
             {label}

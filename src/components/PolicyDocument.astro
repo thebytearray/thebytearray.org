@@ -31,13 +31,12 @@ const lastUpdatedDisplay = new Intl.DateTimeFormat('en-GB', {
   title={policy.title}
   description={description}
   breadcrumbs={[
-    { name: 'Apps', path: '/apps/' },
-    { name: app.name, path: appPath },
-    { name: 'Privacy policy', path: Astro.url.pathname },
+    { name: 'Legal', path: '/legal/' },
+    { name: policy.title, path: Astro.url.pathname },
   ]}
 >
   <div class="mx-auto max-w-2xl pt-4 sm:pt-10" data-pagefind-body>
-    <Breadcrumbs items={[{ label: 'Apps', href: '/apps/' }, { label: app.name, href: appPath }, { label: 'Privacy policy' }]} />
+    <Breadcrumbs items={[{ label: 'Legal', href: '/legal/' }, { label: policy.title }]} />
 
     <header class="mt-6 sm:mt-8">
       <h1
@@ -47,6 +46,9 @@ const lastUpdatedDisplay = new Intl.DateTimeFormat('en-GB', {
       </h1>
       <p class="mt-4 text-label-lg text-on-surface-variant">
         Last updated <time datetime={lastUpdatedDate.toISOString()}>{lastUpdatedDisplay}</time>
+      </p>
+      <p class="mt-2 text-body-md text-on-surface-variant">
+        Applies to <a href={appPath} class="text-link">{app.name}</a>.
       </p>
     </header>
 

@@ -1,5 +1,5 @@
 ---
-import { nav, site } from '../data/site';
+import { contactLink, nav, site } from '../data/site';
 import { getPosts } from '../lib/posts';
 import Logo from './Logo.astro';
 import Icon from './Icon.astro';
@@ -43,6 +43,13 @@ const iconButton =
           }
         </ul>
       </nav>
+      <a
+        href={contactLink.href}
+        aria-current={isActive(contactLink.href) ? 'page' : undefined}
+        class="chip border-transparent bg-secondary-container text-on-secondary-container max-md:hidden"
+      >
+        {contactLink.label}
+      </a>
       <button
         type="button"
         data-palette-open
@@ -86,6 +93,15 @@ const iconButton =
           </li>
         ))
       }
+      <li class="mt-1">
+        <a
+          href={contactLink.href}
+          aria-current={isActive(contactLink.href) ? 'page' : undefined}
+          class="flex min-h-12 items-center justify-center rounded-full bg-primary px-4 text-label-lg text-on-primary transition-expressive hover:bg-primary/90"
+        >
+          {contactLink.label}
+        </a>
+      </li>
     </ul>
   </nav>
 </header>

@@ -2,6 +2,7 @@
 import '../styles/prose.css';
 
 import { site } from '../data/site';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
 import Base from '../layouts/Base.astro';
 
 const lastUpdated = new Date('2026-11-04T21:24:40Z');
@@ -19,9 +20,13 @@ const lastUpdatedDisplay = new Intl.DateTimeFormat('en-GB', {
 <Base
   title="Site privacy"
   description="How thebytearray.org handles your data: no cookies, no analytics, no accounts. Theme choice stays in your browser, emails only if you contact us."
-  breadcrumbs={[{ name: 'Site privacy', path: '/privacy/' }]}
+  breadcrumbs={[
+    { name: 'Legal', path: '/legal/' },
+    { name: 'Site privacy', path: '/privacy/' },
+  ]}
 >
   <div class="mx-auto max-w-2xl pt-4 sm:pt-10" data-pagefind-body>
+    <Breadcrumbs items={[{ label: 'Legal', href: '/legal/' }, { label: 'Site privacy' }]} />
     <header class="mt-6 sm:mt-8">
       <h1
         class="font-display text-[clamp(2rem,7.5vw,3.75rem)] leading-[1.04] font-extrabold tracking-[-0.03em] text-balance"

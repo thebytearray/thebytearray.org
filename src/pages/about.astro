@@ -24,8 +24,33 @@ const sectionTitle = 'font-display text-headline-md text-balance';
     />
 
     <div class="flex flex-col gap-16 sm:gap-24">
+      <section aria-labelledby="data" class={section}>
+        <h2 id="data" class={sectionTitle}>Why we exist</h2>
+        <div class="max-w-2xl space-y-4 text-body-lg text-pretty">
+          <p>
+            We make software that solves real problems without trading away your privacy.
+          </p>
+          <p>
+            Our apps run on your device. They don’t include analytics, ads or tracking, and you don’t need an account
+            to use them. If an app needs the internet, it only connects to devices or servers you choose.
+          </p>
+          <p>
+            We share our code when it can help others, and we keep our policies short so you can read them quickly. Read
+            the full policies for{' '}
+            {
+              apps.filter((app) => app.privacyPath).map((app, i) => (
+                <>
+                  {i > 0 && ' and '}
+                  <a href={app.privacyPath} class="text-link">{app.name}</a>
+                </>
+              ))
+            }.
+          </p>
+        </div>
+      </section>
+
       <section aria-labelledby="what-we-build" class={section}>
-        <h2 id="what-we-build" class={sectionTitle}>Products</h2>
+        <h2 id="what-we-build" class={sectionTitle}>What we make</h2>
         <ul class="grid gap-3 sm:gap-4 md:grid-cols-3">
           {
             workAreas.map(({ title, description, icon }, i) => (
@@ -46,28 +71,26 @@ const sectionTitle = 'font-display text-headline-md text-balance';
         </ul>
       </section>
 
-      <section aria-labelledby="data" class={section}>
-        <h2 id="data" class={sectionTitle}>Data handling</h2>
-        <div class="max-w-2xl space-y-4 text-body-lg text-pretty">
-          <p>
-            Our apps run on your device. They don’t include analytics, ads or tracking, and you don’t need an account
-            to use them. If an app needs the internet, it only connects to devices or servers you choose.
+      <section aria-labelledby="license" class={section}>
+        <h2 id="license" class={sectionTitle}>Open source</h2>
+        <div>
+          <p class="max-w-2xl text-body-lg text-pretty">
+            OpenLoader and this website are open source under {site.license.name}. Our libraries and tools are also
+            published on GitHub.
           </p>
-          <p>
-            We share our code when it can help others, and we keep our policies short so you can read them quickly. Read
-            the full policies for{' '}
-            {
-              apps.filter((app) => app.privacyPath).map((app, i) => (
-                <>
-                  {i > 0 && ' and '}
-                  <a href={app.privacyPath} class="text-link">{app.name}</a>
-                </>
-              ))
-            }.
-          </p>
+          <ul class="mt-7 flex flex-wrap gap-2 sm:gap-2.5">
+            <li><Chip href="/open-source/" variant="filled">Browse repositories</Chip></li>
+            <li>
+              <Chip href={site.github}>
+                <svg viewBox="0 0 24 24" class="size-[1.125rem] flex-none" fill="currentColor" aria-hidden="true">
+                  <path d={brands.github}></path>
+                </svg>
+                GitHub
+              </Chip>
+            </li>
+          </ul>
         </div>
       </section>
-
       <section aria-labelledby="team" class={section}>
         <h2 id="team" class={sectionTitle}>Team</h2>
         <ul class="grid gap-3 sm:gap-4 lg:grid-cols-3">
@@ -116,24 +139,18 @@ const sectionTitle = 'font-display text-headline-md text-balance';
         </ul>
       </section>
 
-      <section aria-labelledby="license" class={section}>
-        <h2 id="license" class={sectionTitle}>Open source</h2>
-        <div>
-          <p class="max-w-2xl text-body-lg text-pretty">
-            OpenLoader and this website are open source under {site.license.name}. Our libraries and tools are also
-            published on GitHub.
+      <section aria-labelledby="company" class={section}>
+        <h2 id="company" class={sectionTitle}>Company</h2>
+        <div class="max-w-2xl text-body-lg text-pretty">
+          <address class="not-italic">
+            {site.company.name}<br />
+            {site.company.office}
+          </address>
+          <p class="mt-2 text-on-surface-variant">
+            Registered in {site.company.jurisdiction}, no.{' '}
+            <a href={site.company.url} target="_blank" rel="noopener" class="text-link">{site.company.number}</a>
           </p>
-          <ul class="mt-7 flex flex-wrap gap-2 sm:gap-2.5">
-            <li><Chip href="/open-source/" variant="filled">Browse repositories</Chip></li>
-            <li>
-              <Chip href={site.github}>
-                <svg viewBox="0 0 24 24" class="size-[1.125rem] flex-none" fill="currentColor" aria-hidden="true">
-                  <path d={brands.github}></path>
-                </svg>
-                GitHub
-              </Chip>
-            </li>
-          </ul>
+          <p class="mt-6"><Chip href="/contact/" icon="send" variant="filled">Contact us</Chip></p>
         </div>
       </section>
     </div>

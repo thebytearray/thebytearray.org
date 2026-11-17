@@ -191,17 +191,6 @@ const sectionTitle = 'font-display text-headline-md';
       </ul>
     </header>
 
-    {
-      app.video && (
-        <section aria-labelledby="video" class="mt-14 sm:mt-20">
-          <h2 id="video" class={sectionTitle}>Watch</h2>
-          <div class="mt-5 max-w-3xl sm:mt-6">
-            <PromoVideo id={app.video.id} title={app.video.title} />
-          </div>
-        </section>
-      )
-    }
-
     <section aria-labelledby="screenshots" class="mt-14 sm:mt-20">
       <h2 id="screenshots" class={sectionTitle}>Screenshots</h2>
       <div class="mt-5 sm:mt-6">
@@ -213,6 +202,17 @@ const sectionTitle = 'font-display text-headline-md';
       <h2 id="features" class={sectionTitle}>What it does</h2>
       <FeatureList features={app.features} />
     </section>
+
+    {
+      app.video && (
+        <section aria-labelledby="video" class="mt-14 sm:mt-20">
+          <h2 id="video" class={sectionTitle}>Watch</h2>
+          <div class="mt-5 max-w-3xl sm:mt-6">
+            <PromoVideo id={app.video.id} title={app.video.title} />
+          </div>
+        </section>
+      )
+    }
 
     <section aria-labelledby="about" class="mt-14 grid gap-x-10 gap-y-5 sm:mt-20 lg:grid-cols-[11rem_1fr]">
       <h2 id="about" class={sectionTitle}>About</h2>
@@ -254,23 +254,40 @@ const sectionTitle = 'font-display text-headline-md';
             </p>
           )
         }
-        <p class="mt-8 text-on-surface-variant">
-          Clear terms before you install:{' '}
+      </div>
+    </section>
+
+    <section aria-labelledby="help" class="mt-14 grid gap-x-10 gap-y-5 sm:mt-20 lg:grid-cols-[11rem_1fr]">
+      <h2 id="help" class={sectionTitle}>Help and legal</h2>
+      <div>
+        <ul class="flex flex-wrap gap-2 sm:gap-2.5">
+          {
+            !app.discontinued && (
+              <li>
+                <Chip href="/contact/" icon="send" variant="filled">Contact support</Chip>
+              </li>
+            )
+          }
           {app.privacyPath && (
-            <>
-              <a href={app.privacyPath} class="text-link whitespace-nowrap">{app.name} privacy</a>{', '}
-            </>
+            <li>
+              <Chip href={app.privacyPath} icon="shield">Privacy policy</Chip>
+            </li>
           )}
           {app.termsPath && (
-            <>
-              <a href={app.termsPath} class="text-link whitespace-nowrap">{app.name} terms</a>{', '}
-            </>
+            <li>
+              <Chip href={app.termsPath} icon="gavel">Terms of service</Chip>
+            </li>
           )}
-          <a href="/refund-policy/" class="text-link whitespace-nowrap">refund policy</a>{', '}
-          <a href="/privacy/" class="text-link whitespace-nowrap">site privacy</a>{' and '}
-          <a href="/terms/" class="text-link whitespace-nowrap">site terms</a>.
-        </p>
-        <p class="mt-4 text-on-surface-variant">
+          {app.paid && (
+            <li>
+              <Chip href="/refund-policy/">Refund policy</Chip>
+            </li>
+          )}
+          <li>
+            <Chip href="/legal/">All legal pages</Chip>
+          </li>
+        </ul>
+        <p class="mt-5 text-on-surface-variant">
           Questions or feedback about {app.name}? Email{' '}
           <button
             type="button"

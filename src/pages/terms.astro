@@ -2,6 +2,7 @@
 import '../styles/prose.css';
 
 import { site } from '../data/site';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
 import Base from '../layouts/Base.astro';
 
 const lastUpdated = new Date('2026-11-05T00:00:00Z');
@@ -19,9 +20,13 @@ const lastUpdatedDisplay = new Intl.DateTimeFormat('en-GB', {
 <Base
   title="Terms"
   description="Clear terms for thebytearray.org and our apps: what you get, pay-once price, requirements, updates, support and refunds. Fair deals only. No hidden charges."
-  breadcrumbs={[{ name: 'Terms', path: '/terms/' }]}
+  breadcrumbs={[
+    { name: 'Legal', path: '/legal/' },
+    { name: 'Terms', path: '/terms/' },
+  ]}
 >
   <div class="mx-auto max-w-2xl pt-4 sm:pt-10" data-pagefind-body>
+    <Breadcrumbs items={[{ label: 'Legal', href: '/legal/' }, { label: 'Terms' }]} />
     <header class="mt-6 sm:mt-8">
       <h1
         class="font-display text-[clamp(2rem,7.5vw,3.75rem)] leading-[1.04] font-extrabold tracking-[-0.03em] text-balance"

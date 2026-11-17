@@ -5,6 +5,7 @@ import Icon from './Icon.astro';
 
 const topics = [
   { id: 'support', label: 'Help with an app' },
+  { id: 'refund', label: 'A refund' },
   { id: 'collaboration', label: 'Working together' },
   { id: 'other', label: 'Something else' },
 ];
@@ -19,38 +20,6 @@ const maxMessage = 1500;
 -->
 <div data-contact data-mail={site.mail} data-max={maxMessage}>
   <form data-form novalidate aria-label="Contact form" class="flex flex-col gap-5">
-    <div class="grid gap-5 sm:grid-cols-2">
-      <div class="field">
-        <label class="field-label" for="contact-name">Name</label>
-        <input
-          id="contact-name"
-          name="name"
-          type="text"
-          required
-          autocomplete="name"
-          placeholder="Your name"
-          aria-describedby="contact-name-error"
-          class="field-input"
-        />
-        <p id="contact-name-error" class="field-error" hidden></p>
-      </div>
-
-      <div class="field">
-        <label class="field-label" for="contact-email">Email</label>
-        <input
-          id="contact-email"
-          name="email"
-          type="email"
-          required
-          autocomplete="email"
-          placeholder="name@example.com"
-          aria-describedby="contact-email-error"
-          class="field-input"
-        />
-        <p id="contact-email-error" class="field-error" hidden></p>
-      </div>
-    </div>
-
     <div class="field" data-topic>
       <label class="field-label" for="contact-topic-button">What is it about?</label>
       <span class="relative block">
@@ -99,6 +68,38 @@ const maxMessage = 1500;
       </span>
       <input type="hidden" id="contact-topic" name="topic" data-topic-value />
       <p id="contact-topic-error" class="field-error" hidden></p>
+    </div>
+
+    <div class="grid gap-5 sm:grid-cols-2">
+      <div class="field">
+        <label class="field-label" for="contact-name">Name</label>
+        <input
+          id="contact-name"
+          name="name"
+          type="text"
+          required
+          autocomplete="name"
+          placeholder="Your name"
+          aria-describedby="contact-name-error"
+          class="field-input"
+        />
+        <p id="contact-name-error" class="field-error" hidden></p>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="contact-email">Email</label>
+        <input
+          id="contact-email"
+          name="email"
+          type="email"
+          required
+          autocomplete="email"
+          placeholder="name@example.com"
+          aria-describedby="contact-email-error"
+          class="field-input"
+        />
+        <p id="contact-email-error" class="field-error" hidden></p>
+      </div>
     </div>
 
     <div class="field">
@@ -336,7 +337,7 @@ const maxMessage = 1500;
       count();
       sent.hidden = true;
       form.hidden = false;
-      field('name').focus();
+      topicButton.focus();
     });
   }
 

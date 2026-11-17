@@ -29,18 +29,13 @@ const description =
   title={title}
   description={description}
   breadcrumbs={[
-    { name: 'Apps', path: '/apps/' },
-    { name: app.name, path: appPath },
-    { name: 'Terms of service', path: Astro.url.pathname },
+    { name: 'Legal', path: '/legal/' },
+    { name: title, path: Astro.url.pathname },
   ]}
 >
   <div class="mx-auto max-w-2xl pt-4 sm:pt-10" data-pagefind-body>
     <Breadcrumbs
-      items={[
-        { label: 'Apps', href: '/apps/' },
-        { label: app.name, href: appPath },
-        { label: 'Terms of service' },
-      ]}
+      items={[{ label: 'Legal', href: '/legal/' }, { label: title }]}
     />
 
     <header class="mt-6 sm:mt-8">

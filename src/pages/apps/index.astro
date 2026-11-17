@@ -3,6 +3,9 @@ import AppRow from '../../components/AppRow.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import FeaturedApp from '../../components/FeaturedApp.astro';
 import { featuredApp, otherApps } from '../../data/apps';
+
+const liveApps = otherApps.filter((app) => !app.discontinued);
+const pastApps = otherApps.filter((app) => app.discontinued);
 import Base from '../../layouts/Base.astro';
 ---
 
@@ -19,16 +22,38 @@ import Base from '../../layouts/Base.astro';
 
   {featuredApp && <FeaturedApp app={featuredApp} heading="h2" class="mt-10 sm:mt-14" />}
 
-  <section aria-labelledby="more-apps" class="mt-16 sm:mt-24">
-    <h2 id="more-apps" class="font-display text-headline-md text-on-surface-variant">More apps</h2>
-    <div class="mt-2 divide-y divide-outline-variant border-y border-outline-variant">
-      {
-        otherApps.map((app) => (
-          <AppRow app={app} heading="h3" />
-        ))
-      }
-    </div>
-  </section>
+  {
+    liveApps.length > 0 && (
+      <section aria-labelledby="more-apps" class="mt-16 sm:mt-24">
+        <h2 id="more-apps" class="font-display text-headline-md text-on-surface-variant">More apps</h2>
+        <div class="mt-2 divide-y divide-outline-variant border-y border-outline-variant">
+          {liveApps.map((app) => (
+            <AppRow app={app} heading="h3" />
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  <p class="mt-8 max-w-prose text-body-lg text-on-surface-variant">
+    Prefer to install without Google Play? <a href="/downloads/" class="text-link">Download the APK</a>.
+  </p>
+
+  {
+    pastApps.length > 0 && (
+      <section aria-labelledby="past-apps" class="mt-16 sm:mt-24">
+        <h2 id="past-apps" class="font-display text-headline-md text-on-surface-variant">Past apps</h2>
+        <p class="mt-2 max-w-prose text-body-lg text-on-surface-variant">
+          We no longer maintain these apps. Their pages stay up for people who still use them.
+        </p>
+        <div class="mt-2 divide-y divide-outline-variant border-y border-outline-variant">
+          {pastApps.map((app) => (
+            <AppRow app={app} heading="h3" />
+          ))}
+        </div>
+      </section>
+    )
+  }
 
   <p class="mt-12 max-w-prose text-body-lg text-on-surface-variant sm:mt-16">
     None of our apps have ads, tracking or accounts. Convertit Pro is a one-time purchase, and the other apps are free.{' '}

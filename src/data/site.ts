@@ -41,9 +41,19 @@ export const site = {
 
 export const nav = [
   { label: 'Apps', href: '/apps/' },
-  { label: 'Open source', href: '/open-source/' },
   { label: 'Blog', href: '/blog/' },
   { label: 'About', href: '/about/' },
+];
+
+/** Shown in the header as a button, apart from the section links. */
+export const contactLink = { label: 'Contact', href: '/contact/' };
+
+/** Pages offered by the search palette besides the header links. */
+export const morePages = [
+  contactLink,
+  { label: 'Open source', href: '/open-source/' },
+  { label: 'Downloads', href: '/downloads/' },
+  { label: 'Legal', href: '/legal/' },
 ];
 
 /** Simple Icons paths for the brand logos used on the site. */

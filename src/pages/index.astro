@@ -1,15 +1,36 @@
 ---
 import { Image } from 'astro:assets';
 import Chip from '../components/Chip.astro';
-import ColorPicker from '../components/ColorPicker.astro';
 import Shape from '../components/Shape.astro';
 import Icon from '../components/Icon.astro';
 import { apps } from '../data/apps';
+import { brands, site } from '../data/site';
 import Base from '../layouts/Base.astro';
 import PostRow from '../components/PostRow.astro';
 import { getPosts } from '../lib/posts';
 
 const latestPosts = (await getPosts()).slice(0, 3);
+// Only apps people can still install; the featured one first.
+const liveApps = apps.filter((app) => !app.discontinued).sort((a, b) => Number(!!b.featured) - Number(!!a.featured));
+const convertit = apps.find((app) => app.slug === 'convertit')!;
+
+const reasons = [
+  {
+    icon: 'devices',
+    title: 'Your files stay on your phone',
+    text: 'Our apps do their work on your device. Nothing is uploaded to us.',
+  },
+  {
+    icon: 'lock',
+    title: 'No ads, no tracking',
+    text: 'No analytics, no ad networks and no account to sign up for.',
+  },
+  {
+    icon: 'shield',
+    title: 'Policies you can read',
+    text: 'Each app has a short privacy policy you can read in a few minutes.',
+  },
+] as const;
 ---
 
 <Base
@@ -18,30 +39,29 @@ const latestPosts = (await getPosts()).slice(0, 3);
   <!-- Hero: one job (trust + explore), one primary CTA. The shape sits in the
        open space beside the lede and holds the app icons, so it is proof
        rather than decoration. -->
-  <section class="relative isolate pt-8 pb-14 sm:pt-14 sm:pb-20">
-    <h1 class="font-display text-[clamp(2.75rem,10.5vw,7rem)] leading-[0.92] font-extrabold tracking-[-0.035em] text-balance">
-      No BS.<br /><span class="text-primary">Straight to the point.</span>
-    </h1>
-
-    <div class="mt-7 grid gap-10 sm:mt-10 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-start lg:gap-16">
+  <section class="relative isolate pt-8 pb-10 sm:pt-14 sm:pb-14">
+    <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-center lg:gap-16">
       <div>
-        <p class="max-w-xl font-display text-title-lg text-pretty sm:text-headline-sm">
-          We make Android apps and developer tools. Our main apps, Convertit and Convertit Pro, convert audio, video
-          and images on your phone, offline and with no ads.
+        <h1 class="max-w-4xl font-display text-[clamp(2.5rem,8.5vw,5.75rem)] leading-[0.95] font-extrabold tracking-[-0.035em] text-balance">
+          Android apps that work <span class="text-primary">offline.</span>
+        </h1>
+        <p class="mt-7 max-w-xl sm:mt-10 font-display text-title-lg text-pretty sm:text-headline-sm">
+          No ads, no tracking and no accounts. Convertit and Convertit Pro convert audio, video and images right on
+          your phone.
         </p>
 
         <div class="mt-8 flex flex-wrap items-center gap-2 sm:mt-10 sm:gap-2.5">
           <Chip href="/apps/" variant="filled">See our apps</Chip>
-          <Chip href="/open-source/" icon="code">Browse open source</Chip>
-        </div>
-
-        <div class="mt-6 flex items-center gap-2 sm:mt-7">
-          <span class="text-label-md text-on-surface-variant">Accent</span>
-          <ColorPicker class="[&_button]:size-8 [&_span]:size-6" />
+          <Chip href={convertit.playStoreUrl}>
+            <svg viewBox="0 0 24 24" class="size-4 flex-none" fill="currentColor" aria-hidden="true">
+              <path d={brands.googlePlay}></path>
+            </svg>
+            Get Convertit on Google Play
+          </Chip>
         </div>
       </div>
 
-      <div aria-hidden="true" class="relative mx-auto aspect-square w-full max-w-[22rem] max-lg:hidden lg:-mt-4">
+      <div aria-hidden="true" class="relative mx-auto aspect-square w-full max-w-[22rem] max-lg:hidden">
         <Shape lobes={9} depth={0.07} class="absolute inset-0 animate-drift text-primary-container" />
         <!-- Only apps you can still install: this is the "what we ship" proof. -->
         <div class="absolute inset-0 grid place-items-center">
@@ -70,13 +90,10 @@ const latestPosts = (await getPosts()).slice(0, 3);
     </div>
   </section>
 
-  <!-- Proof: compact app list. No screenshots, no Play buttons here — details live on /apps/. -->
+  <!-- The apps people can install today. Past apps live on the Apps page. -->
   <section aria-labelledby="apps" class="mt-4 sm:mt-6">
     <div class="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
-      <div>
-        <h2 id="apps" class="font-display text-headline-lg sm:text-display-sm">Apps</h2>
-        <p class="mt-1 text-body-lg text-on-surface-variant">Everything we’ve built, including the apps we no longer maintain.</p>
-      </div>
+      <h2 id="apps" class="font-display text-headline-lg sm:text-display-sm">Our apps</h2>
       <a
         href="/apps/"
         class="inline-flex min-h-10 items-center gap-1 rounded-full px-3 text-label-lg text-primary transition-expressive hover:bg-primary-container hover:text-on-primary-container"
@@ -85,47 +102,63 @@ const latestPosts = (await getPosts()).slice(0, 3);
         <Icon name="arrow_forward" class="text-[1.125rem]" />
       </a>
     </div>
-    <ul class="mt-6 divide-y divide-outline-variant border-y border-outline-variant sm:mt-8">
+    <ul class="mt-6 grid gap-3 sm:mt-8 sm:gap-4 md:grid-cols-2">
       {
-        apps.map((app) => (
-          <li>
-            <a
-              href={`/apps/${app.slug}/`}
-              class="group flex items-center gap-4 py-4 sm:gap-5 sm:py-5"
-            >
+        liveApps.map((app) => (
+          <li class="flex flex-col rounded-xl bg-surface-container p-6 sm:p-8">
+            <a href={`/apps/${app.slug}/`} class="group flex items-center gap-4">
               <Image
                 src={app.icon}
                 alt=""
                 width={128}
                 height={128}
                 loading="lazy"
-                class="size-12 flex-none rounded-[22%] sm:size-14"
+                class="size-14 flex-none rounded-[22%] sm:size-16"
               />
-              <span class="min-w-0 flex-1">
-                <span class="flex flex-wrap items-center gap-x-3 gap-y-1">
-                  <span class="font-display text-title-lg leading-tight group-hover:text-primary group-hover:underline group-hover:decoration-2 group-hover:underline-offset-4">
-                    {app.name}
-                  </span>
-                  {app.discontinued && (
-                    <span class="chip chip-sm chip-tonal text-on-surface-variant">Discontinued</span>
-                  )}
+              <span class="min-w-0">
+                <span class="block font-display text-headline-sm group-hover:text-primary group-hover:underline group-hover:decoration-2 group-hover:underline-offset-4">
+                  {app.name}
                 </span>
-                <span class="mt-0.5 line-clamp-2 block text-body-md text-pretty text-on-surface-variant">
-                  {app.summary}
-                </span>
+                <span class="text-label-lg text-on-surface-variant">{app.paid ? 'One-time purchase' : 'Free'}</span>
               </span>
-              <Icon
-                name="arrow_forward"
-                class="flex-none text-on-surface-variant transition-expressive group-hover:translate-x-1 group-hover:text-primary"
-              />
             </a>
+            <p class="mt-4 flex-1 text-body-lg text-pretty text-on-surface-variant">{app.summary}</p>
+            <p class="mt-6 flex flex-wrap gap-2">
+              <Chip href={app.playStoreUrl} variant="filled" aria-label={`Get ${app.name} on Google Play`}>
+                <svg viewBox="0 0 24 24" class="size-4 flex-none" fill="currentColor" aria-hidden="true">
+                  <path d={brands.googlePlay}></path>
+                </svg>
+                Google Play
+              </Chip>
+              <Chip href={`/apps/${app.slug}/`} aria-label={`${app.name} details`}>Details</Chip>
+            </p>
           </li>
         ))
       }
     </ul>
-    <p class="mt-5 max-w-2xl text-body-md text-pretty text-on-surface-variant">
-      Our apps keep your data on your device, and several of our projects are open source.{' '}
-      <a href="/about/" class="rounded-sm whitespace-nowrap text-primary underline decoration-1 underline-offset-4 hover:decoration-2">About us</a>
+  </section>
+
+  <!-- Why we work this way. -->
+  <section aria-labelledby="why" class="mt-16 sm:mt-24">
+    <h2 id="why" class="font-display text-headline-lg sm:text-display-sm">Why we make them this way</h2>
+    <p class="mt-2 max-w-2xl text-body-lg text-pretty text-on-surface-variant">
+      Useful apps shouldn’t cost you your privacy.
+    </p>
+    <ul class="mt-6 grid gap-3 sm:mt-8 sm:gap-4 md:grid-cols-3">
+      {
+        reasons.map(({ icon, title, text }) => (
+          <li class="rounded-xl bg-surface-container-low p-6">
+            <span class="grid size-12 place-items-center rounded-lg bg-primary-container text-on-primary-container">
+              <Icon name={icon} class="text-[1.5rem]" />
+            </span>
+            <h3 class="mt-5 font-display text-title-lg">{title}</h3>
+            <p class="mt-2 text-body-md text-on-surface-variant">{text}</p>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="mt-5">
+      <a href="/about/" class="text-link">More about us</a>
     </p>
   </section>
 
@@ -157,18 +190,33 @@ const latestPosts = (await getPosts()).slice(0, 3);
     }
   </section>
 
-  <!-- Contact: demoted from second hero to quiet closer. Single CTA. -->
+  <!-- For developers. -->
+  <section aria-labelledby="open-source" class="mt-16 sm:mt-24">
+    <h2 id="open-source" class="font-display text-headline-md sm:text-headline-lg">Open source</h2>
+    <p class="mt-2 max-w-2xl text-body-lg text-pretty text-on-surface-variant">
+      We publish libraries, developer tools and this website on GitHub.
+    </p>
+    <p class="mt-6 flex flex-wrap gap-2 sm:gap-2.5">
+      <Chip href="/open-source/">Browse repositories</Chip>
+      <Chip href={site.github}>
+        <svg viewBox="0 0 24 24" class="size-[1.125rem] flex-none" fill="currentColor" aria-hidden="true">
+          <path d={brands.github}></path>
+        </svg>
+        GitHub
+      </Chip>
+    </p>
+  </section>
+
   <section
     aria-labelledby="contact-title"
     id="contact"
     class="mt-16 scroll-mt-24 rounded-xl-inc bg-surface-container p-6 sm:mt-24 sm:rounded-2xl sm:p-10 lg:p-12"
   >
     <h2 id="contact-title" class="font-display text-headline-md sm:text-headline-lg">
-      Get in touch
+      Need help with an app or a refund?
     </h2>
     <p class="mt-2 max-w-xl text-body-lg text-pretty text-on-surface-variant">
-      Need help with one of our apps, have a feature idea or want to work with us? Send us a message and we’ll
-      get back to you.
+      Send us a message. We also welcome feature ideas and offers to work together.
     </p>
     <p class="mt-6">
       <Chip href="/contact/" icon="send" variant="filled">Contact us</Chip>

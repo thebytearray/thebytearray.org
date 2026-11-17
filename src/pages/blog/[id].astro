@@ -9,6 +9,7 @@ import ListenButton from '../../components/ListenButton.astro';
 import TableOfContents from '../../components/TableOfContents.astro';
 import Base from '../../layouts/Base.astro';
 import { formatDate, getPosts, readingTime, tagSlug } from '../../lib/posts';
+import { apps } from '../../data/apps';
 import { team } from '../../data/site';
 import postAudio from '../../data/post-audio.json';
 
@@ -24,6 +25,11 @@ export async function getStaticPaths() {
 const { post, newer, older } = Astro.props;
 const { title, description, date, updated, author, tags, draft, cover, coverAlt } = post.data;
 const authorMember = team.find((m) => m.name === author);
+// The app a post is about: the longest app name in the title (so "Convertit Pro"
+// wins over "Convertit"), otherwise an app named in the tags.
+const relatedApp =
+  apps.filter((app) => title.includes(app.name)).sort((a, b) => b.name.length - a.name.length)[0] ??
+  apps.find((app) => tags.includes(app.name));
 // Narration from `npm run audio`; posts without one get no Listen button.
 const audio = (postAudio as Record<string, { duration: number; marks: number[] }>)[post.id];
 const { Content, headings } = await render(post);
@@ -119,8 +125,31 @@ const socialImage = ownCover ? cover.src : `/og/${post.id}.png`;
   </article>
 
   {
+    relatedApp && (
+      <p class="mx-auto mt-16 max-w-2xl sm:mt-20">
+        <a
+          href={`/apps/${relatedApp.slug}/`}
+          class="group flex items-center gap-4 rounded-xl bg-surface-container p-6 transition-expressive hover:rounded-2xl hover:bg-surface-container-high"
+        >
+          <Image src={relatedApp.icon} alt="" width={96} height={96} loading="lazy" class="size-12 flex-none rounded-[22%]" />
+          <span class="min-w-0 flex-1">
+            <span class="block text-label-lg text-on-surface-variant">
+              {relatedApp.discontinued ? 'The app this post is about' : 'Get the app'}
+            </span>
+            <span class="font-display text-title-lg">{relatedApp.name}</span>
+          </span>
+          <Icon name="arrow_forward" class="flex-none text-on-surface-variant transition-expressive group-hover:translate-x-1" />
+        </a>
+      </p>
+    )
+  }
+
+  {
     (newer || older) && (
-      <nav aria-label="More posts" class="mx-auto mt-16 grid max-w-2xl gap-3 sm:mt-20 sm:grid-cols-2 sm:gap-4">
+      <nav
+        aria-label="More posts"
+        class:list={['mx-auto grid max-w-2xl gap-3 sm:grid-cols-2 sm:gap-4', relatedApp ? 'mt-3 sm:mt-4' : 'mt-16 sm:mt-20']}
+      >
         {older ? (
           <a
             href={`/blog/${older.id}/`}
