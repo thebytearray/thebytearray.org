@@ -117,6 +117,7 @@ export const team: TeamMember[] = [
     name: 'Shafin',
     role: 'QA intern',
     bio: 'Responsible for testing and quality assurance across all of our apps.',
+    github: 'https://github.com/Kazi-Shafin',
   },
 ];
 
