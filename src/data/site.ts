@@ -102,7 +102,7 @@ export interface TeamMember {
 export const team: TeamMember[] = [
   {
     name: 'Tamim',
-    role: 'Founder and lead developer',
+    role: 'Director and product engineer',
     bio: 'Building software and sharing what I learn along the way.',
     github: 'https://github.com/codewithtamim',
     website: 'https://codewithtamim.dev/',
@@ -111,10 +111,12 @@ export const team: TeamMember[] = [
   {
     name: 'Bat',
     role: 'Chief operating officer',
+    bio: 'Handles communication, including customer support.',
   },
   {
     name: 'Shafin',
     role: 'QA intern',
+    bio: 'Responsible for testing and quality assurance across all of our apps.',
   },
 ];
 
