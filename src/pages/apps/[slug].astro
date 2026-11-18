@@ -36,7 +36,8 @@ const offer = app.paid
     }
   : { '@type': 'Offer', price: '0', priceCurrency: 'USD' };
 
-const details = [
+// Policies sit with the other facts, so the header keeps to the install actions.
+const details: { term: string; description: string; code?: boolean; href?: string }[] = [
   { term: 'Platform', description: app.requirements },
   { term: 'Package name', description: app.packageId, code: true },
   ...(app.license ? [{ term: 'License', description: app.license }] : []),
@@ -46,6 +47,8 @@ const details = [
   ...(app.signingSha1
     ? [{ term: 'Signing certificate (SHA-1)', description: app.signingSha1, code: true }]
     : []),
+  ...(app.privacyPath ? [{ term: 'Privacy', description: 'Privacy policy', href: app.privacyPath }] : []),
+  ...(app.termsPath ? [{ term: 'Terms', description: 'Terms of service', href: app.termsPath }] : []),
 ];
 
 const appLd = {
@@ -170,24 +173,6 @@ const sectionTitle = 'font-display text-headline-md';
             </li>
           )
         }
-        {
-          app.privacyPath && (
-            <li>
-              <Chip href={app.privacyPath} icon="shield" class={onPanel}>
-                Privacy policy
-              </Chip>
-            </li>
-          )
-        }
-        {
-          app.termsPath && (
-            <li>
-              <Chip href={app.termsPath} icon="gavel" class={onPanel}>
-                Terms of service
-              </Chip>
-            </li>
-          )
-        }
       </ul>
     </header>
 
@@ -238,10 +223,18 @@ const sectionTitle = 'font-display text-headline-md';
       <div>
         <dl class="divide-y divide-outline-variant border-y border-outline-variant">
           {
-            details.map(({ term, description, code }) => (
+            details.map(({ term, description, code, href }) => (
               <div class="grid gap-x-6 gap-y-1 py-4 sm:grid-cols-[10rem_1fr] sm:py-5">
                 <dt class="text-label-lg text-on-surface-variant">{term}</dt>
-                <dd>{code ? <code class="font-mono text-body-md break-all">{description}</code> : description}</dd>
+                <dd>
+                  {code ? (
+                    <code class="font-mono text-body-md break-all">{description}</code>
+                  ) : href ? (
+                    <a href={href} class="text-link">{description}</a>
+                  ) : (
+                    description
+                  )}
+                </dd>
               </div>
             ))
           }

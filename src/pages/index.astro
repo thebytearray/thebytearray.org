@@ -3,7 +3,8 @@ import { Image } from 'astro:assets';
 import Chip from '../components/Chip.astro';
 import Shape from '../components/Shape.astro';
 import Icon from '../components/Icon.astro';
-import { apps } from '../data/apps';
+import FeatureList from '../components/FeatureList.astro';
+import { apps, type AppFeature } from '../data/apps';
 import { brands, site } from '../data/site';
 import Base from '../layouts/Base.astro';
 import PostRow from '../components/PostRow.astro';
@@ -14,23 +15,23 @@ const latestPosts = (await getPosts()).slice(0, 3);
 const liveApps = apps.filter((app) => !app.discontinued).sort((a, b) => Number(!!b.featured) - Number(!!a.featured));
 const convertit = apps.find((app) => app.slug === 'convertit')!;
 
-const reasons = [
+const reasons: AppFeature[] = [
   {
     icon: 'devices',
     title: 'Your files stay on your phone',
-    text: 'Our apps do their work on your device. Nothing is uploaded to us.',
+    description: 'Our apps do their work on your device. Nothing is uploaded to us.',
   },
   {
     icon: 'lock',
     title: 'No ads, no tracking',
-    text: 'No analytics, no ad networks and no account to sign up for.',
+    description: 'No analytics, no ad networks and no account to sign up for.',
   },
   {
     icon: 'shield',
     title: 'Policies you can read',
-    text: 'Each app has a short privacy policy you can read in a few minutes.',
+    description: 'Each app has a short privacy policy you can read in a few minutes.',
   },
-] as const;
+];
 ---
 
 <Base
@@ -43,7 +44,7 @@ const reasons = [
     <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-center lg:gap-16">
       <div>
         <h1 class="max-w-4xl font-display text-[clamp(2.5rem,8.5vw,5.75rem)] leading-[0.95] font-extrabold tracking-[-0.035em] text-balance">
-          Android apps that work <span class="text-primary">offline.</span>
+          Android apps that work <span class="text-primary">offline</span>
         </h1>
         <p class="mt-7 max-w-xl sm:mt-10 font-display text-title-lg text-pretty sm:text-headline-sm">
           No ads, no tracking and no accounts. Convertit and Convertit Pro convert audio, video and images right on
@@ -144,19 +145,9 @@ const reasons = [
     <p class="mt-2 max-w-2xl text-body-lg text-pretty text-on-surface-variant">
       Useful apps shouldn’t cost you your privacy.
     </p>
-    <ul class="mt-6 grid gap-3 sm:mt-8 sm:gap-4 md:grid-cols-3">
-      {
-        reasons.map(({ icon, title, text }) => (
-          <li class="rounded-xl bg-surface-container-low p-6">
-            <span class="grid size-12 place-items-center rounded-lg bg-primary-container text-on-primary-container">
-              <Icon name={icon} class="text-[1.5rem]" />
-            </span>
-            <h3 class="mt-5 font-display text-title-lg">{title}</h3>
-            <p class="mt-2 text-body-md text-on-surface-variant">{text}</p>
-          </li>
-        ))
-      }
-    </ul>
+    <div class="mt-6 sm:mt-8">
+      <FeatureList features={reasons} columns={3} />
+    </div>
     <p class="mt-5">
       <a href="/about/" class="text-link">More about us</a>
     </p>

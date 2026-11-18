@@ -44,7 +44,8 @@ const link =
               href={`#${slug}`}
               class:list={[
                 link,
-                '-ml-px border-l border-transparent aria-[current=true]:border-primary',
+                // Square left corners so the active border stays a straight bar on the rail.
+                '-ml-px rounded-l-none border-l-2 border-transparent aria-[current=true]:border-primary',
                 depth === 3 ? 'pl-7' : 'pl-4',
               ]}
             >
