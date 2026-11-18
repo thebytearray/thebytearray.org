@@ -40,6 +40,11 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+        # The text-to-speech dev tool pulls in onnxruntime-node, whose installer
+        # fetches CUDA binaries on Linux. The build never uses them, and the
+        # download can disappear upstream and break the install.
+        env:
+          ONNXRUNTIME_NODE_INSTALL_CUDA: skip
 
       - name: Type-check
         run: npm run check
