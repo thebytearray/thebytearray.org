@@ -11,29 +11,28 @@ import Base from '../../layouts/Base.astro';
 
 <Base
   title="Apps"
-  description="Convertit converts audio and video offline. Convertit Pro adds every tool, pay once. No ads, no tracking, no accounts."
+  description="Convertit converts audio and video offline for free. Convertit Pro adds video compression, lossless audio and image tools for one payment."
   breadcrumbs={[{ name: 'Apps', path: '/apps/' }]}
 >
   <PageHeader
     title="Apps"
-    lede="Our Android apps. None of them show ads or ask you to create an account."
+    lede="Convertit converts audio and video for free. Convertit Pro adds video compression, lossless audio and image tools for one payment. Both work offline on your phone."
     shape="flower"
   />
 
-  {featuredApp && <FeaturedApp app={featuredApp} heading="h2" class="mt-10 sm:mt-14" />}
-
+  <!-- The free app first, then the paid one, so the page reads from the free
+       app to the upgrade. -->
   {
     liveApps.length > 0 && (
-      <section aria-labelledby="more-apps" class="mt-16 sm:mt-24">
-        <h2 id="more-apps" class="font-display text-headline-md text-on-surface-variant">More apps</h2>
-        <div class="mt-2 divide-y divide-outline-variant border-y border-outline-variant">
-          {liveApps.map((app) => (
-            <AppRow app={app} heading="h3" />
-          ))}
-        </div>
-      </section>
+      <div class="mt-6 divide-y divide-outline-variant border-b border-outline-variant sm:mt-8">
+        {liveApps.map((app) => (
+          <AppRow app={app} heading="h2" />
+        ))}
+      </div>
     )
   }
+
+  {featuredApp && <FeaturedApp app={featuredApp} heading="h2" class="mt-10 sm:mt-14" />}
 
   <p class="mt-8 max-w-prose text-body-lg text-on-surface-variant">
     Prefer to install without Google Play? <a href="/downloads/" class="text-link">Download the APK</a>.

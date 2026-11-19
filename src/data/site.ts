@@ -10,9 +10,9 @@ const mail = 'Y29udGFjdEB0aGVieXRlYXJyYXkub3Jn';
 export const site = {
   name: 'The Byte Array',
   title: 'The Byte Array',
-  tagline: 'Android apps and developer tools',
+  tagline: 'Convertit and Convertit Pro for Android',
   description:
-    'The Byte Array makes mobile apps, libraries and developer tools that do one job well. Our apps have no ads, no tracking and no accounts.',
+    'The Byte Array makes Convertit and Convertit Pro, Android apps that convert and compress audio, video and images on your phone. Our apps have no ads, no tracking and no accounts.',
   locale: 'en',
   mail,
   /** Written-out form of the address, safe to show in the page. */

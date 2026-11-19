@@ -115,7 +115,7 @@ This mode uses a constant bitrate, so the file size is easy to predict: about th
 
 - **Keep original**: copies the sound as it is, with no quality loss. If the format you picked can't hold the original sound (for example, AAC sound in a WebM file), it's compressed to 128 kbps instead (Opus for WebM, AAC for the rest).
 - **Compress to 128 kbps AAC**: the default. Good enough for nearly everything and saves a bit of space.
-- **Remove audio**: no sound at all. Useful for clips you'll put music on later.
+- **Remove audio**: no sound at all. Useful for clips you'll add your own sound to later.
 
 ## Preserve metadata
 

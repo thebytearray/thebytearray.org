@@ -43,6 +43,12 @@ export interface AppFeature {
   description: string;
 }
 
+export interface AppFaq {
+  question: string;
+  /** Plain text: it is also published as schema.org FAQPage data. */
+  answer: string;
+}
+
 export interface App {
   slug: AppSlug;
   name: string;
@@ -63,6 +69,17 @@ export interface App {
   /** Promo video on YouTube. `id` is the video ID from its URL. */
   video?: { id: string; title: string; uploadDate?: string };
   features: AppFeature[];
+  /** Who the app is for, finishing "Pick it if…". Shown where the live apps are compared. */
+  bestFor?: string;
+  /** The strongest facts about the app, shown where the live apps are compared. */
+  highlights?: string[];
+  /**
+   * Questions people ask about the app, answered from facts on this page and
+   * in its guides. Shown on the app page, in its Markdown copy and as FAQPage data.
+   */
+  faqs?: AppFaq[];
+  /** Blog posts that explain the app in depth. */
+  guides?: { title: string; path: `/${string}/` }[];
   playStoreUrl: string;
   packageId: string;
   sourceUrl?: string;
@@ -80,12 +97,10 @@ export interface App {
   /** SEO description (150-160 chars). Falls back to `summary` when omitted. */
   seoDescription?: string;
   /**
-   * Paid app. Its `price` is used for the `offers` node in structured data,
-   * so a "pay once" app is never described to search engines as free.
+   * Paid app. Its Google Play prices are listed in src/lib/prices.ts, so a
+   * "pay once" app is never described to search engines as free.
    */
   paid?: boolean;
-  /** Play Store price, required when `paid` is set. */
-  price?: { amount: string; currency: string };
   /** Kept at the legacy URL: store listings link to it. */
   privacyPath?: `/${string}/`;
   /** App-specific terms of service, when the app has its own. */
@@ -97,12 +112,12 @@ export interface App {
 export const apps: App[] = [
   {
     slug: 'convertit',
-    video: { id: 'y99jlwEYT5k', title: 'Convertit promo video' },
+    video: { id: 'y99jlwEYT5k', title: 'Convertit promo video', uploadDate: '2026-10-13T05:28:10-07:00' },
     name: 'Convertit',
     tagline: 'Offline audio and video converter for Android',
     summary: 'An offline audio and video converter for Android, with no ads.',
     description:
-      'Convertit is an offline audio and video converter for Android. Pick a file and a format (MP3, M4A, AAC, OGG or OPUS), and it converts in the background. It shows no ads.',
+      'Convertit is an offline audio and video converter for Android. Pick a file and a format (MP3, M4A, AAC, OGG, OPUS, WMA, MKA, SPX or AMR), and it converts in the background. It shows no ads.',
     icon: convertitIcon,
     iconFile: 'src/assets/apps/convertit/icon.png',
     screenshots: [
@@ -110,7 +125,7 @@ export const apps: App[] = [
       { src: convertitFormats, alt: 'Pick the format, done: MP3, M4A, AAC, OGG and OPUS' },
       { src: convertitBackground, alt: 'Keeps going in the background: queue files and carry on' },
       { src: convertitLibrary, alt: 'Everything you converted: open or share in a tap' },
-      { src: convertitTags, alt: 'Fix the tags: title, artist, album and cover art' },
+      { src: convertitTags, alt: 'Fix the tags: title, cover art and other details' },
     ],
     features: [
       {
@@ -121,27 +136,68 @@ export const apps: App[] = [
       {
         icon: 'tune',
         title: 'Pick the format',
-        description: 'MP3, M4A, AAC, OGG and OPUS.',
+        description: 'MP3, M4A, AAC, OGG, OPUS, WMA, MKA, SPX and AMR.',
       },
       {
-        icon: 'queue_music',
+        icon: 'playlist_add',
         title: 'Keeps going in the background',
         description: 'Queue several files and carry on with something else.',
       },
       {
-        icon: 'library_music',
+        icon: 'folder_open',
         title: 'Library',
         description: 'Open or share any converted file in a tap.',
       },
       {
         icon: 'sell',
         title: 'Fix the tags',
-        description: 'Edit the title, artist, album and cover art.',
+        description: 'Edit the title, cover art and other details of an audio file.',
       },
       {
         icon: 'wifi_off',
         title: 'Offline, no ads',
         description: 'Your files are converted on your device, and the app shows no ads.',
+      },
+    ],
+    bestFor: 'you want to convert audio, or save the audio from a video, for free.',
+    highlights: [
+      '9 audio formats, including MP3, M4A and OPUS',
+      'Edit audio tags such as the title and cover art',
+      'Speed audio up or slow it down, from 0.5x to 2x',
+      'Queue files and keep converting in the background',
+    ],
+    faqs: [
+      {
+        question: 'Is Convertit free?',
+        answer: 'Yes. Convertit is free on Google Play and shows no ads. It needs no account.',
+      },
+      {
+        question: 'Why is Convertit free?',
+        answer:
+          'We want to make a real difference in how people convert audio on their phones, without nagging you or pushing you to pay. Convertit has no permission to use the internet, so it cannot send your files or data anywhere, and we never sell data. The free features stay free. If you want to support our work and get the advanced tools, you can buy Convertit Pro.',
+      },
+      {
+        question: 'Which formats can Convertit convert to?',
+        answer:
+          'Convertit takes audio or video files and saves the result as MP3, M4A, AAC, OGG, OPUS, WMA, MKA, SPX or AMR. You can choose the bitrate and sample rate, change the playback speed from 0.5x to 2x, and queue several files while it keeps converting in the background.',
+      },
+      {
+        question: 'Does Convertit upload my files?',
+        answer:
+          'No. Files are converted offline on your phone and are never uploaded. The app has no ads and no tracking.',
+      },
+      {
+        question: 'Can Convertit edit audio tags?',
+        answer: 'Yes. You can edit the title, cover art and other tags of a converted file.',
+      },
+      {
+        question: 'Which Android versions does Convertit support?',
+        answer: 'Android 7.0 and newer.',
+      },
+      {
+        question: 'What does Convertit Pro add?',
+        answer:
+          'Convertit Pro is the paid version. It adds video compression with H.264, H.265, VP9 and AV1, HDR and HDR10+ preservation, video stabilization, 13 audio formats including FLAC and ALAC, loudness normalization, noise reduction, a five-band equalizer, a ringtone maker, image conversion from formats such as HEIC, EXIF cleaning and media info.',
       },
     ],
     playStoreUrl: 'https://play.google.com/store/apps/details?id=com.nasahacker.convertit',
@@ -157,12 +213,12 @@ export const apps: App[] = [
   },
   {
     slug: 'convertit-pro',
-    video: { id: 'MDA3KWgDElg', title: 'Convertit Pro promo video' },
+    video: { id: 'MDA3KWgDElg', title: 'Convertit Pro promo video', uploadDate: '2026-10-24T12:46:49-07:00' },
     name: 'Convertit Pro',
     tagline: 'Audio, video and image tools for Android. One purchase covers the tools listed below.',
     summary: 'Audio, video and image tools for Android. Offline, no ads, pay once.',
     description:
-      'Convertit Pro is the paid version of Convertit. One purchase unlocks the tools listed under What it does on this page as of 20 October 2026: audio, video and image conversion, video compression, noise reduction, a ringtone maker, EXIF and metadata tools, and media info. Future new tools may be separate and will be listed here before any charge. It runs offline and shows no ads.',
+      'Convertit Pro is the paid version of Convertit. One purchase unlocks the 14 tools listed under What it does on this page: audio, video and image conversion, video to GIF, video compression, video stabilization, noise reduction, an equalizer, volume leveling, a ringtone maker, EXIF cleaning for images and folders, metadata editing and media info. Future new tools may be separate and will be listed here before any charge. It runs offline and shows no ads.',
     icon: convertitProIcon,
     iconFile: 'src/assets/apps/convertit-pro/icon.png',
     featured: true,
@@ -206,55 +262,129 @@ export const apps: App[] = [
     ],
     features: [
       {
-        icon: 'apps',
-        title: 'All tools in one place',
-        description: 'Convert, enhance and inspect media from one screen. One purchase unlocks the tools listed here, no ads.',
-      },
-      {
         icon: 'compress',
         title: 'Compress video',
-        description: 'Shrink files with your pick of speed, codec, format and resolution.',
+        description:
+          'Shrink videos with H.264, H.265, VP9 or AV1, in MP4, MKV, WebM and five other formats. Compress several at once.',
       },
       {
         icon: 'movie',
-        title: 'HDR10+ metadata kept',
-        description: 'Compress HDR10+ video without losing its dynamic metadata.',
+        title: 'HDR kept',
+        description: 'Keeps HDR10, HLG and HDR10+ when compressing, so HDR video still looks right.',
+      },
+      {
+        icon: 'video_stable',
+        title: 'Stabilize video',
+        description: 'Smooth out shaky footage. Set how strong the shake is, the zoom and how the borders are filled.',
+      },
+      {
+        icon: 'audio_file',
+        title: 'Convert audio and video',
+        description:
+          '13 audio formats, including lossless FLAC and ALAC, with CUE track splitting and silence removal. Videos convert to other formats too.',
       },
       {
         icon: 'crop',
         title: 'Trim and normalize',
-        description: 'Cut video to the part that matters and even out the loudness.',
-      },
-      {
-        icon: 'noise_control_off',
-        title: 'Reduce noise',
-        description: 'Scrub wind and hum out of voice recordings, on your device.',
+        description: 'Cut audio and video to the part you need, and even out the loudness with EBU R128.',
       },
       {
         icon: 'gif',
         title: 'Video to GIF',
-        description: 'Turn a clip into a GIF without leaving the app.',
+        description: 'Turn a clip into a GIF. Pick the size, the frame rate (5 to 20 fps) and the speed (0.5x to 8x).',
       },
       {
-        icon: 'queue_music',
-        title: 'FLAC and CUE',
-        description: 'Convert to FLAC, with CUE track splitting and a compression level slider.',
+        icon: 'image',
+        title: 'Convert images',
+        description: 'Convert HEIC, AVIF, WebP, PNG and JPG, or save as PDF, SVG or ICO, with a quality slider.',
+      },
+      {
+        icon: 'noise_control_off',
+        title: 'Reduce noise',
+        description: 'Scrub wind and hum out of voice recordings with an on-device AI model.',
+      },
+      {
+        icon: 'equalizer',
+        title: 'Equalizer',
+        description: 'Five bands, from deep bass to air, with presets for more bass, more treble or clearer voice.',
+      },
+      {
+        icon: 'graphic_eq',
+        title: 'Level volume (beta)',
+        description: 'Bring a file to a steady volume, with one target for voice and one for other audio.',
+      },
+      {
+        icon: 'notifications_active',
+        title: 'Ringtone maker',
+        description: 'Trim a clip and set it as your ringtone, notification sound or alarm in one step.',
       },
       {
         icon: 'cleaning_services',
         title: 'EXIF and metadata',
-        description: 'Clean EXIF from images or a whole folder, and edit tags.',
+        description: 'Clean EXIF from a few images or a whole folder, and edit the tags of any file.',
       },
       {
         icon: 'info',
         title: 'Media info',
-        description: 'A plain verdict on any file: codec, resolution, HDR and chapters.',
+        description: 'A plain verdict on any file: codec, resolution, HDR and chapters, plus the full report.',
       },
       {
         icon: 'lock',
         title: 'Offline, no ads',
-        description: 'Everything runs on your device. No ads and no tracking.',
+        description: 'Everything runs on your device. The app has no permission to use the internet.',
       },
+    ],
+    bestFor: 'you need smaller videos, lossless audio or image conversion, and would rather pay once than subscribe.',
+    highlights: [
+      'Compress video with H.264, H.265, VP9 or AV1',
+      'Keeps HDR10, HLG and HDR10+ when compressing',
+      '13 audio formats, including lossless FLAC and ALAC',
+      'Noise reduction, loudness normalization and HEIC conversion',
+    ],
+    faqs: [
+      {
+        question: 'How much does Convertit Pro cost?',
+        answer:
+          'Convertit Pro is a one-time purchase on Google Play, with no subscription and no ads. Google Play sets the price for each country, and the current prices are listed with the app details on this page. One purchase unlocks the 14 tools listed on this page. Future new tools may be separate and will be listed here before any charge.',
+      },
+      {
+        question: 'Does Convertit Pro upload my files?',
+        answer:
+          'No. Every tool runs offline on your phone, so videos, audio and images are never uploaded. There are no ads, no tracking and no account.',
+      },
+      {
+        question: 'Which codecs and formats can the video compressor use?',
+        answer:
+          'Four codecs: H.264, H.265 (HEVC), VP9 and AV1. AV1 can use the phone’s hardware encoder where there is one, or libaom or SVT-AV1 on the CPU. Output containers are MP4, MKV, AVI, MOV, WebM, 3GP, FLV and WMV. The Small, Medium and Large levels pick the size for you, or you can set the resolution, quality, frame rate or exact bitrate yourself, and several videos can be compressed at once.',
+      },
+      {
+        question: 'Does Convertit Pro keep HDR when compressing video?',
+        answer:
+          'Yes. Preserve HDR keeps HDR10 or HLG colour and 10-bit depth with H.265 in MP4 on phones that support HDR encoding, with VP9 and with AV1. Preserve HDR10+ also keeps the per-frame HDR10+ brightness metadata. Dolby Vision is saved as H.265 with standard HDR (HLG or PQ). With Preserve HDR off, the video is converted to SDR colour.',
+      },
+      {
+        question: 'Which audio formats does Convertit Pro support?',
+        answer:
+          '13 output formats: MP3, M4A, AAC, OGG, Opus, WMA, MKA, SPX and AMR (lossy), FLAC and ALAC (lossless) and WAV and AIFF (uncompressed). FLAC has a compression level from 0 to 12. The converter also offers CBR, VBR and ABR, playback speed from 0.5x to 2x, trimming, silence removal, a five-band equalizer, EBU R128 loudness normalization and CUE sheet track splitting.',
+      },
+      {
+        question: 'What else can Convertit Pro do besides convert and compress?',
+        answer:
+          'It stabilizes shaky video, reduces wind and hum noise in voice recordings with an on-device DeepFilterNet model, applies a five-band equalizer, levels volume (in beta), turns video clips into GIFs and makes ringtones that it can set as your ringtone, notification or alarm sound. It converts images between HEIC, HEIF, AVIF, WebP, PNG, JPG and BMP, or to PDF, SVG and ICO. It also cleans EXIF data from single images or whole folders, edits tags and shows a plain-language summary of any media file: codec, resolution, HDR and chapters.',
+      },
+      {
+        question: 'What is the difference between Convertit and Convertit Pro?',
+        answer:
+          'Convertit is free and converts audio and video to nine audio formats, including MP3, M4A and OPUS, with tag editing. Convertit Pro is paid once and adds video compression and stabilization, HDR preservation, lossless audio, loudness, noise and equalizer tools, a ringtone maker, image conversion, EXIF cleaning and media info.',
+      },
+      {
+        question: 'Which Android versions does Convertit Pro support?',
+        answer: 'Android 7.0 and newer. H.265 compression needs a phone with an H.265 encoder, which most phones from Android 10 onwards have.',
+      },
+    ],
+    guides: [
+      { title: 'How the video compressor in Convertit Pro works', path: '/blog/convertit-pro-video-compressor-guide/' },
+      { title: 'How the audio converter in Convertit Pro works', path: '/blog/convertit-pro-audio-converter-guide/' },
     ],
     playStoreUrl: 'https://play.google.com/store/apps/details?id=org.thebytearray.convertit',
     packageId: 'org.thebytearray.convertit',
@@ -264,7 +394,6 @@ export const apps: App[] = [
     seoDescription:
       'Compress video with HDR10+ metadata intact, and convert audio and images offline on Android. One purchase, no ads or tracking. Android 7.0+.',
     paid: true,
-    price: { amount: '5.99', currency: 'USD' },
     privacyPath: '/convertit-pro-privacy/',
     termsPath: '/convertit-pro-terms/',
   },

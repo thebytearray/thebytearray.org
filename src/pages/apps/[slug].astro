@@ -8,6 +8,7 @@ import ScreenshotGallery from '../../components/ScreenshotGallery.astro';
 import { apps, type App } from '../../data/apps';
 import { getDownload } from '../../data/downloads';
 import { brands, site } from '../../data/site';
+import { formatPrice, getPrices } from '../../lib/prices';
 import Base from '../../layouts/Base.astro';
 
 export function getStaticPaths() {
@@ -26,18 +27,25 @@ const absolute = (src: string) => new URL(src, Astro.site).href;
 const icon = await getImage({ src: app.icon, width: 512 });
 const shots = await Promise.all(app.screenshots.map((shot) => getImage({ src: shot.src, width: 720 })));
 
-// Free apps advertise a zero price; paid apps advertise their Play price.
-const offer = app.paid
-  ? app.price && {
+// Free apps advertise a zero price; paid apps advertise their Play price in
+// each country it was read for. With no prices, a paid app gets no offer at
+// all rather than looking free.
+const prices = getPrices(app);
+const offers = app.paid
+  ? prices.map((price) => ({
       '@type': 'Offer',
-      price: app.price.amount,
-      priceCurrency: app.price.currency,
+      price: price.amount,
+      priceCurrency: price.currency,
+      eligibleRegion: { '@type': 'Country', name: price.country },
       url: app.playStoreUrl,
-    }
-  : { '@type': 'Offer', price: '0', priceCurrency: 'USD' };
+    }))
+  : [{ '@type': 'Offer', price: '0', priceCurrency: 'USD' }];
 
 // Policies sit with the other facts, so the header keeps to the install actions.
 const details: { term: string; description: string; code?: boolean; href?: string }[] = [
+  ...(prices.length > 0
+    ? [{ term: 'Price', description: `${prices.map(formatPrice).join(' · ')}, one-time purchase on Google Play` }]
+    : []),
   { term: 'Platform', description: app.requirements },
   { term: 'Package name', description: app.packageId, code: true },
   ...(app.license ? [{ term: 'License', description: app.license }] : []),
@@ -70,7 +78,7 @@ const appLd = {
   screenshot: shots.map((shot) => absolute(shot.src)),
   featureList: app.features.map((feature) => feature.title),
   isAccessibleForFree: !app.paid,
-  ...(offer && { offers: offer }),
+  ...(offers.length > 0 && { offers }),
   ...(app.license && { license: site.license.url }),
   ...(app.sourceUrl && { codeRepository: app.sourceUrl }),
 };
@@ -83,6 +91,15 @@ const videoLd = app.video && {
   embedUrl: `https://www.youtube-nocookie.com/embed/${app.video.id}`,
   contentUrl: `https://www.youtube.com/watch?v=${app.video.id}`,
   ...(app.video.uploadDate && { uploadDate: app.video.uploadDate }),
+};
+
+const faqLd = app.faqs && {
+  '@type': 'FAQPage',
+  mainEntity: app.faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
 };
 
 const onPanel = 'border-transparent bg-surface text-on-surface';
@@ -98,7 +115,7 @@ const sectionTitle = 'font-display text-headline-md';
     { name: 'Apps', path: '/apps/' },
     { name: app.name, path },
   ]}
-  jsonLd={videoLd ? [appLd, videoLd] : [appLd]}
+  jsonLd={[appLd, videoLd, faqLd].filter((node) => !!node)}
   titleSuffix={false}
 >
   <div class="pt-2 sm:pt-6" data-pagefind-body>
@@ -203,6 +220,36 @@ const sectionTitle = 'font-display text-headline-md';
       <h2 id="about" class={sectionTitle}>About</h2>
       <p class="max-w-2xl text-body-lg text-pretty">{app.description}</p>
     </section>
+
+    {
+      app.faqs && (
+        <section aria-labelledby="faq" class="mt-14 grid gap-x-10 gap-y-5 sm:mt-20 lg:grid-cols-[11rem_1fr]">
+          <h2 id="faq" class={sectionTitle}>Questions</h2>
+          <div>
+            <dl class="max-w-3xl divide-y divide-outline-variant border-y border-outline-variant">
+              {app.faqs.map(({ question, answer }) => (
+                <div class="py-5 sm:py-6">
+                  <dt class="font-display text-title-lg leading-tight">{question}</dt>
+                  <dd class="mt-2 text-body-md text-pretty text-on-surface-variant">{answer}</dd>
+                </div>
+              ))}
+            </dl>
+            {app.guides && (
+              <p class="mt-5 text-body-lg text-pretty">
+                Every setting is explained in{' '}
+                {app.guides.map((guide, i) => (
+                  <>
+                    {i > 0 && (i === app.guides!.length - 1 ? ' and ' : ', ')}
+                    <a href={guide.path} class="text-link">{guide.title}</a>
+                  </>
+                ))}
+                .
+              </p>
+            )}
+          </div>
+        </section>
+      )
+    }
 
     {
       app.sourcePost && (

@@ -4,6 +4,7 @@
 // data the HTML pages use, so the two never drift apart.
 import { apps, type App } from '../data/apps';
 import { getDownload } from '../data/downloads';
+import { formatPrice, getPrices } from './prices';
 import { site, team } from '../data/site';
 import type { Post } from './posts';
 
@@ -28,7 +29,12 @@ export const legalPages = [
 /** Markdown link to the app page, its .md copy, and its status. */
 function appStatus(app: App): string {
   if (app.discontinued) return 'Discontinued, no longer available to install.';
-  if (app.paid && app.price) return `Paid, one-time purchase of ${app.price.amount} ${app.price.currency} on Google Play.`;
+  if (app.paid) {
+    const prices = getPrices(app).map(formatPrice);
+    return prices.length > 0
+      ? `Paid, one-time purchase on Google Play (${prices.join(', ')}; the price depends on the country).`
+      : 'Paid, one-time purchase on Google Play.';
+  }
   return 'Free on Google Play, no ads.';
 }
 
@@ -63,6 +69,8 @@ export function appMarkdown(app: App): string {
     '',
     ...app.features.map((feature) => `- **${feature.title}**: ${feature.description}`),
     '',
+    ...(app.faqs ? ['## Questions', '', ...app.faqs.flatMap(({ question, answer }) => [`### ${question}`, '', answer, ''])] : []),
+    ...(app.guides ? ['## Guides', '', ...app.guides.map((guide) => `- [${guide.title}](${url(guide.path)})`), ''] : []),
     `Web page: ${url(`/apps/${app.slug}/`)}`,
     '',
   ].join('\n');

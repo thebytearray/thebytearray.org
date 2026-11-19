@@ -63,7 +63,7 @@ A few things to know:
 
 ## Bitrate
 
-Bitrate is how much data is used for each second of audio. Higher sounds clearer and makes bigger files. 128k is fine for speech, and 256k or 320k is good for music.
+Bitrate is how much data is used for each second of audio. Higher sounds clearer and makes bigger files. 128k is fine for speech, and 256k or 320k keeps more detail.
 
 The list changes with the format, sample rate and channels. For example, MP3 goes from 64k to 320k, while Opus goes from 16k to 320k. The app only shows bitrates the encoder can actually produce for your settings. If you change something that makes your current bitrate impossible, it moves to the nearest lower one.
 
@@ -85,11 +85,11 @@ When you pick FLAC, a slider from 0 to 12 shows up in place of the bitrate mode.
 
 ![The FLAC compression level slider at 5, with Sample Rate 44.1 kHz and Channels Auto below it](./images/convertit-pro-audio-converter/05-flac.png)
 
-The sound is exactly the same at every level. A higher level just takes longer to encode and gives a slightly smaller file. If you're archiving music, 12 is worth it. If you're in a hurry, 0 is fastest.
+The sound is exactly the same at every level. A higher level just takes longer to encode and gives a slightly smaller file. If you're archiving audio, 12 is worth it. If you're in a hurry, 0 is fastest.
 
 ## Sample rate
 
-This is how many samples of sound are stored each second. 44.1 kHz is CD quality and 48 kHz is common for video. Lower rates cut the high frequencies, which is fine for voice but noticeable on music.
+This is how many samples of sound are stored each second. 44.1 kHz is CD quality and 48 kHz is common for video. Lower rates cut the high frequencies, which is fine for voice but noticeable on other audio.
 
 The list depends on the format. Opus works from 8 to 48 kHz, and AMR only supports 8 and 16 kHz, the rates used for phone calls. If you switch to a format that doesn't support your current rate, the app picks one that works.
 
@@ -159,7 +159,7 @@ Moving any slider switches the preset to **Custom**. The equalizer only shows wh
 
 ## Track splitting
 
-Some albums come as one big file (often FLAC or WAV) with a `.cue` sheet next to it that lists where each track starts. Turn on **Track splitting**, tap **Select CUE file** and pick that sheet. You get one file per track instead of one long file.
+Some recordings come as one big file (often FLAC or WAV) with a `.cue` sheet next to it that lists where each track starts. Turn on **Track splitting**, tap **Select CUE file** and pick that sheet. You get one file per track instead of one long file.
 
 ![The Track splitting card turned on with a Select CUE file row, and the Trim card greyed out above it](./images/convertit-pro-audio-converter/11-cue.png)
 
@@ -186,9 +186,9 @@ If you picked several files, they're all converted with the same settings.
 
 - **Shrink a lecture recording**: Podcast AAC, then turn on Remove silence. Set the playback speed to 1.25x if you like it faster.
 - **Make a FLAC collection smaller without losing anything**: FLAC with the compression level at 12.
-- **Make music fit on a small phone**: Opus at 128k. Opus holds up well at lower bitrates.
+- **Make audio fit on a small phone**: Opus at 128k. Opus holds up well at lower bitrates.
 - **Get podcast episodes to the same volume**: turn on Normalize loudness and leave the defaults.
-- **Split a full album rip into tracks**: pick the big file, turn on Track splitting and select its `.cue` file.
+- **Split one long recording into tracks**: pick the big file, turn on Track splitting and select its `.cue` file.
 
 If something doesn't work the way this post says, or you think a setting is missing, [let us know](/contact/).
 
