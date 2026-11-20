@@ -1,0 +1,169 @@
+---
+import { Image } from 'astro:assets';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import Chip from '../../components/Chip.astro';
+import Icon from '../../components/Icon.astro';
+import { apps } from '../../data/apps';
+import { brands } from '../../data/site';
+import Base from '../../layouts/Base.astro';
+import { formatPrice, getPrices } from '../../lib/prices';
+
+const free = apps.find((app) => app.slug === 'convertit')!;
+const pro = apps.find((app) => app.slug === 'convertit-pro')!;
+const columns = [
+  { app: free, price: 'Free' },
+  { app: pro, price: getPrices(pro).map(formatPrice).join(' · ') },
+];
+
+// Read from both apps' source. `true` is a check, `false` a dash, text is
+// shown as is. Keep each cell to a few words.
+type Cell = boolean | string;
+const groups: { title: string; rows: [string, Cell, Cell][] }[] = [
+  {
+    title: 'Audio',
+    rows: [
+      ['Convert audio', true, true],
+      ['Audio from video', true, true],
+      ['Output formats', '9', '13'],
+      ['Lossless FLAC, ALAC, WAV, AIFF', false, true],
+      ['Bitrate modes', 'Fixed', 'CBR, VBR, ABR'],
+      ['Speed 0.5x to 2x', true, true],
+      ['Edit tags and cover art', true, true],
+      ['Noise reduction', false, true],
+      ['5-band equalizer', false, true],
+      ['Loudness normalization', false, true],
+      ['Level volume', false, 'Beta'],
+      ['Remove silence', false, true],
+      ['Ringtone maker', false, true],
+    ],
+  },
+  {
+    title: 'Video',
+    rows: [
+      ['Convert video', false, '8 formats'],
+      ['Compress video', false, 'H.264, H.265, VP9, AV1'],
+      ['Keep HDR10, HLG, HDR10+', false, true],
+      ['Stabilize', false, true],
+      ['Trim', false, true],
+      ['Video to GIF', false, true],
+    ],
+  },
+  {
+    title: 'Images and files',
+    rows: [
+      ['Convert images', false, 'HEIC, AVIF, WebP, PDF and more'],
+      ['Clean EXIF', false, 'Files or folders'],
+      ['Media info', false, true],
+    ],
+  },
+  {
+    title: 'App',
+    rows: [
+      ['Background converting', true, true],
+      ['Reorder and pause the queue', false, true],
+      ['Presets', false, 'Beta'],
+      ['Themes and app icons', false, true],
+      ['Back up app data', false, true],
+    ],
+  },
+];
+
+const both = ['No internet permission', 'No ads', 'No tracking', 'No account', 'Android 7.0+'];
+---
+
+<Base
+  title="Convertit vs Convertit Pro"
+  description="What Convertit does for free, and what Convertit Pro adds for one payment: video compression with HDR, lossless audio, noise reduction and image tools."
+  breadcrumbs={[
+    { name: 'Apps', path: '/apps/' },
+    { name: 'Compare', path: '/apps/compare/' },
+  ]}
+>
+  <div class="pt-2 sm:pt-6" data-pagefind-body>
+    <Breadcrumbs items={[{ label: 'Apps', href: '/apps/' }, { label: 'Compare' }]} />
+
+    <header class="pt-6 pb-8 sm:pt-10 sm:pb-12">
+      <h1 class="font-display text-hero text-balance">Free or Pro?</h1>
+      <p class="mt-4 max-w-xl text-title-lg font-normal text-pretty text-on-surface-variant">
+        Free converts audio. Pro does video, images and more, for one payment.
+      </p>
+      <ul class="mt-6 flex flex-wrap gap-2">
+        {both.map((item) => <li class="chip chip-sm chip-tonal">{item}</li>)}
+      </ul>
+    </header>
+
+    <table class="w-full border-collapse text-left">
+      <caption class="sr-only">Features in Convertit and Convertit Pro</caption>
+      <thead class="sticky top-(--header-height) z-10 bg-surface">
+        <tr class="border-b border-outline-variant">
+          <th scope="col" class="py-4"><span class="sr-only">Feature</span></th>
+          {
+            columns.map(({ app, price }) => (
+              <th scope="col" class="w-[34%] px-2 py-4 align-bottom sm:w-56">
+                <a href={`/apps/${app.slug}/`} class="group flex flex-col items-start gap-2">
+                  <Image src={app.icon} alt="" width={96} height={96} class="size-10 rounded-[22%] sm:size-12" />
+                  <span class="font-display text-title-md group-hover:text-primary sm:text-title-lg">{app.name}</span>
+                  <span class="text-label-md font-normal text-on-surface-variant tabular-nums">{price}</span>
+                </a>
+              </th>
+            ))
+          }
+        </tr>
+      </thead>
+      {
+        groups.map(({ title, rows }) => (
+          <tbody>
+            <tr>
+              <th scope="colgroup" colspan="3" class="pt-8 pb-2 font-display text-headline-sm">
+                {title}
+              </th>
+            </tr>
+            {rows.map(([feature, ...cells]) => (
+              <tr class="border-b border-outline-variant">
+                <th scope="row" class="py-3 pr-2 text-body-md font-normal">
+                  {feature}
+                </th>
+                {cells.map((cell) => (
+                  <td class="px-2 py-3 text-body-sm text-on-surface-variant">
+                    {cell === true ? (
+                      <>
+                        <Icon name="check" class="text-primary" />
+                        <span class="sr-only">Yes</span>
+                      </>
+                    ) : cell === false ? (
+                      <>
+                        <span aria-hidden="true" class="opacity-50">–</span>
+                        <span class="sr-only">No</span>
+                      </>
+                    ) : (
+                      cell
+                    )}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        ))
+      }
+    </table>
+
+    <div class="mt-12 grid gap-3 sm:grid-cols-2">
+      {
+        columns.map(({ app, price }) => (
+          <div class="flex items-center justify-between gap-4 rounded-xl bg-surface-container p-5">
+            <span>
+              <span class="block font-display text-title-lg">{app.name}</span>
+              <span class="text-label-md text-on-surface-variant tabular-nums">{price}</span>
+            </span>
+            <Chip href={app.playStoreUrl} variant="filled" aria-label={`Get ${app.name} on Google Play`}>
+              <svg viewBox="0 0 24 24" class="size-4 flex-none" fill="currentColor" aria-hidden="true">
+                <path d={brands.googlePlay}></path>
+              </svg>
+              Get it
+            </Chip>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</Base>

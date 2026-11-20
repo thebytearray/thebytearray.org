@@ -13,6 +13,7 @@ const url = (path: string) => new URL(path, import.meta.env.SITE).href;
 /** Pages that are not apps or posts, in the order a reader is likely to need them. */
 export const pages = [
   { title: 'Apps', path: '/apps/', description: 'Every app The Byte Array makes, with what each one does and where to get it.' },
+  { title: 'Convertit vs Convertit Pro', path: '/apps/compare/', description: 'Feature by feature: what the free app does and what Pro adds.' },
   { title: 'Downloads', path: '/downloads/', description: 'Direct APK downloads with version, file size and SHA-256 checksum.' },
   { title: 'Open source', path: '/open-source/', description: 'Libraries, developer tools and apps published on GitHub.' },
   { title: 'Blog', path: '/blog/', description: 'Product updates: releases, discontinued apps and privacy changes.' },

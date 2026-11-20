@@ -159,12 +159,12 @@ export const apps: App[] = [
         description: 'Your files are converted on your device, and the app shows no ads.',
       },
     ],
-    bestFor: 'you want to convert audio, or save the audio from a video, for free.',
+    bestFor: 'you just need audio conversion, free.',
     highlights: [
-      '9 audio formats, including MP3, M4A and OPUS',
-      'Edit audio tags such as the title and cover art',
-      'Speed audio up or slow it down, from 0.5x to 2x',
-      'Queue files and keep converting in the background',
+      'MP3, M4A, OPUS and 6 more formats',
+      'Edit title, artist and cover art',
+      'Speed from 0.5x to 2x',
+      'Converts in the background',
     ],
     faqs: [
       {
@@ -334,12 +334,12 @@ export const apps: App[] = [
         description: 'Everything runs on your device. The app has no permission to use the internet.',
       },
     ],
-    bestFor: 'you need smaller videos, lossless audio or image conversion, and would rather pay once than subscribe.',
+    bestFor: 'you want smaller videos, lossless audio or image tools.',
     highlights: [
-      'Compress video with H.264, H.265, VP9 or AV1',
-      'Keeps HDR10, HLG and HDR10+ when compressing',
-      '13 audio formats, including lossless FLAC and ALAC',
-      'Noise reduction, loudness normalization and HEIC conversion',
+      'Compress with H.264, H.265, VP9 or AV1',
+      'Keeps HDR10, HLG and HDR10+',
+      'Lossless FLAC and ALAC',
+      'Noise reduction and HEIC conversion',
     ],
     faqs: [
       {

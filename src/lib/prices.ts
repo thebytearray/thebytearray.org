@@ -25,6 +25,15 @@ const prices: Partial<Record<AppSlug, Price[]>> = {
 /** The app's Play prices; empty for free apps. */
 export const getPrices = (app: App): Price[] => (app.paid && prices[app.slug]) || [];
 
-/** A price as shoppers see it, for example "$5.99" or "£4.99". */
-export const formatPrice = ({ amount, currency }: Price) =>
-  new Intl.NumberFormat('en', { style: 'currency', currency }).format(Number(amount));
+/** A price as shoppers see it, for example "$5.99" or "₹690". Whole amounts drop
+ * the ".00" so every price reads in one format. */
+export const formatPrice = ({ amount, currency }: Price) => {
+  const value = Number(amount);
+  const digits = Number.isInteger(value) ? 0 : 2;
+  return new Intl.NumberFormat('en', {
+    style: 'currency',
+    currency,
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits,
+  }).format(value);
+};

@@ -35,7 +35,7 @@ const { id, title } = Astro.props;
     />
     <span class="absolute inset-0 grid place-items-center bg-black/20 transition-colors group-hover:bg-black/10">
       <span
-        class="grid size-16 place-items-center rounded-full bg-primary text-on-primary shadow-lg transition-transform group-hover:scale-105 group-active:scale-95 sm:size-20"
+        class="grid size-16 place-items-center rounded-full bg-primary text-on-primary transition-transform duration-(--duration-press) ease-[var(--ease-press)] group-active:scale-95 sm:size-20"
       >
         <Icon name="play_arrow" class="text-[2.25rem] sm:text-[2.75rem]" />
       </span>

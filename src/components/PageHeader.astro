@@ -1,39 +1,19 @@
 ---
-import type { ShapeKind } from '../lib/shape';
-import Shape from './Shape.astro';
-
 interface Props {
   title: string;
   lede?: string;
-  /** The large drifting shape behind the title. */
-  shape?: ShapeKind;
-  tone?: 'primary' | 'secondary' | 'tertiary';
 }
 
-const { title, lede, shape = 'cookie', tone = 'tertiary' } = Astro.props;
-
-const tones = {
-  primary: ['text-primary-container', 'text-tertiary-container'],
-  secondary: ['text-secondary-container', 'text-primary-container'],
-  tertiary: ['text-tertiary-container', 'text-primary-container'],
-};
-const [large] = tones[tone];
+const { title, lede } = Astro.props;
 ---
 
-<header class="relative isolate pt-8 pb-10 sm:pt-14 sm:pb-16">
-  <div
-    class="pointer-events-none absolute top-2 right-[-18%] -z-10 aspect-square w-[min(13rem,52vw)] sm:right-[-4%] sm:w-60 lg:right-[4%] lg:w-72"
-  >
-    <Shape kind={shape} class:list={['absolute inset-0 animate-drift', large]} />
-  </div>
-  <h1
-    class="max-w-4xl font-display text-[clamp(2.75rem,11vw,6.5rem)] leading-[0.92] font-extrabold tracking-[-0.032em] text-balance"
-  >
+<header class="pt-8 pb-10 sm:pt-16 sm:pb-16">
+  <h1 class="max-w-4xl font-display text-hero text-balance">
     {title}
   </h1>
   {
     lede && (
-      <p class="mt-5 max-w-xl font-display text-title-lg text-pretty text-on-surface-variant sm:mt-6 sm:text-headline-sm">
+      <p class="mt-5 max-w-2xl text-title-lg font-normal text-pretty text-on-surface-variant sm:mt-6">
         {lede}
       </p>
     )

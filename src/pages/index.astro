@@ -1,14 +1,14 @@
 ---
 import { Image } from 'astro:assets';
 import Chip from '../components/Chip.astro';
-import Shape from '../components/Shape.astro';
 import Icon from '../components/Icon.astro';
+import Shape from '../components/Shape.astro';
 import FeatureList from '../components/FeatureList.astro';
 import { apps, type AppFeature } from '../data/apps';
 import { brands, site } from '../data/site';
 import Base from '../layouts/Base.astro';
 import PostRow from '../components/PostRow.astro';
-import { getPosts, tagSlug } from '../lib/posts';
+import { getPosts } from '../lib/posts';
 import { formatPrice, getPrices } from '../lib/prices';
 
 const latestPosts = (await getPosts()).slice(0, 3);
@@ -21,104 +21,74 @@ const reasons: AppFeature[] = [
   {
     icon: 'wifi_off',
     title: 'Works without internet',
-    description:
-      'Every conversion runs on your phone. Neither app has permission to use the internet, so your files can’t be uploaded anywhere.',
+    description: 'No internet permission. Your files can’t leave your phone.',
   },
   {
     icon: 'lock',
-    title: 'Nothing to sign up for',
-    description: 'The apps have no ads, no tracking and no account. Open one and start converting.',
+    title: 'No sign up',
+    description: 'No ads, no tracking, no account.',
   },
   {
     icon: 'sell',
     title: 'Pay once for Pro',
-    description: 'Convertit Pro is a single purchase on Google Play. There is no subscription to keep paying.',
+    description: 'One purchase. No subscription.',
   },
   {
     icon: 'movie',
-    title: 'Keeps the quality you recorded',
-    description:
-      'Pro keeps HDR10+ data when it compresses video. It converts audio to lossless FLAC and can split one long file into tracks using its CUE sheet.',
+    title: 'Keeps your quality',
+    description: 'HDR10+ survives compression. Lossless FLAC for audio.',
   },
 ];
+const [lead, ...rest] = reasons;
 
-// What happens when something goes wrong, in the terms the contact page and
-// refund policy use.
-const support: AppFeature[] = [
-  {
-    icon: 'mail',
-    title: 'A person reads every message',
-    description: 'Email us or use the contact form. We aim to reply within 5 business days.',
-  },
-  {
-    icon: 'info',
-    title: 'Guides for every setting',
-    description: 'Step-by-step guides explain each option in the Pro video compressor and audio converter.',
-  },
-  {
-    icon: 'gavel',
-    title: 'A fair refund policy',
-    description:
-      'If a feature we advertise does not work and we cannot fix it within 14 business days, you can ask for a refund.',
-  },
-  {
-    icon: 'shield',
-    title: 'Privacy policies you can read',
-    description: 'Each app has a short privacy policy you can read in a few minutes.',
-  },
-];
 ---
 
 <Base
   description="Convertit is a free offline audio and video converter for Android. Convertit Pro adds video compression with HDR10+, lossless audio and image tools for one payment."
 >
-  <!-- Hero: one job (trust + explore), one primary CTA. The shape sits in the
-       open space beside the lede and holds the app icons, so it is proof
-       rather than decoration. -->
-  <section class="relative isolate pt-8 pb-10 sm:pt-14 sm:pb-14">
+  <!-- Hero: what we make, with one primary action. -->
+  <section class="pt-8 pb-12 sm:pt-14 sm:pb-20">
     <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-center lg:gap-16">
       <div>
-        <h1 class="max-w-4xl font-display text-[clamp(2.5rem,8.5vw,5.75rem)] leading-[0.95] font-extrabold tracking-[-0.035em] text-balance">
+        <h1 class="max-w-2xl font-display text-hero text-balance">
           Convert and compress media, <span class="text-primary">offline</span>
         </h1>
-        <p class="mt-7 max-w-xl sm:mt-10 font-display text-title-lg text-pretty sm:text-headline-sm">
-          We make Convertit, a free audio and video converter for Android, and Convertit Pro, which adds video
-          compression, lossless audio and image tools for one payment. Your files never leave your phone.
-        </p>
-
-        <div class="mt-8 flex flex-wrap items-center gap-2 sm:mt-10 sm:gap-2.5">
-          <Chip href="#apps" variant="filled">Compare the apps</Chip>
-          <Chip href={convertit.playStoreUrl}>
-            <svg viewBox="0 0 24 24" class="size-4 flex-none" fill="currentColor" aria-hidden="true">
-              <path d={brands.googlePlay}></path>
-            </svg>
-            Get Convertit on Google Play
-          </Chip>
+        <div class="mt-6 sm:mt-8">
+          <p class="max-w-xl text-title-lg font-normal text-pretty text-on-surface-variant">
+            A free audio and video converter for Android. Pro adds compression, lossless audio and image tools, for
+            one payment.
+          </p>
+          <div class="mt-6 flex flex-wrap items-center gap-2">
+            <Chip href="/apps/compare/" variant="filled">Compare the apps</Chip>
+            <Chip href={convertit.playStoreUrl}>
+              <svg viewBox="0 0 24 24" class="size-4 flex-none" fill="currentColor" aria-hidden="true">
+                <path d={brands.googlePlay}></path>
+              </svg>
+              Get Convertit on Google Play
+            </Chip>
+          </div>
         </div>
       </div>
 
+      <!-- The shape holds the two app icons: what we ship, not decoration. -->
       <div aria-hidden="true" class="relative mx-auto aspect-square w-full max-w-[22rem] max-lg:hidden">
-        <Shape lobes={9} depth={0.07} class="absolute inset-0 animate-drift text-primary-container" />
-        <!-- Only apps you can still install: this is the "what we ship" proof. -->
+        <Shape lobes={9} depth={0.07} class="absolute inset-0 text-primary-container" />
         <div class="absolute inset-0 grid place-items-center">
           <div class="relative h-44 w-56">
             {
-              apps
-                .filter((app) => !app.discontinued)
-                .slice(0, 2)
-                .map((app, i) => (
-                  <Image
-                    src={app.icon}
-                    alt=""
-                    width={192}
-                    height={192}
-                    loading="lazy"
-                    class:list={[
-                      'absolute size-28 rounded-[22%] shadow-level3',
-                      i === 0 ? 'top-0 left-0 -rotate-8' : 'right-0 bottom-0 rotate-6',
-                    ]}
-                  />
-                ))
+              liveApps.slice(0, 2).map((app, i) => (
+                <Image
+                  src={app.icon}
+                  alt=""
+                  width={192}
+                  height={192}
+                  loading="lazy"
+                  class:list={[
+                    'absolute size-28 rounded-[22%] shadow-level3',
+                    i === 0 ? 'top-0 left-0 -rotate-8' : 'right-0 bottom-0 rotate-6',
+                  ]}
+                />
+              ))
             }
           </div>
         </div>
@@ -132,10 +102,10 @@ const support: AppFeature[] = [
     <div class="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
       <h2 id="apps-title" class="font-display text-headline-lg sm:text-display-sm">Which one do you need?</h2>
       <a
-        href="/apps/"
+        href="/apps/compare/"
         class="inline-flex min-h-10 items-center gap-1 rounded-full px-3 text-label-lg text-primary transition-expressive hover:bg-primary-container hover:text-on-primary-container"
       >
-        All apps
+        Full comparison
         <Icon name="arrow_forward" class="text-[1.125rem]" />
       </a>
     </div>
@@ -192,62 +162,35 @@ const support: AppFeature[] = [
   <!-- Why the free app is free: people rightly ask what they pay with instead. -->
   <section aria-labelledby="why-free" class="mt-16 grid gap-x-10 gap-y-5 sm:mt-24 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
     <h2 id="why-free" class="font-display text-headline-lg sm:text-display-sm">Why is Convertit free?</h2>
-    <div class="max-w-2xl space-y-4 text-body-lg text-pretty">
-      <p>
-        There’s a saying: if a product is free, you’re the product. That isn’t the case here, and you should know
-        exactly why the app is free.
-      </p>
-      <p>
-        We want to make a real difference in how people convert audio on their phones, without nagging you or
-        pushing you to pay. Free means free. We won’t lock the free features later to push you toward Pro.
-      </p>
-      <p>
-        Convertit doesn’t have permission to use the internet, so it can’t send your files or your data anywhere.
-        We don’t collect your data, and we never sell it.
-      </p>
-      <p>
-        If you want to support our work and get the advanced tools, you can buy Convertit Pro. It’s a one-time
-        purchase, and we won’t make promises about it that aren’t true.
-      </p>
-      <p>
-        We try to answer quickly and fix problems fast, and we read every piece of feedback. It’s how we learn what
-        to build next. <a href="/contact/" class="text-link">Send us your feedback</a>.
-      </p>
-    </div>
+    <ul class="max-w-2xl space-y-3 text-title-lg font-normal text-pretty">
+      <li>No ads. No data selling. No internet permission.</li>
+      <li>Free features stay free. We won’t lock them later.</li>
+      <li>Pro is how we get paid, once.</li>
+      <li class="text-body-lg text-on-surface-variant">
+        Ideas or problems? <a href="/contact/" class="text-link">Tell us</a>
+      </li>
+    </ul>
   </section>
 
-  <!-- Why we work this way. -->
+  <!-- Why pick Convertit: the offline promise leads, the rest follow as a list. -->
   <section aria-labelledby="why" class="mt-16 sm:mt-24">
     <h2 id="why" class="font-display text-headline-lg sm:text-display-sm">Why pick Convertit</h2>
     <p class="mt-2 max-w-2xl text-body-lg text-pretty text-on-surface-variant">
       Useful apps shouldn’t cost you your privacy.
     </p>
-    <div class="mt-6 sm:mt-8">
-      <FeatureList features={reasons} />
+    <div class="mt-6 grid gap-6 sm:mt-8 lg:grid-cols-[5fr_7fr] lg:gap-10">
+      <div class="flex flex-col rounded-xl-inc bg-primary-container p-6 text-on-primary-container sm:rounded-2xl sm:p-8">
+        <Icon name={lead.icon} class="text-[3rem]" />
+        <h3 class="mt-auto pt-10 font-display text-headline-md">{lead.title}</h3>
+        <p class="mt-2 text-body-lg text-pretty">{lead.description}</p>
+      </div>
+      <div>
+        <FeatureList features={rest} columns={1} />
+        <p class="mt-2">
+          <a href="/about/" class="text-link">More about us</a>
+        </p>
+      </div>
     </div>
-    <p class="mt-5">
-      <a href="/about/" class="text-link">More about us</a>
-    </p>
-  </section>
-
-  <!-- Support: what happens when something goes wrong. -->
-  <section
-    aria-labelledby="support"
-    id="contact"
-    class="mt-16 scroll-mt-24 rounded-xl-inc bg-surface-container p-6 sm:mt-24 sm:rounded-2xl sm:p-10 lg:p-12"
-  >
-    <h2 id="support" class="font-display text-headline-md sm:text-headline-lg">Help when you need it</h2>
-    <p class="mt-2 max-w-xl text-body-lg text-pretty text-on-surface-variant">
-      We’re a small team in London, and we answer support and refund requests ourselves.
-    </p>
-    <div class="mt-6 sm:mt-8">
-      <FeatureList features={support} />
-    </div>
-    <p class="mt-6 flex flex-wrap gap-2 sm:gap-2.5">
-      <Chip href="/contact/" icon="send" variant="filled">Contact support</Chip>
-      <Chip href={`/blog/tags/${tagSlug('Guides')}/`}>Read the guides</Chip>
-      <Chip href="/refund-policy/">Refund policy</Chip>
-    </p>
   </section>
 
   <!-- Blog: latest posts. -->
@@ -255,7 +198,7 @@ const support: AppFeature[] = [
     <div class="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
       <div>
         <h2 id="blog" class="font-display text-headline-lg sm:text-display-sm">Blog</h2>
-        <p class="mt-1 text-body-lg text-on-surface-variant">Updates on our apps, and why we made the decisions we did.</p>
+        <p class="mt-1 text-body-lg text-on-surface-variant">App news and how-to guides.</p>
       </div>
       <a
         href="/blog/"
@@ -282,9 +225,9 @@ const support: AppFeature[] = [
   <section aria-labelledby="open-source" class="mt-16 sm:mt-24">
     <h2 id="open-source" class="font-display text-headline-md sm:text-headline-lg">Open source</h2>
     <p class="mt-2 max-w-2xl text-body-lg text-pretty text-on-surface-variant">
-      We publish libraries, developer tools and this website on GitHub.
+      Our libraries, tools and this website are on GitHub.
     </p>
-    <p class="mt-6 flex flex-wrap gap-2 sm:gap-2.5">
+    <p class="mt-6 flex flex-wrap gap-2">
       <Chip href="/open-source/">Browse repositories</Chip>
       <Chip href={site.github}>
         <svg viewBox="0 0 24 24" class="size-[1.125rem] flex-none" fill="currentColor" aria-hidden="true">

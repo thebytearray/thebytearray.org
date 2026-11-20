@@ -23,8 +23,6 @@ const iconLink =
     <PageHeader
       title="About The Byte Array"
       lede="We’re The Byte Array, a small software company. We make mobile apps, libraries and developer tools, and much of our code is open source."
-      shape="cookie"
-      tone="primary"
     />
 
     <div class="flex flex-col gap-16 sm:gap-24">
@@ -65,7 +63,7 @@ const iconLink =
             OpenLoader and this website are open source under {site.license.name}. Our libraries and tools are also
             published on GitHub.
           </p>
-          <ul class="mt-7 flex flex-wrap gap-2 sm:gap-2.5">
+          <ul class="mt-7 flex flex-wrap gap-2">
             <li><Chip href="/open-source/" variant="filled">Browse repositories</Chip></li>
             <li>
               <Chip href={site.github}>
