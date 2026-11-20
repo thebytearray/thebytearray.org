@@ -9,8 +9,18 @@ export interface PolicySection {
   blocks: readonly PolicyBlock[];
 }
 
+/**
+ * Apps that have a privacy policy here but no app page on the site, such as
+ * helper apps. Their policy says "Applies to <name>" without a link.
+ */
+export const unlistedApps = {
+  precheck: { name: "Precheck" },
+} as const;
+
+export type UnlistedAppSlug = keyof typeof unlistedApps;
+
 export interface Policy {
-  app: AppSlug;
+  app: AppSlug | UnlistedAppSlug;
   title: string;
   /** ISO 8601 timestamp of the last update, e.g. "2026-10-20T04:22:31Z". Shown with date and time for transparency. */
   lastUpdated: string;
@@ -20,7 +30,7 @@ export interface Policy {
 
 const p = (text: string): PolicyBlock => ({ type: "paragraph", text });
 
-export const policies: Record<AppSlug, Policy> = {
+export const policies: Record<AppSlug | UnlistedAppSlug, Policy> = {
   convertit: {
     app: "convertit",
     title: "Convertit privacy policy",
@@ -164,6 +174,93 @@ export const policies: Record<AppSlug, Policy> = {
         blocks: [
           p(
             "Converted files, your library and your preferences are stored exclusively on your device using Android’s local storage APIs. Uninstalling the App removes its stored data; converted files you saved to shared storage stay until you delete them.",
+          ),
+        ],
+      },
+      {
+        heading: "Changes to this policy",
+        blocks: [
+          p(
+            "We version this page. See the Last updated date and time above. If we make a material change, we add a dated note here and announce it on our blog at least 7 days before it takes effect.",
+          ),
+        ],
+      },
+    ],
+  },
+  precheck: {
+    app: "precheck",
+    title: "Precheck privacy policy",
+    lastUpdated: "2026-11-20T23:30:00Z",
+    sections: [
+      {
+        heading: "Introduction",
+        blocks: [
+          p(
+            "This privacy policy explains how Precheck (“the App”) handles your data. Precheck tests whether your phone can run Convertit Pro and which of its features work on it.",
+          ),
+        ],
+      },
+      {
+        heading: "Data collection",
+        blocks: [
+          p(
+            "Precheck does not collect any personal data. It has no permission to use the internet, so it cannot send anything to us or to anyone else.",
+          ),
+        ],
+      },
+      {
+        heading: "What the App reads",
+        blocks: [
+          p("To run its checks, the App reads these details from your phone. They are used on your phone only, to show the results:"),
+          {
+            type: "list",
+            items: [
+              {
+                term: "Device",
+                text: "The manufacturer, model, Android version, processor name, whether the processor can run 64-bit apps, number of processor cores, amount of memory and whether the phone runs Android Go.",
+              },
+              {
+                term: "Media support",
+                text: "The video and image encoders your phone reports, and what its graphics chip and camera video profiles support, such as HEVC, AV1, HDR and 4K.",
+              },
+            ],
+          },
+          p("The App does not read your files, photos, contacts, location or any identifier that is unique to you or your phone."),
+        ],
+      },
+      {
+        heading: "Sharing a report",
+        blocks: [
+          p(
+            "If you tap Share, the App builds a plain-text report of your phone’s details and the check results and opens Android’s share menu. Nothing is sent unless you choose an app to share it with. What happens to the report then is up to you and the app you pick.",
+          ),
+        ],
+      },
+      {
+        heading: "Permissions",
+        blocks: [p("The App requests no permissions.")],
+      },
+      {
+        heading: "Links to Google Play",
+        blocks: [
+          p(
+            "The App can open Convertit Pro’s page in the Google Play app or your browser. Google’s privacy policy applies to anything you do there.",
+          ),
+        ],
+      },
+      {
+        heading: "Third-party services",
+        blocks: [
+          p(
+            "Precheck does not integrate any third-party analytics, advertising, crash reporting or tracking services. It shows no ads and has no accounts.",
+          ),
+        ],
+      },
+      {
+        heading: "Data storage",
+        blocks: [
+          p(
+            "The App does not save the check results or your phone’s details. They are worked out each time you open it and are gone when you close it.",
           ),
         ],
       },

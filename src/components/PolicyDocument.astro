@@ -2,7 +2,7 @@
 import '../styles/prose.css';
 
 import { getApp } from '../data/apps';
-import type { Policy } from '../data/policies';
+import { type Policy, unlistedApps } from '../data/policies';
 import { site } from '../data/site';
 import Base from '../layouts/Base.astro';
 import Breadcrumbs from './Breadcrumbs.astro';
@@ -13,8 +13,9 @@ interface Props {
 }
 
 const { policy, description } = Astro.props;
-const app = getApp(policy.app)!;
-const appPath = `/apps/${app.slug}/`;
+// Apps without a page on the site are named but not linked.
+const app = policy.app in unlistedApps ? undefined : getApp(policy.app);
+const appName = app?.name ?? unlistedApps[policy.app as keyof typeof unlistedApps].name;
 const lastUpdatedDate = new Date(policy.lastUpdated);
 const lastUpdatedDisplay = new Intl.DateTimeFormat('en-GB', {
   day: 'numeric',
@@ -48,7 +49,7 @@ const lastUpdatedDisplay = new Intl.DateTimeFormat('en-GB', {
         Last updated <time datetime={lastUpdatedDate.toISOString()}>{lastUpdatedDisplay}</time>
       </p>
       <p class="mt-2 text-body-md text-on-surface-variant">
-        Applies to <a href={appPath} class="text-link">{app.name}</a>.
+        Applies to {app ? <a href={`/apps/${app.slug}/`} class="text-link">{appName}</a> : appName}.
       </p>
     </header>
 

@@ -1,0 +1,10 @@
+---
+import PolicyDocument from '../components/PolicyDocument.astro';
+import { policies } from '../data/policies';
+---
+
+<!-- This URL is for the Google Play listing; keep the path stable. -->
+<PolicyDocument
+  policy={policies.precheck}
+  description="How Precheck handles your data: it checks your phone on the device, saves nothing and has no internet access."
+/>

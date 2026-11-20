@@ -1,6 +1,7 @@
 ---
 import PageHeader from '../components/PageHeader.astro';
 import { apps } from '../data/apps';
+import { unlistedApps } from '../data/policies';
 import Base from '../layouts/Base.astro';
 
 const siteWide = [
@@ -9,17 +10,22 @@ const siteWide = [
   { label: 'Refund policy', href: '/refund-policy/' },
 ];
 
-// Live apps first, then the ones we no longer maintain.
-const byApp = [...apps]
-  .sort((a, b) => Number(!!a.discontinued) - Number(!!b.discontinued))
+// Live apps first, then helper apps without an app page, then the ones we no
+// longer maintain.
+const listed = apps
   .map((app) => ({
-    app,
+    name: app.name,
+    discontinued: !!app.discontinued,
     links: [
       ...(app.privacyPath ? [{ label: 'Privacy policy', href: app.privacyPath }] : []),
       ...(app.termsPath ? [{ label: 'Terms of service', href: app.termsPath }] : []),
     ],
   }))
   .filter(({ links }) => links.length > 0);
+const helpers = [
+  { name: unlistedApps.precheck.name, discontinued: false, links: [{ label: 'Privacy policy', href: '/precheck-privacy/' }] },
+];
+const byApp = [...listed.filter((a) => !a.discontinued), ...helpers, ...listed.filter((a) => a.discontinued)];
 
 const linkClass =
   'flex min-h-12 items-center justify-between gap-3 rounded-lg px-4 text-body-lg transition-expressive hover:bg-secondary-container hover:text-on-secondary-container';
@@ -54,11 +60,11 @@ const linkClass =
         <h2 id="by-app" class="font-display text-headline-sm">By app</h2>
         <div class="mt-4 flex flex-col gap-4">
           {
-            byApp.map(({ app, links }) => (
+            byApp.map(({ name, discontinued, links }) => (
               <div class="rounded-xl bg-surface-container p-2">
                 <h3 class="flex flex-wrap items-center gap-x-3 gap-y-1 px-4 pt-3 pb-1 font-display text-title-lg">
-                  {app.name}
-                  {app.discontinued && (
+                  {name}
+                  {discontinued && (
                     <span class="chip chip-sm chip-tonal text-on-surface-variant">No longer maintained</span>
                   )}
                 </h3>

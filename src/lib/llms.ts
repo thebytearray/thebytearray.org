@@ -25,6 +25,7 @@ export const legalPages = [
   { title: 'Terms', path: '/terms/', description: 'Terms for the website and the apps.' },
   { title: 'Refund policy', path: '/refund-policy/', description: 'When you can get a refund for a paid app.' },
   { title: 'Site privacy', path: '/privacy/', description: 'How thebytearray.org handles data: no cookies, no analytics.' },
+  { title: 'Precheck privacy', path: '/precheck-privacy/', description: 'Precheck checks your phone on the device, saves nothing and has no internet access.' },
 ];
 
 /** Markdown link to the app page, its .md copy, and its status. */
