@@ -15,6 +15,7 @@ export interface PolicySection {
  */
 export const unlistedApps = {
   precheck: { name: "Precheck" },
+  "convertit-ios": { name: "Convertit for iPhone and iPad" },
 } as const;
 
 export type UnlistedAppSlug = keyof typeof unlistedApps;
@@ -174,6 +175,122 @@ export const policies: Record<AppSlug | UnlistedAppSlug, Policy> = {
         blocks: [
           p(
             "Converted files, your library and your preferences are stored exclusively on your device using Android’s local storage APIs. Uninstalling the App removes its stored data; converted files you saved to shared storage stay until you delete them.",
+          ),
+        ],
+      },
+      {
+        heading: "Changes to this policy",
+        blocks: [
+          p(
+            "We version this page. See the Last updated date and time above. If we make a material change, we add a dated note here and announce it on our blog at least 7 days before it takes effect.",
+          ),
+        ],
+      },
+    ],
+  },
+  "convertit-ios": {
+    app: "convertit-ios",
+    title: "Convertit for iPhone and iPad privacy policy",
+    lastUpdated: "2026-11-21T08:50:00Z",
+    sections: [
+      {
+        heading: "Introduction",
+        blocks: [
+          p(
+            "This privacy policy explains how Convertit for iPhone and iPad (“the App”), published by The Byte Array Ltd, handles your data. We believe in minimal data collection and maximum transparency.",
+          ),
+        ],
+      },
+      {
+        heading: "Data collection",
+        blocks: [
+          p(
+            "The App does not collect personal data. It has no account, no analytics, no advertising and no tracking, and it does not send your information to our servers or to anyone else’s. The only time we receive anything is when you choose to contact us, as described under Support and logs.",
+          ),
+        ],
+      },
+      {
+        heading: "Your files",
+        blocks: [
+          p(
+            "Audio, video and image files you choose are converted, compressed and edited on your device. The App never uploads your files, the results, or their tags, cover art, dates or locations to any server.",
+          ),
+        ],
+      },
+      {
+        heading: "Permissions",
+        blocks: [
+          p("The App asks for these permissions only when a feature needs them, and uses them only on your device:"),
+          {
+            type: "list",
+            items: [
+              {
+                term: "Add to Photos",
+                text: "Used to save converted videos and GIFs to your Photos library when you choose Photos as the destination.",
+              },
+              {
+                term: "Full Photos access",
+                text: "Used by Storage Saver to find your largest videos and save smaller copies next to them, and to open or share files the App saved to Photos. If you limit access, the App only sees the items you allow. Videos stored in iCloud may be downloaded by Photos so they can be compressed on your device.",
+              },
+              {
+                term: "Notifications",
+                text: "Used only if you ask for a reminder before your 24-hour pass ends. The reminder is scheduled on your device.",
+              },
+            ],
+          },
+          p(
+            "Files you pick from the Files app, and folders you choose as a save location, are accessed only with the system’s file picker and only for the files and folders you select. You can change Photos and notification access at any time in the Settings app.",
+          ),
+        ],
+      },
+      {
+        heading: "Purchases",
+        blocks: [
+          p(
+            "Pro and the 24-hour pass are sold through the App Store. Apple handles the payment, and we never see your payment details or your Apple Account. To know whether Pro is unlocked, the App reads your purchase records from Apple on your device. We do not receive them.",
+          ),
+        ],
+      },
+      {
+        heading: "Support and logs",
+        blocks: [
+          p(
+            "If you use Contact support, the App opens your own mail app with your message addressed to us. We receive what you send, including your email address and anything you write. If you turn on Attach logs, the email also includes the App’s log, recent system messages from the App and a device report (device model, iOS version, language and region, free storage and similar technical details). Logs can include the names of files you processed. Nothing is sent until you press send in your mail app.",
+          ),
+          p(
+            "File logging is off unless you turn it on in Settings, or turn on Attach logs. Logs stay on your device until you share them, and the App keeps at most a few small log files. We use support emails and logs only to answer you and fix problems, and we delete them when they are no longer needed for that.",
+          ),
+        ],
+      },
+      {
+        heading: "Third-party services",
+        blocks: [
+          p(
+            "The App does not include third-party analytics, advertising, tracking or crash-reporting services. It uses Apple’s own frameworks for purchases, Photos and notifications, under Apple’s privacy policy. Links in the App, for example to our community channels, open in your browser and are covered by those sites’ own policies.",
+          ),
+        ],
+      },
+      {
+        heading: "Data storage",
+        blocks: [
+          p(
+            "Converted files, your library, presets and preferences are stored only on your device. Files saved to the App’s folder appear in the Files app; files saved to Photos stay in your Photos library. Deleting the App removes its library and settings; files you saved to Photos or to another folder stay until you delete them. An app data backup you export is a file you control.",
+          ),
+        ],
+      },
+      {
+        heading: "Your rights",
+        blocks: [
+          p(
+            "Because the App does not send us your data, we hold nothing about you unless you email us. If you have, you can ask us to see, correct or delete what we hold, and we will reply within 30 days. If you are in the UK or the EU, you can also complain to your data protection authority; in the UK that is the Information Commissioner’s Office.",
+          ),
+        ],
+      },
+      {
+        heading: "Children",
+        blocks: [
+          p(
+            "The App is not directed at children and does not knowingly collect information from anyone, including children.",
           ),
         ],
       },

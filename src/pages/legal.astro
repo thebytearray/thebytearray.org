@@ -24,6 +24,14 @@ const listed = apps
   .filter(({ links }) => links.length > 0);
 const helpers = [
   { name: unlistedApps.precheck.name, discontinued: false, links: [{ label: 'Privacy policy', href: '/precheck-privacy/' }] },
+  {
+    name: unlistedApps['convertit-ios'].name,
+    discontinued: false,
+    links: [
+      { label: 'Privacy policy', href: '/convertit-ios-privacy/' },
+      { label: 'Terms of service', href: '/convertit-ios-terms/' },
+    ],
+  },
 ];
 const byApp = [...listed.filter((a) => !a.discontinued), ...helpers, ...listed.filter((a) => a.discontinued)];
 

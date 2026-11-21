@@ -1,0 +1,10 @@
+---
+import PolicyDocument from '../components/PolicyDocument.astro';
+import { policies } from '../data/policies';
+---
+
+<!-- This URL is for the App Store listing and the in-app paywall; keep the path stable. -->
+<PolicyDocument
+  policy={policies['convertit-ios']}
+  description="How Convertit for iPhone and iPad handles your data: nothing is collected, and your files never leave your device."
+/>
